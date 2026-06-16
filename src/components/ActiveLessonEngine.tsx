@@ -1,9 +1,10 @@
 "use client";
 
 import React, { useEffect, useRef, useState, useCallback } from "react";
-import { ArrowLeft, Check } from "lucide-react";
-import { motion } from "framer-motion";
+import { ArrowLeft, Check, Grid } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
+import { alphabetData } from "@/lib/alphabetData";
 
 interface Point {
   x: number;
@@ -17,9 +18,21 @@ interface ActiveLessonEngineProps {
   audioUrl?: string;
   onBack?: () => void;
   onNext?: () => void;
+  currentLetterIndex?: number;
+  onSelectLetterIndex?: (index: number) => void;
 }
 
-export default function ActiveLessonEngine({ childId, letter, pathString, audioUrl, onBack, onNext }: ActiveLessonEngineProps) {
+export default function ActiveLessonEngine({ 
+  childId, 
+  letter, 
+  pathString, 
+  audioUrl, 
+  onBack, 
+  onNext,
+  currentLetterIndex,
+  onSelectLetterIndex
+}: ActiveLessonEngineProps) {
+  const [showAlphabetGrid, setShowAlphabetGrid] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isCompleted, setIsCompleted] = useState(false);
   const [allCheckpointsHit, setAllCheckpointsHit] = useState(false);
@@ -351,38 +364,49 @@ export default function ActiveLessonEngine({ childId, letter, pathString, audioU
   };
 
   return (
-    <div className="flex flex-col items-center w-full max-w-md sm:max-w-lg md:max-w-xl mx-auto relative px-4">
+    <div className="flex flex-col items-center w-full max-w-md sm:max-w-lg md:max-w-xl mx-auto relative px-4 py-2 justify-between min-h-[72vh] md:min-h-[78vh]">
       {/* Standardized Header */}
-      <div className="flex justify-between items-center w-full mb-8 z-10 px-1">
+      <div className="flex justify-between items-center w-full mb-3 sm:mb-4 z-10 px-1">
         {onBack ? (
           <button 
             onClick={onBack} 
-            className="btn-white btn-squishy rounded-full w-14 h-14 flex items-center justify-center toddler-target border-2 border-slate-dark shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] active:translate-y-0.5 active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]"
+            className="bg-white squishy-press rounded-full w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center toddler-target border-2 border-slate-dark"
           >
-            <ArrowLeft size={28} strokeWidth={3} />
+            <ArrowLeft className="w-6 h-6 sm:w-7 sm:h-7" strokeWidth={3} />
           </button>
         ) : (
-          <div className="w-14 h-14" />
+          <div className="w-12 h-12 sm:w-14 sm:h-14" />
         )}
         
         {/* Centered Target Letter Sticker */}
-        <div className="flex items-center gap-2.5 bg-white border-2 border-slate-dark rounded-full px-6 py-2.5 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
-          <span className="text-base font-black text-slate-dark uppercase tracking-wide">Trace:</span>
-          <div className="w-10 h-10 rounded-full bg-[var(--lime-green)] border-2 border-slate-dark flex items-center justify-center font-black text-xl text-slate-dark shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]">
+        <div className="flex items-center gap-1.5 sm:gap-2.5 bg-white border-2 border-slate-dark rounded-xl px-3 py-1.5 sm:px-5 sm:py-2.5 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rotate-[-1.5deg]">
+          <span className="text-xs sm:text-base font-black text-slate-dark uppercase tracking-wide">Trace:</span>
+          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-[var(--lime-green)] border-2 border-slate-dark flex items-center justify-center font-black text-lg sm:text-xl text-slate-dark shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
             {letter}
           </div>
         </div>
 
-        <div className="w-14 h-14 opacity-0 pointer-events-none" />
+        <button 
+          onClick={() => setShowAlphabetGrid(true)} 
+          className="bg-white squishy-press rounded-full w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center toddler-target border-2 border-slate-dark"
+        >
+          <Grid className="w-6 h-6 sm:w-7 sm:h-7 text-primary" strokeWidth={3} />
+        </button>
       </div>
       
-      <div className="w-full aspect-square card-3d overflow-hidden relative border-2 border-[var(--slate-dark)] shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+      <div className="w-full max-w-[280px] sm:max-w-[360px] aspect-square card-3d overflow-hidden relative border-2 border-[var(--slate-dark)] shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] mx-auto">
         {/* Hidden SVG for path length calculations */}
         <svg width="0" height="0" className="absolute pointer-events-none">
           <path ref={svgPathRef} d={pathString} />
         </svg>
 
-        <div className="relative w-full h-full flex justify-center items-center">
+        <div 
+          className="relative w-full h-full flex justify-center items-center bg-[var(--surface-container-lowest)]"
+          style={{
+            backgroundImage: "radial-gradient(rgba(113, 122, 104, 0.15) 1.5px, transparent 1.5px)",
+            backgroundSize: "20px 20px"
+          }}
+        >
           <canvas
             ref={canvasRef}
             width={500}
@@ -399,15 +423,64 @@ export default function ActiveLessonEngine({ childId, letter, pathString, audioU
 
       <button 
         onClick={handleCheck}
-        className={`mt-8 w-24 h-24 rounded-full flex items-center justify-center btn-squishy shadow-md transition-all toddler-target ${allCheckpointsHit ? "btn-green animate-pulse-bounce" : "bg-gray-100 border-gray-300 text-gray-400 cursor-not-allowed opacity-50"}`}
-        style={{
-          boxShadow: allCheckpointsHit ? "0 6px 0 0 var(--slate-dark)" : "none",
-          transform: allCheckpointsHit ? "translateY(-3px)" : "none"
-        }}
+        className={`mt-3 sm:mt-6 w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center transition-all toddler-target border-2 border-slate-dark ${
+          allCheckpointsHit 
+            ? "bg-[var(--primary-container)] squishy-press animate-pulse-bounce text-slate-dark" 
+            : "bg-gray-100 text-gray-400 cursor-not-allowed opacity-50"
+        }`}
         disabled={!allCheckpointsHit}
       >
-        <Check size={48} strokeWidth={4} />
+        <Check className="w-8 h-8 sm:w-10 sm:h-10" strokeWidth={4} />
       </button>
+
+      <AnimatePresence>
+        {showAlphabetGrid && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+            onClick={() => setShowAlphabetGrid(false)}
+          >
+            <motion.div 
+              initial={{ scale: 0.9, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.9, y: 20 }}
+              className="bg-white border-2 border-slate-dark p-6 rounded-[2rem] max-w-sm w-full shadow-purple flex flex-col gap-4"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <h2 className="text-xl font-black text-slate-dark text-center uppercase tracking-wide">Select Letter</h2>
+              <div className="grid grid-cols-5 gap-2 max-h-[60vh] overflow-y-auto p-1">
+                {alphabetData.map((data, index) => {
+                  const isSelected = currentLetterIndex === index;
+                  return (
+                    <button
+                      key={data.letter}
+                      onClick={() => {
+                        if (onSelectLetterIndex) onSelectLetterIndex(index);
+                        setShowAlphabetGrid(false);
+                      }}
+                      className={`w-11 h-11 rounded-xl flex items-center justify-center text-lg font-black transition-all border-2 border-slate-dark ${
+                        isSelected 
+                          ? "bg-primary-container text-slate-dark shadow-[2px_2px_0px_0px_var(--slate-dark)] scale-105" 
+                          : "bg-white text-slate-dark shadow-[1px_1px_0px_0px_var(--slate-dark)] hover:scale-105"
+                      }`}
+                    >
+                      {data.letter}
+                    </button>
+                  );
+                })}
+              </div>
+              <button 
+                onClick={() => setShowAlphabetGrid(false)}
+                className="w-full py-2.5 font-extrabold bg-gray-100 hover:bg-gray-200 rounded-full border-2 border-slate-dark text-xs uppercase"
+              >
+                Cancel
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

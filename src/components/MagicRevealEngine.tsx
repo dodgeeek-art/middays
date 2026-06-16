@@ -19,6 +19,7 @@ export default function MagicRevealEngine({ childId, onBack }: MagicRevealEngine
   const [gameState, setGameState] = useState<"erasing" | "choosing" | "success">("erasing");
   const [targetLetter, setTargetLetter] = useState("A");
   const [choices, setChoices] = useState<any[]>([]);
+  const [startTime, setStartTime] = useState<number>(0);
   
   const isErasing = useRef(false);
   const lastPoint = useRef<Point | null>(null);
@@ -71,15 +72,36 @@ export default function MagicRevealEngine({ childId, onBack }: MagicRevealEngine
     if (!ctx) return;
 
     ctx.globalCompositeOperation = "source-over"; // Default
-    ctx.fillStyle = "#A8E6CF"; // Minty frost
+    
+    // Beautiful diagonal pastel gradient
+    const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+    grad.addColorStop(0, "#c9f0df"); // Pastel frost mint
+    grad.addColorStop(0.5, "#e5ddf8"); // Pastel frost lavender
+    grad.addColorStop(1, "#ffd8d6"); // Pastel frost peach
+    ctx.fillStyle = grad;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     
-    // Add some noise/mud
-    ctx.fillStyle = "rgba(255,255,255,0.4)";
-    for (let i = 0; i < 200; i++) {
+    // Add sparkling highlight bubbles
+    ctx.fillStyle = "rgba(255,255,255,0.45)";
+    for (let i = 0; i < 15; i++) {
        ctx.beginPath();
-       ctx.arc(Math.random() * canvas.width, Math.random() * canvas.height, Math.random() * 30 + 10, 0, Math.PI * 2);
+       ctx.arc(Math.random() * canvas.width, Math.random() * canvas.height, Math.random() * 40 + 20, 0, Math.PI * 2);
        ctx.fill();
+    }
+    
+    // Draw cute sparkle cross shapes
+    ctx.strokeStyle = "rgba(255,255,255,0.7)";
+    ctx.lineWidth = 4;
+    for (let i = 0; i < 12; i++) {
+      const x = Math.random() * canvas.width;
+      const y = Math.random() * canvas.height;
+      const size = Math.random() * 12 + 8;
+      ctx.beginPath();
+      ctx.moveTo(x - size, y);
+      ctx.lineTo(x + size, y);
+      ctx.moveTo(x, y - size);
+      ctx.lineTo(x, y + size);
+      ctx.stroke();
     }
   };
 
@@ -89,6 +111,7 @@ export default function MagicRevealEngine({ childId, onBack }: MagicRevealEngine
     setTargetLetter(newLetter);
     setGameState("erasing");
     eraseCount.current = 0;
+    setStartTime(Date.now());
   };
 
   useEffect(() => {
@@ -232,7 +255,7 @@ export default function MagicRevealEngine({ childId, onBack }: MagicRevealEngine
     setChoices(shuffledChoices);
   };
 
-  const handleChoice = (selectedLetter: string) => {
+  const handleChoice = async (selectedLetter: string) => {
     if (selectedLetter === targetLetter) {
       setGameState("success");
       
@@ -258,6 +281,30 @@ export default function MagicRevealEngine({ childId, onBack }: MagicRevealEngine
         osc.stop(audioCtxRef.current.currentTime + 0.8);
       }
 
+      const elapsed = Date.now() - startTime;
+      if (childId) {
+        try {
+          await fetch(`/api/progress/${childId}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              targetLetter,
+              tracingScore: 100,
+              phonemicScore: 100,
+              timeSpentMs: elapsed,
+            }),
+          });
+          
+          await fetch(`/api/badges/${childId}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ badgeName: `Reveal Master ${targetLetter}` }),
+          });
+        } catch (err) {
+          console.error("Telemetry failed to save in MagicRevealEngine:", err);
+        }
+      }
+
       setTimeout(() => {
         startNewRound();
       }, 3500);
@@ -267,41 +314,41 @@ export default function MagicRevealEngine({ childId, onBack }: MagicRevealEngine
   };
 
   return (
-    <div className="flex flex-col items-center w-full max-w-md sm:max-w-lg md:max-w-xl mx-auto px-4">
+    <div className="flex flex-col items-center w-full max-w-md sm:max-w-lg md:max-w-xl mx-auto px-4 py-2 justify-between min-h-[72vh] md:min-h-[78vh]">
       {/* Standardized Header */}
-      <div className="flex justify-between items-center w-full mb-8 z-10 px-1">
+      <div className="flex justify-between items-center w-full mb-3 sm:mb-4 z-10 px-1">
         {onBack ? (
           <button 
             onClick={onBack} 
-            className="btn-white btn-squishy rounded-full w-14 h-14 flex items-center justify-center toddler-target border-2 border-slate-dark shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] active:translate-y-0.5 active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]"
+            className="bg-white squishy-press rounded-full w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center toddler-target border-2 border-slate-dark"
           >
-            <ArrowLeft size={28} strokeWidth={3} />
+            <ArrowLeft className="w-6 h-6 sm:w-7 sm:h-7" strokeWidth={3} />
           </button>
         ) : (
-          <div className="w-14 h-14" />
+          <div className="w-12 h-12 sm:w-14 sm:h-14" />
         )}
         
         {/* Centered Target Letter Sticker */}
-        <div className="flex items-center gap-2.5 bg-white border-2 border-slate-dark rounded-full px-6 py-2.5 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
-          <span className="text-base font-black text-slate-dark uppercase tracking-wide">Reveal:</span>
-          <div className="w-10 h-10 rounded-full bg-[var(--light-purple)] border-2 border-slate-dark flex items-center justify-center font-black text-xl text-slate-dark shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]">
+        <div className="flex items-center gap-1.5 sm:gap-2.5 bg-white border-2 border-slate-dark rounded-full px-3 py-1.5 sm:px-6 sm:py-2.5 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+          <span className="text-xs sm:text-base font-black text-slate-dark uppercase tracking-wide">Reveal:</span>
+          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-[var(--light-purple)] border-2 border-slate-dark flex items-center justify-center font-black text-lg sm:text-xl text-slate-dark shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
             {targetLetter}
           </div>
         </div>
 
         <button 
           onClick={startNewRound} 
-          className="btn-red btn-squishy rounded-full w-14 h-14 flex items-center justify-center toddler-target border-2 border-slate-dark shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] active:translate-y-0.5 active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]"
+          className="bg-[var(--tertiary-container)] text-[var(--on-tertiary-container)] squishy-press rounded-full w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center toddler-target border-2 border-slate-dark"
         >
-          <RefreshCw size={22} strokeWidth={3} />
+          <RefreshCw className="w-5 h-5 sm:w-6 sm:h-6" strokeWidth={3} />
         </button>
       </div>
       
-      <div className="flex flex-col items-center w-full gap-6">
-        <div className="relative w-full aspect-square card-3d overflow-hidden border-2 border-[var(--slate-dark)] shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+      <div className="flex flex-col items-center w-full gap-4 sm:gap-6">
+        <div className="relative w-full max-w-[280px] sm:max-w-[360px] aspect-square card-3d overflow-hidden border-2 border-[var(--slate-dark)] shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] mx-auto">
           {/* Hidden Letter Background */}
-          <div className="absolute inset-0 flex items-center justify-center bg-gray-50 select-none">
-            <span className="text-[300px] font-black leading-none -mt-8 select-none" style={{ color: "var(--lime-green)" }}>
+          <div className="absolute inset-0 flex items-center justify-center bg-[var(--surface-container-lowest)] select-none">
+            <span className="text-[130px] sm:text-[180px] font-black leading-none select-none drop-shadow-[4px_4px_0px_var(--slate-dark)]" style={{ color: "var(--lime-green)" }}>
               {targetLetter}
             </span>
           </div>
@@ -339,19 +386,19 @@ export default function MagicRevealEngine({ childId, onBack }: MagicRevealEngine
                     whileTap={{ scale: 0.97, y: 4 }}
                     key={i}
                     onClick={() => handleChoice(choice.letter)}
-                    className={`card-organic ${wavyClass} relative p-6 aspect-square flex flex-col items-center justify-center border-2 border-[var(--slate-dark)]`}
+                    className={`card-organic ${wavyClass} relative p-2.5 sm:p-5 flex flex-col items-center justify-center border-2 border-[var(--slate-dark)] h-24 sm:h-36 w-full`}
                     style={{
                       backgroundColor: isCorrect ? "var(--lime-green)" : "white",
                       boxShadow: "4px 4px 0px 0px var(--slate-dark)"
                     }}
                   >
                     {/* Playful letter association badge */}
-                    <div className="absolute top-4 left-4 w-10 h-10 rounded-full bg-[var(--light-purple)] border-2 border-[var(--slate-dark)] flex items-center justify-center shadow-sm">
-                      <span className="text-xl font-black text-[var(--slate-dark)]">{choice.letter}</span>
+                    <div className="absolute top-2 left-2 sm:top-3 sm:left-3 w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-[var(--light-purple)] border border-[var(--slate-dark)] flex items-center justify-center shadow-sm">
+                      <span className="text-xs sm:text-lg font-black text-[var(--slate-dark)]">{choice.letter}</span>
                     </div>
 
-                    <div className="flex items-center justify-center w-full h-full">
-                      <Icon size={96} />
+                    <div className="flex items-center justify-center w-full h-full max-h-[70%] mt-2">
+                      <Icon className="w-12 h-12 sm:w-20 sm:h-20" />
                     </div>
                   </motion.button>
                 );

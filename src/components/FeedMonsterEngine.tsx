@@ -203,15 +203,15 @@ export default function FeedMonsterEngine({ childId, onBack }: FeedMonsterEngine
     
     for (let i = 0; i < 12; i++) {
       const angle = Math.random() * Math.PI + Math.PI / 4; // scatter downwards/outwards
-      const speed = 1.5 + Math.random() * 4;
+      const speed = 1.2 + Math.random() * 3;
       newCrumbs.push({
         id: crumbIdCounter.current++,
-        x: 0, // centered on mouth
-        y: 65, // mouth vertical alignment
-        vx: Math.cos(angle) * speed,
-        vy: -Math.sin(angle) * speed, // drop downwards
+        x: 0, // centered relative to mouth
+        y: 0, // centered relative to mouth
+        vx: Math.cos(angle) * speed * 0.7,
+        vy: Math.abs(Math.sin(angle) * speed) * 0.7, // drop downwards
         color: colors[Math.floor(Math.random() * colors.length)],
-        size: 5 + Math.random() * 6
+        size: 3 + Math.random() * 4
       });
     }
     setCrumbs(prev => [...prev, ...newCrumbs]);
@@ -353,56 +353,40 @@ export default function FeedMonsterEngine({ childId, onBack }: FeedMonsterEngine
   const currentObject = objectDictionary[targetLetter];
 
   return (
-    <div className="flex flex-col items-center w-full max-w-2xl mx-auto px-4 select-none">
+    <div className="flex flex-col items-center w-full max-w-2xl mx-auto px-4 select-none justify-between min-h-[72vh] md:min-h-[78vh] py-2">
       {/* Standardized Header */}
-      <div className="flex justify-between items-center w-full mb-8 z-10 px-1">
+      <div className="flex justify-between items-center w-full mb-3 sm:mb-4 z-10 px-1">
         <button 
           onClick={onBack} 
-          className="btn-white btn-squishy rounded-full w-14 h-14 flex items-center justify-center toddler-target border-2 border-slate-dark shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] active:translate-y-0.5 active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]"
+          className="bg-white squishy-press rounded-full w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center toddler-target border-2 border-slate-dark"
         >
-          <ArrowLeft size={28} strokeWidth={3} />
+          <ArrowLeft className="w-5.5 h-5.5 sm:w-7 sm:h-7 text-foreground" strokeWidth={3} />
         </button>
         
         {/* Centered Speech/Feed Target Sticker */}
-        <div className="flex items-center gap-2.5 bg-white border-2 border-slate-dark rounded-full px-6 py-2.5 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
-          <span className="text-base font-black text-slate-dark uppercase tracking-wide">Feed me:</span>
-          <div className="w-10 h-10 rounded-full bg-[var(--light-peach)] border-2 border-slate-dark flex items-center justify-center font-black text-xl text-slate-dark shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]">
+        <div className="flex items-center gap-1.5 sm:gap-2.5 bg-white border-2 border-slate-dark rounded-xl px-4 sm:px-5 py-2 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rotate-[1deg]">
+          <span className="text-xs sm:text-base font-black text-slate-dark uppercase tracking-wide">Feed me:</span>
+          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-[var(--light-peach)] border-2 border-slate-dark flex items-center justify-center font-black text-base sm:text-xl text-slate-dark shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
             {targetLetter}
           </div>
         </div>
 
         <button 
           onClick={playNoteSound}
-          className={`btn-white btn-squishy rounded-full w-14 h-14 flex items-center justify-center toddler-target border-2 border-slate-dark shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] active:translate-y-0.5 active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] ${
+          className={`bg-white squishy-press rounded-full w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center toddler-target border-2 border-slate-dark ${
             gameState !== "playing" ? "opacity-50 pointer-events-none" : ""
           }`}
         >
-          <Volume2 size={28} strokeWidth={3} className="text-primary" />
+          <Volume2 className="w-5.5 h-5.5 sm:w-7 sm:h-7 text-primary" strokeWidth={3} />
         </button>
       </div>
 
       {/* Main Board */}
-      <div className="w-full relative flex flex-col items-center gap-8 mt-2">
+      <div className="w-full relative flex flex-col items-center gap-4 sm:gap-6 mt-2">
         {/* Dynamic Monster Canvas Area */}
-        <div className="w-full h-[270px] relative flex justify-center items-center overflow-visible">
-          {/* Animated crumbs wrapper */}
-          <div className="absolute top-[180px] left-1/2 -translate-x-1/2 w-48 h-48 pointer-events-none overflow-visible">
-            {crumbs.map(crumb => (
-              <div 
-                key={crumb.id}
-                className="absolute rounded-full"
-                style={{
-                  left: `calc(50% + ${crumb.x}px)`,
-                  top: `${crumb.y}px`,
-                  width: `${crumb.size}px`,
-                  height: `${crumb.size}px`,
-                  backgroundColor: crumb.color,
-                  transform: "translate(-50%, -50%)"
-                }}
-              />
-            ))}
-          </div>
-
+        <div className="w-full h-[160px] sm:h-[200px] md:h-[220px] relative flex justify-center items-center overflow-visible">
+          <div className="absolute bg-[var(--secondary-container)] w-44 h-44 rounded-full blur-[40px] opacity-40 -z-10 animate-pulse pointer-events-none" />
+          
           {/* SVG Animated Monster */}
           <motion.div
             animate={
@@ -419,8 +403,26 @@ export default function FeedMonsterEngine({ childId, onBack }: FeedMonsterEngine
                 ? { duration: 0.5 }
                 : { duration: 4, repeat: Infinity, ease: "easeInOut" }
             }
-            className="w-64 h-64 relative overflow-visible"
+            className="w-44 h-44 sm:w-54 sm:h-54 md:w-64 md:h-64 relative overflow-visible"
           >
+            {/* Animated crumbs wrapper nested inside the monster container */}
+            <div className="absolute top-[68%] left-[50%] w-12 h-12 pointer-events-none overflow-visible z-20">
+              {crumbs.map(crumb => (
+                <div 
+                  key={crumb.id}
+                  className="absolute rounded-full"
+                  style={{
+                    left: `calc(50% + ${crumb.x}px)`,
+                    top: `${crumb.y}px`,
+                    width: `${crumb.size}px`,
+                    height: `${crumb.size}px`,
+                    backgroundColor: crumb.color,
+                    transform: "translate(-50%, -50%)"
+                  }}
+                />
+              ))}
+            </div>
+
             <svg viewBox="0 0 100 100" className="w-full h-full overflow-visible drop-shadow-lg">
               {/* Little stubby feet */}
               <ellipse cx="35" cy="92" rx="10" ry="6" fill="#6a1b9a" stroke="#111" strokeWidth="4" />
@@ -525,18 +527,28 @@ export default function FeedMonsterEngine({ childId, onBack }: FeedMonsterEngine
         </div>
 
         {/* Choice Tray */}
-        <div className="w-full grid grid-cols-3 gap-4 mt-6">
+        <div className="w-full grid grid-cols-3 gap-3 sm:gap-6 mt-4 sm:mt-5">
           <AnimatePresence>
             {choices.map((choice, idx) => {
               const Icon = choice.icon;
               const isSelected = feedingIndex === idx;
               const wavyClass = idx === 1 ? "card-wavy-1" : "card-wavy-2";
               
+              const cardGradients = [
+                "from-emerald-200 via-emerald-100 to-lime-50",
+                "from-violet-200 via-violet-100 to-fuchsia-50",
+                "from-rose-200 via-rose-100 to-orange-50"
+              ];
+              const textColors = [
+                "text-emerald-950",
+                "text-violet-950",
+                "text-rose-950"
+              ];
+              
               return (
                 <motion.button
                   key={choice.letter}
                   style={{
-                    backgroundColor: "white",
                     boxShadow: isSelected && gameState === "success"
                       ? "none"
                       : "4px 4px 0px 0px var(--slate-dark)",
@@ -546,22 +558,22 @@ export default function FeedMonsterEngine({ childId, onBack }: FeedMonsterEngine
                   whileHover={gameState === "playing" ? { scale: 1.05 } : {}}
                   whileTap={gameState === "playing" ? { scale: 0.95, y: 4 } : {}}
                   onClick={() => handleCardTap(idx)}
-                  className={`card-organic ${wavyClass} aspect-[4/5] p-3 flex flex-col items-center justify-between border-2 border-slate-dark transition-shadow relative overflow-hidden bg-white ${
+                  className={`card-organic ${wavyClass} bg-gradient-to-br ${cardGradients[idx % cardGradients.length]} aspect-[4/5] p-2 sm:p-3 flex flex-col items-center justify-between border-2 border-slate-dark transition-shadow relative overflow-hidden ${
                     gameState !== "playing" && !isSelected ? "opacity-45 pointer-events-none" : "cursor-pointer"
                   }`}
                 >
                   {/* Subtle letter indicator badge */}
-                  <div className="absolute top-2 left-2 w-7 h-7 rounded-full bg-[var(--secondary-container)] border border-slate-dark flex items-center justify-center text-xs font-black shadow-sm">
+                  <div className="absolute top-1 sm:top-2 left-1 sm:left-2 w-5.5 h-5.5 sm:w-7 sm:h-7 rounded-full bg-white/90 border border-slate-dark flex items-center justify-center text-[10px] sm:text-xs font-black shadow-sm">
                     {choice.letter}
                   </div>
 
                   {/* SVG Illustration */}
                   <div className="flex-grow flex items-center justify-center w-full h-full max-h-[70%] mt-2">
-                    <Icon size={75} />
+                    <Icon className="w-10 h-10 sm:w-16 sm:h-16 md:w-[75px] md:h-[75px] transition-transform duration-300" />
                   </div>
                   
                   {/* Subtitle name of item */}
-                  <span className="text-sm font-black uppercase tracking-wider text-slate-dark text-center border-t border-slate-dark/10 w-full pt-1.5 mt-1">
+                  <span className={`text-[10px] sm:text-xs md:text-sm font-black uppercase tracking-wider ${textColors[idx % textColors.length]} text-center border-t border-slate-dark/10 w-full pt-1.5 mt-1`}>
                     {choice.name}
                   </span>
                 </motion.button>

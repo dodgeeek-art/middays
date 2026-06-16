@@ -142,24 +142,29 @@ export default function Home() {
 
       {/* Dynamic TopAppBar Shell matching Stitch designs */}
       {!(view === "lesson" && activeGame !== "menu") && (
-        <header className="sticky top-0 z-50 flex justify-between items-center w-full px-6 py-4 bg-background/85 backdrop-blur-md border-none">
+        <header className="sticky top-0 z-50 flex justify-between items-center w-full px-5 py-4 bg-background/80 backdrop-blur-md border-none">
           {view === "dashboard" ? (
             /* Parent Dashboard Header */
             <>
               <button 
                 onClick={() => setView("lesson")}
-                className="flex items-center gap-2 text-foreground font-bold neo-brutal-press bg-white border-2 border-slate-dark rounded-full px-5 py-2.5 transition-all text-sm"
+                className="flex items-center gap-2 text-on-surface-variant font-label-lg neo-brutal-press bg-white border-2 border-slate-dark rounded-full px-4 py-2 transition-all text-xs"
               >
-                <ArrowLeft size={18} strokeWidth={3} />
+                <ArrowLeft className="w-4 h-4" strokeWidth={2.5} />
                 <span>Back to Play</span>
               </button>
-              <div className="absolute left-1/2 -translate-x-1/2">
-                <h1 className="font-sans text-3xl font-black text-primary tracking-tight">Midday's</h1>
+              <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-2 select-none">
+                <img 
+                  alt="Midday Logo" 
+                  className="w-8 h-8 object-contain" 
+                  src="/logo.png" 
+                />
+                <h1 className="font-display-lg-mobile text-display-lg-mobile md:font-display-lg md:text-display-lg text-primary tracking-tight font-black uppercase leading-none">Midday</h1>
               </div>
               <div className="flex items-center gap-3">
-                <div className="bg-primary-container px-4 py-2 rounded-full border-2 border-slate-dark flex items-center gap-2 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-                  <span className="text-xl text-primary">⭐</span>
-                  <span className="text-sm font-black text-on-primary-container">{starsCount}</span>
+                <div className="bg-primary-container px-4 py-1.5 rounded-full flex items-center gap-2 border-2 border-slate-dark shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                  <span className="text-primary font-black">⭐</span>
+                  <span className="font-label-lg text-on-primary-container text-xs sm:text-sm">{starsCount}</span>
                 </div>
                 <div className="w-10 h-10 rounded-full border-2 border-slate-dark overflow-hidden bg-white">
                   <img 
@@ -173,19 +178,22 @@ export default function Home() {
           ) : (
             /* General / Kid's Trophy Room Header */
             <>
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-full border-2 border-primary overflow-hidden bg-primary-container">
+              <div className="flex items-center gap-3 select-none">
+                <div className="w-11 h-11 rounded-2xl border-2 border-slate-dark overflow-hidden bg-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] p-0.5">
                   <img 
-                    alt="Kid profile" 
-                    className="w-full h-full object-cover" 
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuD9ZjWW3-2zDccH9zvN_35X9UN1RvAZsBLlu3Zi99WnvUeUcK8BP4CvOQVk7bAO8ZjLUfm5JzTdlorn-CTgBZGOvHySrSrYsTHit1Og35pzZnBKerC-GheS2QZcznY42uNvxQtUI4o3r-VJhF1WpPb6QrPKjYVL2HNGdhpW1kEVNqExauXAd_pX9sbvL_VrwLHEDSPJouDwY1wZ4QD7sp2E2CwnvMcpVjz18jQPOjn-kaUIxapuS-FXg9thhRskCGUCXm_uQIKVchqy" 
+                    alt="Midday Logo" 
+                    className="w-full h-full object-contain" 
+                    src="/logo.png" 
                   />
                 </div>
-                <span className="font-sans text-3xl font-black text-primary tracking-tight">Midday's</span>
+                <div className="flex flex-col items-start leading-none">
+                  <span className="font-display-lg text-display-lg-mobile text-primary tracking-tight font-black uppercase">Midday</span>
+                  <span className="text-[9px] font-black uppercase tracking-wider text-slate-dark/50">Playbook</span>
+                </div>
               </div>
-              <div className="flex items-center bg-secondary-container px-4 py-2 rounded-full border-2 border-slate-dark shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-y-0.5 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] transition-all">
-                <span className="text-xl mr-2 text-tertiary">⭐</span>
-                <span className="text-sm font-black text-on-secondary-container">{starsCount} stars</span>
+              <div className="flex items-center bg-secondary-container px-4 py-2 rounded-full border-2 border-slate-dark shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] squishy-press">
+                <span className="text-tertiary mr-2">⭐</span>
+                <span className="font-label-lg text-label-lg-mobile text-on-secondary-container">{starsCount} stars</span>
               </div>
             </>
           )}
@@ -193,7 +201,7 @@ export default function Home() {
       )}
 
       {/* Main View Shell */}
-      <main className="flex-grow max-w-6xl mx-auto w-full p-4 pb-32 md:pb-8 mt-2 md:mt-8 flex flex-col justify-center relative z-0">
+      <main className="flex-grow max-w-6xl mx-auto w-full p-4 pb-28 sm:pb-32 md:pb-8 mt-1 sm:mt-4 flex flex-col justify-center relative z-0">
         {!childId ? (
           <div className="flex justify-center items-center h-64">
             <motion.p 
@@ -216,23 +224,15 @@ export default function Home() {
                   )}
                   {activeGame === "tracing" && (
                     <motion.div key="tracing" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="flex flex-col gap-6 w-full max-w-4xl mx-auto">
-                      {/* Alphabet Carousel */}
-                      <div 
-                        className="glass-panel p-4 overflow-x-auto whitespace-nowrap rounded-[2rem] flex gap-3 snap-x scroll-smooth max-w-md mx-auto w-full"
-                        style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-                      >
-                        {alphabetData.map((data, index) => (
-                          <button
-                            key={data.letter}
-                            onClick={() => setCurrentLetterIndex(index)}
-                            className={`snap-center shrink-0 w-16 h-16 rounded-2xl flex items-center justify-center text-3xl font-black transition-all border-2 border-slate-dark ${currentLetterIndex === index ? "bg-primary-container text-slate-dark shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] scale-110" : "bg-white text-slate-dark shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:scale-105"}`}
-                          >
-                            {data.letter}
-                          </button>
-                        ))}
-                      </div>
-
-                      <ActiveLessonEngine childId={childId} letter={currentLetter} pathString={currentPath} onBack={() => setActiveGame("menu")} onNext={handleNextLetter} />
+                      <ActiveLessonEngine 
+                        childId={childId} 
+                        letter={currentLetter} 
+                        pathString={currentPath} 
+                        currentLetterIndex={currentLetterIndex}
+                        onSelectLetterIndex={setCurrentLetterIndex}
+                        onBack={() => setActiveGame("menu")} 
+                        onNext={handleNextLetter} 
+                      />
                     </motion.div>
                   )}
                   {activeGame === "reveal" && (
@@ -269,8 +269,8 @@ export default function Home() {
 
       {/* BottomNavBar Shell matching Stitch layout */}
       {activeGame === "menu" && (
-        <nav className="fixed bottom-0 left-0 w-full p-5 md:pb-8 z-50 rounded-t-[2.5rem] bg-white border-t-2 border-slate-dark shadow-lg">
-          <div className="max-w-md mx-auto flex justify-around items-center">
+        <nav className="fixed bottom-4 left-1/2 -translate-x-1/2 w-[90%] max-w-md pt-3 pb-3 z-50 rounded-[2rem] bg-white/90 backdrop-blur-md border-2 border-slate-dark shadow-[0_12px_30px_rgba(0,0,0,0.12)]">
+          <div className="flex justify-around items-center px-4">
             {(["lesson", "trophies", "dashboard"] as const).map((tab) => {
               const isActive = view === tab;
               let Icon = Play;
@@ -280,26 +280,31 @@ export default function Home() {
               if (tab === "dashboard") { Icon = Settings; label = "Parents"; }
               
               return (
-                <motion.button 
-                  key={tab}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
+                <div 
+                  key={tab} 
                   onClick={() => handleTabClick(tab)}
-                  className={`transition-all duration-150 toddler-target flex items-center justify-center gap-2 border-2 border-slate-dark ${
-                    isActive 
-                      ? "bg-primary-container px-6 py-2.5 rounded-full flex-grow max-w-[160px] h-14" 
-                      : "bg-white w-14 h-14 rounded-full"
-                  }`}
-                  style={{
-                    boxShadow: isActive ? "0 6px 0 0 var(--slate-dark)" : "0 3px 0 0 var(--slate-dark)",
-                    transform: isActive ? "translateY(-3px)" : "none"
-                  }}
+                  className="flex flex-col items-center gap-1 flex-1 cursor-pointer py-0.5"
                 >
-                  <Icon size={24} strokeWidth={3} className="text-foreground" />
-                  {isActive && (
-                    <span className="text-sm font-black tracking-wide uppercase text-foreground">{label}</span>
-                  )}
-                </motion.button>
+                  <motion.button 
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className={`w-12 h-12 rounded-full border-2 border-slate-dark flex items-center justify-center pointer-events-none transition-all ${
+                      isActive 
+                        ? "bg-primary-container -translate-y-1 shadow-[0_4px_12px_-4px_rgba(155,229,100,0.6)]" 
+                        : "bg-white"
+                    }`}
+                    style={{
+                      boxShadow: isActive ? "0 4px 0 0 var(--slate-dark)" : "0 2px 0 0 var(--slate-dark)"
+                    }}
+                  >
+                    <Icon className="w-5 h-5 text-foreground" strokeWidth={3} />
+                  </motion.button>
+                  <span className={`text-[9px] font-black uppercase tracking-wider transition-colors duration-150 ${
+                    isActive ? "text-primary" : "text-slate-dark/50"
+                  }`}>
+                    {label}
+                  </span>
+                </div>
               );
             })}
           </div>

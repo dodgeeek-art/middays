@@ -72,96 +72,89 @@ export default function ParentDashboard({ childId }: { childId?: string }) {
       animate="show" 
       className="max-w-5xl mx-auto px-4 pb-20 pt-6"
     >
-      {/* Header Title Section */}
+      {/* Header Section */}
       <motion.div variants={itemVariants} className="mb-8">
-        <h2 className="text-4xl font-extrabold text-[#2e312f] mb-2 tracking-tight">Parent Dashboard</h2>
-        <p className="text-lg font-bold text-gray-500">Here is how {data.name || "Demo Student"} is doing today.</p>
+        <h2 className="font-headline-lg text-headline-lg text-[#2e312f] mb-2">Parent Dashboard</h2>
+        <p className="font-body-md text-on-surface-variant">Here is how {data.name || "Demo Student"} is doing today.</p>
       </motion.div>
 
-      {/* Telemetry Stat Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+      {/* Telemetry Stat Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         {/* Accuracy */}
         <motion.div 
           variants={itemVariants} 
-          whileHover={{ y: -4 }}
-          className="bg-[var(--primary-container)]/40 p-6 rounded-[32px] border-2 border-[var(--primary)]/20 neo-brutal-shadow flex flex-col items-center justify-center text-center"
+          className="bg-primary-container/40 p-6 rounded-3xl border-2 border-primary/20 neo-brutal-shadow flex flex-col items-center justify-center text-center"
         >
-          <div className="bg-white/80 p-3.5 rounded-2xl mb-4 border-2 border-[var(--slate-dark)] shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-            <CheckCircle2 className="text-[var(--primary)] text-4xl" size={32} strokeWidth={2.5} />
+          <div className="bg-white/60 p-3 rounded-2xl mb-4">
+            <CheckCircle2 className="text-primary text-4xl" size={36} strokeWidth={2.5} />
           </div>
-          <span className="font-bold text-[var(--on-primary-container)] uppercase tracking-wider text-xs mb-1.5">Accuracy</span>
-          <div className="text-4xl font-extrabold text-[var(--primary)]">{averageScore}%</div>
+          <span className="font-label-lg text-on-primary-fixed-variant uppercase tracking-widest text-xs mb-1">Accuracy</span>
+          <div className="font-display-lg text-primary">{averageScore}%</div>
         </motion.div>
 
         {/* Total Time */}
         <motion.div 
           variants={itemVariants} 
-          whileHover={{ y: -4 }}
-          className="bg-[var(--tertiary-container)]/40 p-6 rounded-[32px] border-2 border-[var(--tertiary)]/20 neo-brutal-shadow flex flex-col items-center justify-center text-center"
+          className="bg-tertiary-container/40 p-6 rounded-3xl border-2 border-tertiary/20 neo-brutal-shadow flex flex-col items-center justify-center text-center"
         >
-          <div className="bg-white/80 p-3.5 rounded-2xl mb-4 border-2 border-[var(--slate-dark)] shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-            <Clock className="text-[var(--tertiary)] text-4xl" size={32} strokeWidth={2.5} />
+          <div className="bg-white/60 p-3 rounded-2xl mb-4">
+            <Clock className="text-tertiary text-4xl" size={36} strokeWidth={2.5} />
           </div>
-          <span className="font-bold text-[var(--on-tertiary-container)] uppercase tracking-wider text-xs mb-1.5">Total Time</span>
-          <div className="text-4xl font-extrabold text-[var(--tertiary)]">{totalTimeStr}</div>
+          <span className="font-label-lg text-on-tertiary-fixed-variant uppercase tracking-widest text-xs mb-1">Total Time</span>
+          <div className="font-display-lg text-tertiary">{totalTimeStr}</div>
         </motion.div>
 
         {/* Sessions */}
         <motion.div 
           variants={itemVariants} 
-          whileHover={{ y: -4 }}
-          className="bg-[var(--secondary-container)]/40 p-6 rounded-[32px] border-2 border-[var(--secondary)]/20 neo-brutal-shadow flex flex-col items-center justify-center text-center"
+          className="bg-secondary-container/40 p-6 rounded-3xl border-2 border-secondary/20 neo-brutal-shadow flex flex-col items-center justify-center text-center"
         >
-          <div className="bg-white/80 p-3.5 rounded-2xl mb-4 border-2 border-[var(--slate-dark)] shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-            <BarChart2 className="text-[var(--secondary)] text-4xl" size={32} strokeWidth={2.5} />
+          <div className="bg-white/60 p-3 rounded-2xl mb-4">
+            <BarChart2 className="text-secondary text-4xl" size={36} strokeWidth={2.5} />
           </div>
-          <span className="font-bold text-[var(--on-secondary-container)] uppercase tracking-wider text-xs mb-1.5">Sessions</span>
-          <div className="text-4xl font-extrabold text-[var(--secondary)]">{totalSessions}</div>
+          <span className="font-label-lg text-on-secondary-fixed-variant uppercase tracking-widest text-xs mb-1">Sessions</span>
+          <div className="font-display-lg text-secondary">{totalSessions}</div>
         </motion.div>
       </div>
 
-      {/* Session History Table Section */}
-      <motion.div variants={itemVariants} className="mb-10">
+      {/* Session History Section */}
+      <motion.div variants={itemVariants} className="mb-12">
         <div className="flex justify-between items-center mb-6 px-2">
-          <h3 className="text-2xl font-black text-[#2e312f]">Session History</h3>
-          <button className="font-bold text-[var(--primary)] hover:underline flex items-center gap-1">
-            <span>Download Report</span>
-            <ChevronRight size={18} />
-          </button>
+          <h3 className="font-headline-md text-headline-md">Session History</h3>
+          <button className="font-label-lg text-primary hover:underline">Download Report</button>
         </div>
 
-        <div className="glass-card rounded-[32px] overflow-hidden border-2 border-[var(--slate-dark)] neo-brutal-shadow">
+        <div className="glass-card rounded-[32px] overflow-hidden border-2 border-outline-variant/30 neo-brutal-shadow">
           <div className="overflow-x-auto">
             <table className="w-full border-collapse">
               <thead>
-                <tr className="bg-[var(--surface-container-high)]/50 text-left border-b-2 border-[var(--slate-dark)]">
-                  <th className="p-6 font-bold text-gray-700 text-sm">Date</th>
-                  <th className="p-6 font-bold text-gray-700 text-sm">Activity</th>
-                  <th className="p-6 font-bold text-gray-700 text-sm">Accuracy</th>
-                  <th className="p-6 font-bold text-gray-700 text-sm">Progress</th>
+                <tr className="bg-surface-container-high/50 text-left">
+                  <th className="p-6 font-label-lg text-on-surface-variant border-b border-outline-variant">Date</th>
+                  <th className="p-6 font-label-lg text-on-surface-variant border-b border-outline-variant">Activity</th>
+                  <th className="p-6 font-label-lg text-on-surface-variant border-b border-outline-variant">Accuracy</th>
+                  <th className="p-6 font-label-lg text-on-surface-variant border-b border-outline-variant">Progress</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[var(--outline-variant)]/40">
+              <tbody className="divide-y divide-outline-variant/30">
                 {data.progressRecord.map((record) => {
-                  // Style colors based on accuracy
-                  let progressColor = "bg-[var(--primary)]";
-                  let textColor = "text-[var(--primary)]";
-                  let bgBadge = "bg-[var(--primary-container)]";
+                  let progressColor = "bg-primary";
+                  let textColor = "text-primary";
+                  let bgBadge = "bg-primary-container";
                   
                   if (record.tracingScore < 90) {
-                    progressColor = "bg-[var(--secondary)]";
-                    textColor = "text-[var(--secondary)]";
-                    bgBadge = "bg-[var(--secondary-container)]";
+                    progressColor = "bg-secondary";
+                    textColor = "text-secondary";
+                    bgBadge = "bg-secondary-container";
                   }
                   if (record.tracingScore < 80) {
-                    progressColor = "bg-[var(--tertiary)]";
-                    textColor = "text-[var(--tertiary)]";
-                    bgBadge = "bg-[var(--tertiary-container)]";
+                    progressColor = "bg-tertiary";
+                    textColor = "text-tertiary";
+                    bgBadge = "bg-tertiary-container";
                   }
 
                   return (
                     <tr key={record.id} className="hover:bg-white/40 transition-colors">
-                      <td className="p-6 font-bold text-gray-600 text-sm">
+                      <td className="p-6 font-body-md text-on-surface">
                         {new Date(record.createdAt).toLocaleDateString(undefined, { 
                           month: 'short', 
                           day: 'numeric', 
@@ -170,15 +163,15 @@ export default function ParentDashboard({ childId }: { childId?: string }) {
                       </td>
                       <td className="p-6">
                         <div className="flex items-center gap-3">
-                          <div className={`w-10 h-10 rounded-xl ${bgBadge} border-2 border-[var(--slate-dark)] flex items-center justify-center shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]`}>
+                          <div className={`w-10 h-10 rounded-xl ${bgBadge} flex items-center justify-center`}>
                             <BookOpen size={20} className="text-gray-800" strokeWidth={2.5} />
                           </div>
-                          <span className="font-extrabold text-gray-800">Trace Letter {record.targetLetter}</span>
+                          <span className="font-body-lg text-on-surface">Trace Letter {record.targetLetter}</span>
                         </div>
                       </td>
-                      <td className={`p-6 font-black ${textColor}`}>{record.tracingScore}%</td>
+                      <td className={`p-6 font-label-lg ${textColor}`}>{record.tracingScore}%</td>
                       <td className="p-6 min-w-[150px]">
-                        <div className="w-full bg-[var(--surface-container-highest)] border border-[var(--slate-dark)] rounded-full h-3.5 overflow-hidden p-0.5">
+                        <div className="w-full bg-surface-container-highest rounded-full h-3 p-0.5 overflow-hidden border border-outline-variant/20">
                           <motion.div 
                             initial={{ width: 0 }}
                             animate={{ width: `${record.tracingScore}%` }}
@@ -203,22 +196,21 @@ export default function ParentDashboard({ childId }: { childId?: string }) {
         </div>
       </motion.div>
 
-      {/* Weekly Focus Suggestion Banner */}
+      {/* Weekly Focus Suggestion */}
       <motion.div 
         variants={itemVariants}
-        whileHover={{ scale: 1.01 }}
-        className="bg-[var(--surface-container-low)] rounded-[32px] p-8 border-2 border-[var(--slate-dark)] flex flex-col md:flex-row items-center gap-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+        className="bg-surface-container-low rounded-[32px] p-8 border-2 border-outline-variant flex flex-col md:flex-row items-center gap-6"
       >
-        <div className="w-20 h-20 bg-white border-2 border-[var(--slate-dark)] rounded-full flex items-center justify-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex-shrink-0">
-          <Lightbulb className="text-[var(--primary-container)]" size={44} strokeWidth={2.5} style={{ fill: "var(--primary-container)" }} />
+        <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center neo-brutal-shadow flex-shrink-0">
+          <Lightbulb className="text-primary text-5xl" size={48} style={{ fill: "var(--primary-container)" }} />
         </div>
         <div>
-          <h4 className="text-2xl font-black text-gray-800 mb-2">Weekly Focus: "Phonetic P"</h4>
-          <p className="text-base font-bold text-gray-500 leading-relaxed">
+          <h4 className="font-headline-md text-headline-md mb-2">Weekly Focus: "Phonetic P"</h4>
+          <p className="font-body-md text-on-surface-variant">
             {data.name || "Demo Student"} is doing great with visuals! This week, try spending more time on activities starting with the letter 'P' to help reinforce phonetic recognition.
           </p>
           <div className="mt-4 flex gap-3">
-            <button className="bg-[var(--primary)] text-white font-extrabold px-6 py-3 rounded-full border-2 border-[var(--slate-dark)] shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] active:translate-y-0.5 active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] transition-all">
+            <button className="bg-primary text-white font-label-lg px-6 py-3 rounded-full neo-brutal-shadow neo-brutal-press transition-all">
               View Suggested Activities
             </button>
           </div>
