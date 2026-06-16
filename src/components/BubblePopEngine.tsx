@@ -189,8 +189,8 @@ export default function BubblePopEngine({ childId, onBack }: BubblePopEngineProp
   // Spawn Bubble
   const spawnBubble = (forceTarget = false) => {
     const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    // 20% chance to spawn target letter, otherwise random distractor (excluding targetLetter)
-    const isTarget = forceTarget || Math.random() < 0.20;
+    // 8% chance to spawn target letter, otherwise random distractor (excluding targetLetter)
+    const isTarget = forceTarget || Math.random() < 0.08;
     const distractorLetters = letters.replace(targetLetter, "");
     const letter = isTarget ? targetLetter : distractorLetters[Math.floor(Math.random() * distractorLetters.length)];
     
@@ -237,6 +237,7 @@ export default function BubblePopEngine({ childId, onBack }: BubblePopEngineProp
       const scale = isMobile ? 0.65 : 1.0;
       createBurst(bubble.x, bubble.y + (bubble.size * scale) / 2, "#4ECDC4");
       setBubbles(prev => prev.filter(b => b.id !== bubbleId));
+      spawnBubble();
       
       const nextCount = poppedCount + 1;
       setPoppedCount(nextCount);
@@ -316,12 +317,12 @@ export default function BubblePopEngine({ childId, onBack }: BubblePopEngineProp
 
     const containerHeight = bubbleContainerRef.current?.clientHeight || 600;
     
-    // Set up initial bubbles if empty (spawn 8 bubbles for a livelier screen)
+    // Set up initial bubbles if empty (spawn 12 bubbles for a livelier screen)
     if (bubbles.length === 0) {
-      for (let i = 0; i < 8; i++) {
+      for (let i = 0; i < 12; i++) {
         setTimeout(() => {
           if (gameState === "playing") spawnBubble(i === 0);
-        }, i * 350);
+        }, i * 250);
       }
     }
 
@@ -329,7 +330,7 @@ export default function BubblePopEngine({ childId, onBack }: BubblePopEngineProp
       // 1. Update bubble positions
       setBubbles(prev => {
         const next = prev.map(b => {
-          let yOffset = b.y + b.speed;
+          const yOffset = b.y + b.speed;
           let shakeOffset = b.shakeOffset;
           
           if (b.shaking) {
@@ -549,7 +550,7 @@ export default function BubblePopEngine({ childId, onBack }: BubblePopEngineProp
             {/* Victory Sticker */}
             <div className="w-full max-w-sm glass-panel card-wavy-2 p-6 sm:p-8 flex flex-col items-center text-center mt-3 sm:mt-6 bg-[#e4d8f8]/90 backdrop-blur-md">
               <h2 className="text-3xl sm:text-4xl font-black text-slate-dark uppercase tracking-wide mb-1">Awesome!</h2>
-              <p className="text-base sm:text-lg font-bold text-slate-dark/70 mb-4 sm:mb-6">You popped all the letter {targetLetter}'s!</p>
+              <p className="text-base sm:text-lg font-bold text-slate-dark/70 mb-4 sm:mb-6">You popped all the letter {targetLetter}&apos;s!</p>
               
               {/* Display visual word association illustration */}
               {targetObject && (

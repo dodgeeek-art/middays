@@ -10,6 +10,10 @@ import ActivitiesMenu from "@/components/ActivitiesMenu";
 import MagicRevealEngine from "@/components/MagicRevealEngine";
 import BubblePopEngine from "@/components/BubblePopEngine";
 import FeedMonsterEngine from "@/components/FeedMonsterEngine";
+import SoundScavengerEngine from "@/components/SoundScavengerEngine";
+import RhymeRiverEngine from "@/components/RhymeRiverEngine";
+import PhonicsMatchEngine from "@/components/PhonicsMatchEngine";
+import SyllableDrummerEngine from "@/components/SyllableDrummerEngine";
 import { motion, AnimatePresence } from "framer-motion";
 import { Lock, Play, Trophy, Settings, ArrowLeft } from "lucide-react";
 
@@ -29,7 +33,7 @@ interface Child {
 
 export default function Home() {
   const [view, setView] = useState<"lesson" | "dashboard" | "trophies">("lesson");
-  const [activeGame, setActiveGame] = useState<"menu" | "tracing" | "reveal" | "bubbles" | "monster">("menu");
+  const [activeGame, setActiveGame] = useState<"menu" | "tracing" | "reveal" | "bubbles" | "monster" | "scavenger" | "rhyme" | "match" | "drummer">("menu");
   const [childId, setChildId] = useState<string | null>(null);
   const [childProgress, setChildProgress] = useState<Child | null>(null);
 
@@ -248,6 +252,26 @@ export default function Home() {
                   {activeGame === "monster" && (
                     <motion.div key="monster" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
                       <FeedMonsterEngine childId={childId} onBack={() => setActiveGame("menu")} />
+                    </motion.div>
+                  )}
+                  {activeGame === "scavenger" && (
+                    <motion.div key="scavenger" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
+                      <SoundScavengerEngine childId={childId} onBack={() => setActiveGame("menu")} />
+                    </motion.div>
+                  )}
+                  {activeGame === "rhyme" && (
+                    <motion.div key="rhyme" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
+                      <RhymeRiverEngine childId={childId} onBack={() => setActiveGame("menu")} />
+                    </motion.div>
+                  )}
+                  {activeGame === "match" && (
+                    <motion.div key="match" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
+                      <PhonicsMatchEngine childId={childId} onBack={() => setActiveGame("menu")} />
+                    </motion.div>
+                  )}
+                  {activeGame === "drummer" && (
+                    <motion.div key="drummer" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
+                      <SyllableDrummerEngine childId={childId} onBack={() => setActiveGame("menu")} />
                     </motion.div>
                   )}
                 </AnimatePresence>

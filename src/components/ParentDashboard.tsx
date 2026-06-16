@@ -205,9 +205,9 @@ export default function ParentDashboard({ childId }: { childId?: string }) {
           <Lightbulb className="text-primary text-5xl" size={48} style={{ fill: "var(--primary-container)" }} />
         </div>
         <div>
-          <h4 className="font-headline-md text-headline-md mb-2">Weekly Focus: "Phonetic P"</h4>
+          <h4 className="font-headline-md text-headline-md mb-2">Weekly Focus: &quot;Phonetic P&quot;</h4>
           <p className="font-body-md text-on-surface-variant">
-            {data.name || "Demo Student"} is doing great with visuals! This week, try spending more time on activities starting with the letter 'P' to help reinforce phonetic recognition.
+            {data.name || "Demo Student"} is doing great with visuals! This week, try spending more time on activities starting with the letter &apos;P&apos; to help reinforce phonetic recognition.
           </p>
           <div className="mt-4 flex gap-3">
             <button className="bg-primary text-white font-label-lg px-6 py-3 rounded-full neo-brutal-shadow neo-brutal-press transition-all">

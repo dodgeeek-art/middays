@@ -199,7 +199,7 @@ export default function ProgressVisualizer({ childId }: { childId?: string }) {
         </div>
         
         <h1 className="font-display-lg text-display-lg-mobile text-primary mb-1 tracking-tight">My Trophy Room</h1>
-        <p className="font-body-md text-on-surface-variant max-w-[280px]">Look at all the amazing things you've done today!</p>
+        <p className="font-body-md text-on-surface-variant max-w-[280px]">Look at all the amazing things you&apos;ve done today!</p>
       </section>
 
       {/* Stats Bento Grid */}
