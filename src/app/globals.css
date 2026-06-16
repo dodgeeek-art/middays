@@ -1,26 +1,210 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f8faf7; /* Neutral clay gray background */
+  --foreground: #191c1b; /* Clean high-contrast dark text */
+  
+  /* Google Stitch Modern Organic Colors */
+  --primary: #336b00; /* Dark forest green */
+  --primary-container: #9be564; /* Lime green brand color */
+  --on-primary-container: #306600;
+  
+  --secondary: #635a75; /* Slate lavender */
+  --secondary-container: #e4d8f8; /* Light purple */
+  --on-secondary-container: #655d78;
+  
+  --tertiary: #ae2f34; /* Coral red */
+  --tertiary-container: #ffc3c0; /* Soft peach */
+  --on-tertiary-container: #a72a30;
+  
+  --surface-container-lowest: #ffffff;
+  --surface-container-low: #f2f4f1;
+  --surface-container: #eceeeb;
+  --surface-container-high: #e7e9e6;
+  --surface-container-highest: #e1e3e0;
+  
+  --outline: #717a68;
+  --outline-variant: #c1cab4;
+  --slate-dark: #111111;
+  
+  /* Activity card pastel colors */
+  --lime-green: #9be564;
+  --light-purple: #e4d8f8;
+  --light-mint: #e1f5ec;
+  --light-peach: #ffc3c0;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-primary: var(--primary);
+  --color-primary-container: var(--primary-container);
+  --color-on-primary-container: var(--on-primary-container);
+  --color-secondary: var(--secondary);
+  --color-secondary-container: var(--secondary-container);
+  --color-on-secondary-container: var(--on-secondary-container);
+  --color-tertiary: var(--tertiary);
+  --color-tertiary-container: var(--tertiary-container);
+  --color-on-tertiary-container: var(--on-tertiary-container);
+  --color-surface-container-lowest: var(--surface-container-lowest);
+  --color-surface-container-low: var(--surface-container-low);
+  --color-surface-container: var(--surface-container);
+  --color-surface-container-high: var(--surface-container-high);
+  --color-surface-container-highest: var(--surface-container-highest);
+  --color-outline: var(--outline);
+  --color-outline-variant: var(--outline-variant);
+  --color-slate-dark: var(--slate-dark);
+  --color-lime-green: var(--lime-green);
+  --color-light-purple: var(--light-purple);
+  --color-light-mint: var(--light-mint);
+  --color-light-peach: var(--light-peach);
+  --font-sans: var(--font-quicksand), sans-serif;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  overflow-x: hidden;
+  font-weight: 700; /* Chunky friendly text */
+}
+
+/* Neo-Brutal Layout Offset & Shadows */
+.neo-brutal-shadow {
+  box-shadow: 4px 4px 0px 0px var(--slate-dark);
+}
+
+.neo-brutal-press {
+  transition: transform 0.1s ease-out, box-shadow 0.1s ease-out;
+  box-shadow: 4px 4px 0px 0px var(--slate-dark);
+}
+
+.neo-brutal-press:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0px 0px var(--slate-dark);
+}
+
+/* Squishy button class aliases matching stitch design */
+.squishy-press {
+  transition: transform 0.1s ease-out, box-shadow 0.1s ease-out;
+  box-shadow: 4px 4px 0px 0px var(--slate-dark);
+}
+
+.squishy-press:active {
+  transform: translate(2px, 2px) scale(0.98);
+  box-shadow: 2px 2px 0px 0px var(--slate-dark);
+}
+
+/* Ambient Background Blobs with Gaussian Blurs */
+.ambient-blob {
+  position: fixed;
+  z-index: -1;
+  filter: blur(100px);
+  border-radius: 50%;
+  opacity: 0.3;
+  animation: blob-float 20s infinite alternate ease-in-out;
+}
+
+@keyframes blob-float {
+  0% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(40px, 60px) scale(1.1); }
+}
+
+/* Translucent Glass Card Overlay */
+.glass-card {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.glass-panel {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(12px);
+  border: 2px solid var(--slate-dark);
+  box-shadow: 4px 4px 0px 0px var(--slate-dark);
+}
+
+/* Asymmetrical Card wave configurations */
+.card-organic {
+  background-color: white;
+  border: 2px solid var(--slate-dark);
+  box-shadow: 4px 4px 0px 0px var(--slate-dark);
+  transition: transform 0.2s ease;
+}
+
+.card-wavy-1 {
+  border-radius: 2.5rem;
+}
+
+.card-wavy-2 {
+  border-radius: 2.5rem;
+}
+
+/* Card 3D outlines */
+.card-3d {
+  background-color: white;
+  border: 2px solid var(--slate-dark);
+  border-radius: 2.5rem;
+  box-shadow: 4px 4px 0px 0px var(--slate-dark);
+  transition: transform 0.2s ease;
+}
+
+/* Toddler Visual Micro-interactions */
+@keyframes pulse-bounce {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 8px 24px rgba(155, 229, 100, 0.3);
+  }
+  50% {
+    transform: scale(1.08);
+    box-shadow: 0 16px 36px rgba(155, 229, 100, 0.5);
+  }
+}
+
+.animate-pulse-bounce {
+  animation: pulse-bounce 1.8s infinite ease-in-out;
+}
+
+@keyframes wiggle {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-3deg); }
+  75% { transform: rotate(3deg); }
+}
+
+.animate-wiggle {
+  animation: wiggle 0.5s ease-in-out infinite;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-6px); }
+  40%, 80% { transform: translateX(6px); }
+}
+
+.animate-shake {
+  animation: shake 0.4s ease-in-out;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-10px) rotate(2deg); }
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+/* Touch-target optimization for toddlers */
+.toddler-target {
+  min-width: 84px;
+  min-height: 84px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (pointer: coarse) {
+  .toddler-target {
+    min-width: 96px;
+    min-height: 96px;
+  }
 }

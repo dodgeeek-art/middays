@@ -1,0 +1,43 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Child {
+  id             String            @id @default(uuid())
+  name           String
+  progressRecord ProgressRecord[]
+  badges         Badge[]
+}
+
+model ProgressRecord {
+  id             String   @id @default(uuid())
+  childId        String
+  child          Child    @relation(fields: [childId], references: [id])
+  targetLetter   String   // e.g., 'Aa'
+  tracingScore   Int      // Accuracy of tracing
+  phonemicScore  Int      // Interaction with sound elements
+  timeSpentMs    Int
+  createdAt      DateTime @default(now())
+}
+
+model Badge {
+  id        String   @id @default(uuid())
+  childId   String
+  child     Child    @relation(fields: [childId], references: [id])
+  badgeName String   // e.g., 'Apple', 'Bus'
+  earnedAt  DateTime @default(now())
+}
+
+model LetterCurriculum {
+  id             String @id @default(uuid())
+  letter         String @unique // e.g., 'Aa', 'Bb'
+  vocabularyWord String // e.g., 'Apple', 'Bus'
+  pathData       String // SVG Path2D string
+  audioUrl       String // URL to the hosted phonetic audio
+  createdAt      DateTime @default(now())
+}

@@ -39,3 +39,16 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+/src/generated/prisma
+
+# SQLite databases
+/dev.db
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+
+# Playbook Zip file
+/stitch_midday_preschool_literacy_playbook.zip
+
