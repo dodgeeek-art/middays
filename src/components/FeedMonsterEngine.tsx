@@ -269,6 +269,11 @@ export default function FeedMonsterEngine({ childId, onBack }: FeedMonsterEngine
           });
           
           saveProgressTelemetry();
+
+          // Auto-advance to the next round after 2.2 seconds
+          setTimeout(() => {
+            startNewRound();
+          }, 2200);
         }, 1200);
       }, 500); // delay during slide motion
     } else {
@@ -566,30 +571,6 @@ export default function FeedMonsterEngine({ childId, onBack }: FeedMonsterEngine
         </div>
 
         {/* Bottom Navigation / Celebration */}
-        <AnimatePresence>
-          {gameState === "success" && (
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              className="w-full flex flex-col items-center gap-4 mt-4"
-            >
-              <div className="bg-[#9be564] border-2 border-slate-dark rounded-[2rem] p-6 text-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] w-full max-w-sm">
-                <h3 className="text-2xl font-black text-slate-dark uppercase mb-1">Munch Munch!</h3>
-                <p className="text-base font-bold text-slate-dark/80 mb-4">
-                  {currentObject.name} starts with {targetLetter}!
-                </p>
-                <button
-                  onClick={startNewRound}
-                  className="w-full py-4 text-xl font-black bg-white hover:bg-gray-50 text-slate-dark rounded-full border-2 border-slate-dark shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] active:translate-y-0.5 active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] flex items-center justify-center gap-2"
-                >
-                  <span>Next Round</span>
-                  <ArrowRight size={22} strokeWidth={3} />
-                </button>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
       </div>
     </div>
   );

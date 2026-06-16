@@ -52,3 +52,7 @@ next-env.d.ts
 # Playbook Zip file
 /stitch_midday_preschool_literacy_playbook.zip
 
+# Track pre-seeded SQLite database for Vercel deployment
+!/prisma/dev.db
+
+
