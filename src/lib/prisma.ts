@@ -37,7 +37,7 @@ if (process.env.NODE_ENV === 'production') {
     new PrismaClient({
       log: ['query', 'info', 'warn', 'error'],
     });
-  if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
+  globalForPrisma.prisma = prisma;
 }
 
 export { prisma };
