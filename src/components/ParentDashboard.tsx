@@ -3,6 +3,8 @@
 import React, { useEffect, useState } from "react";
 import { Clock, BookOpen, Lightbulb, CheckCircle2, BarChart2 } from "@/components/Icons";
 import { motion } from "framer-motion";
+import ClayCard from "@/components/ui/ClayCard";
+import ClayButton from "@/components/ui/ClayButton";
 
 interface ProgressRecord {
   id: string;
@@ -81,50 +83,53 @@ export default function ParentDashboard({ childId }: { childId?: string }) {
       {/* Telemetry Stat Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         {/* Accuracy */}
-        <motion.div 
+        <ClayCard 
           variants={itemVariants} 
-          className="clay-card bg-primary-container/30 border-white/20 p-6 flex flex-col items-center justify-center text-center shadow-[6px_6px_12px_rgba(255,133,161,0.06),_inset_-4px_-4px_8px_rgba(0,0,0,0.04),_inset_4px_4px_8px_rgba(255,255,255,0.95)]"
+          variant="primary"
+          className="flex flex-col items-center justify-center text-center"
         >
           <div className="bg-white/80 border border-white/40 p-3 rounded-2xl mb-4 shadow-[inset_1px_1px_3px_rgba(255,255,255,0.9),_inset_-1px_-1px_3px_rgba(0,0,0,0.03)]">
             <CheckCircle2 className="text-[#ff85a1]" size={36} strokeWidth={2.5} />
           </div>
           <span className="text-xs font-black uppercase tracking-wider text-[#590d22]/70 mb-1">Accuracy</span>
           <div className="text-4xl font-black text-[#ff85a1]">{averageScore}%</div>
-        </motion.div>
+        </ClayCard>
 
         {/* Total Time */}
-        <motion.div 
+        <ClayCard 
           variants={itemVariants} 
-          className="clay-card bg-tertiary-container/30 border-white/20 p-6 flex flex-col items-center justify-center text-center shadow-[6px_6px_12px_rgba(255,209,102,0.06),_inset_-4px_-4px_8px_rgba(0,0,0,0.04),_inset_4px_4px_8px_rgba(255,255,255,0.95)]"
+          variant="tertiary"
+          className="flex flex-col items-center justify-center text-center"
         >
           <div className="bg-white/80 border border-white/40 p-3 rounded-2xl mb-4 shadow-[inset_1px_1px_3px_rgba(255,255,255,0.9),_inset_-1px_-1px_3px_rgba(0,0,0,0.03)]">
             <Clock className="text-[#ffd166]" size={36} strokeWidth={2.5} />
           </div>
           <span className="text-xs font-black uppercase tracking-wider text-[#5c4d00]/70 mb-1">Total Time</span>
           <div className="text-4xl font-black text-[#ffd166]">{totalTimeStr}</div>
-        </motion.div>
+        </ClayCard>
 
         {/* Sessions */}
-        <motion.div 
+        <ClayCard 
           variants={itemVariants} 
-          className="clay-card bg-secondary-container/30 border-white/20 p-6 flex flex-col items-center justify-center text-center shadow-[6px_6px_12px_rgba(78,205,196,0.06),_inset_-4px_-4px_8px_rgba(0,0,0,0.04),_inset_4px_4px_8px_rgba(255,255,255,0.95)]"
+          variant="secondary"
+          className="flex flex-col items-center justify-center text-center"
         >
           <div className="bg-white/80 border border-white/40 p-3 rounded-2xl mb-4 shadow-[inset_1px_1px_3px_rgba(255,255,255,0.9),_inset_-1px_-1px_3px_rgba(0,0,0,0.03)]">
             <BarChart2 className="text-[#4ecdc4]" size={36} strokeWidth={2.5} />
           </div>
           <span className="text-xs font-black uppercase tracking-wider text-[#0b4a45]/70 mb-1">Sessions</span>
           <div className="text-4xl font-black text-[#4ecdc4]">{totalSessions}</div>
-        </motion.div>
+        </ClayCard>
       </div>
 
       {/* Session History Section */}
       <motion.div variants={itemVariants} className="mb-12">
         <div className="flex justify-between items-center mb-6 px-2">
           <h3 className="text-2xl font-black text-[#4A5358] uppercase">Session History</h3>
-          <button className="font-black text-xs uppercase px-4 py-2 bg-white border border-white/20 rounded-full clay-btn hover:scale-102 active:scale-96 transition-all text-[#4A5358] cursor-pointer shadow-sm">Download Report</button>
+          <ClayButton variant="surface" size="sm" className="text-xs">Download Report</ClayButton>
         </div>
 
-        <div className="clay-card border border-white/20 rounded-[2rem] overflow-hidden bg-white">
+        <ClayCard className="border border-white/20 rounded-[2rem] overflow-hidden bg-white p-0">
           <div className="overflow-x-auto">
             <table className="w-full border-collapse">
               <thead>
@@ -193,13 +198,13 @@ export default function ParentDashboard({ childId }: { childId?: string }) {
               </tbody>
             </table>
           </div>
-        </div>
+        </ClayCard>
       </motion.div>
 
       {/* Weekly Focus Suggestion */}
-      <motion.div 
+      <ClayCard 
         variants={itemVariants}
-        className="clay-card border border-white/20 rounded-[2rem] p-8 flex flex-col md:flex-row items-center gap-6 bg-white/70"
+        className="flex flex-col md:flex-row items-center gap-6 bg-white/70"
       >
         <div className="w-24 h-24 bg-white border border-white/20 rounded-full flex items-center justify-center shadow-[6px_6px_12px_rgba(0,0,0,0.04),_inset_-4px_-4px_8px_rgba(0,0,0,0.04),_inset_4px_4px_8px_rgba(255,255,255,0.95)] flex-shrink-0 animate-float">
           <Lightbulb className="text-[#ff85a1] text-5xl" size={48} style={{ fill: "var(--primary-container)" }} />
@@ -210,12 +215,12 @@ export default function ParentDashboard({ childId }: { childId?: string }) {
             {data.name || "Demo Student"} is doing great with visuals! This week, try spending more time on activities starting with the letter &apos;P&apos; to help reinforce phonetic recognition.
           </p>
           <div className="mt-4 flex gap-3">
-            <button className="bg-primary text-white text-xs font-black uppercase px-6 py-3.5 rounded-full clay-btn border border-white/20 hover:scale-102 active:scale-96 transition-all shadow-md">
+            <ClayButton variant="primary" className="text-xs py-3 px-5">
               View Suggested Activities
-            </button>
+            </ClayButton>
           </div>
         </div>
-      </motion.div>
+      </ClayCard>
     </motion.div>
   );
 }

@@ -9,26 +9,26 @@ html, body {
 
 :root {
   /* Candy pastel kid-friendly theme */
-  --background: #f3f8fc; /* Soft pastel sky blue canvas */
+  --background: #e2efe9; /* Calm pastel celadon-green canvas */
   --foreground: #4a5358; /* Soft readable dark charcoal (not harsh black) */
   
-  /* Primary: Bubblegum Pink */
-  --primary: #ff85a1;
-  --primary-container: #ffcad4;
-  --on-primary-container: #590d22;
+  /* Primary: Dusty Rose Clay */
+  --primary: #e07383;
+  --primary-container: #f2c1c6;
+  --on-primary-container: #5e1c22;
   
-  /* Secondary: Soft Mint Green */
-  --secondary: #4ecdc4;
-  --secondary-container: #d2f4e6;
-  --on-secondary-container: #0b4a45;
+  /* Secondary: Celadon Green Clay */
+  --secondary: #3fa394;
+  --secondary-container: #c3e6dc;
+  --on-secondary-container: #0d4036;
   
-  /* Tertiary: Sunshine Yellow */
-  --tertiary: #ffd166;
-  --tertiary-container: #fef5d1;
-  --on-tertiary-container: #5c4d00;
+  /* Tertiary: Honey Gold Clay */
+  --tertiary: #d4a919;
+  --tertiary-container: #f5e4a3;
+  --on-tertiary-container: #544001;
   
   /* Containers & Surfaces */
-  --surface-container-lowest: #ffffff;
+  --surface-container-lowest: #faf9f5; /* Soft warm ivory cream background (replaces blinding white) */
   --surface-container-low: #f9fbfd;
   --surface-container: #f1f6fa;
   --surface-container-high: #e7eff5;
@@ -40,11 +40,11 @@ html, body {
   --slate-dark: #4a5358; /* Retained as soft charcoal for compatibility */
   
   /* Activity card pastel colors - vibrant candy pastels */
-  --lime-green: #a7f3d0; /* Soft minty pastel */
-  --light-purple: #e9d5ff; /* Pastel lavender */
-  --light-mint: #ccfbf1; /* Pastel teal */
-  --light-peach: #fecdd3; /* Pastel rose */
-  --light-blue: #bfdbfe; /* Pastel sky blue */
+  --lime-green: #bee8d4; /* Soft celadon lime */
+  --light-purple: #ddcbf5; /* Iris lavender */
+  --light-mint: #c3f2ec; /* Soft pastel teal */
+  --light-peach: #f7c2b3; /* Rich apricot peach */
+  --light-blue: #b5cce6; /* Denim blue */
 }
 
 @theme inline {
@@ -73,6 +73,25 @@ html, body {
   --color-light-peach: var(--light-peach);
   --color-light-blue: var(--light-blue);
   --font-sans: var(--font-quicksand), sans-serif;
+
+  /* Claymorphic Layered Shadows */
+  --shadow-clay-card: 4px 6px 12px rgba(40, 50, 60, 0.04), 12px 16px 32px rgba(40, 50, 60, 0.08), inset -6px -6px 12px rgba(40, 50, 60, 0.05), inset 6px 6px 12px rgba(255, 255, 255, 0.95);
+  --shadow-clay-card-hover: 6px 8px 16px rgba(40, 50, 60, 0.05), 16px 24px 44px rgba(40, 50, 60, 0.12), inset -6px -6px 12px rgba(40, 50, 60, 0.03), inset 6px 6px 12px rgba(255, 255, 255, 0.95);
+  --shadow-clay-btn: 3px 4px 8px rgba(40, 50, 60, 0.04), 6px 8px 16px rgba(40, 50, 60, 0.06), inset -4px -4px 8px rgba(40, 50, 60, 0.05), inset 4px 4px 8px rgba(255, 255, 255, 0.95);
+  --shadow-clay-btn-hover: 4px 6px 10px rgba(40, 50, 60, 0.06), 8px 14px 22px rgba(40, 50, 60, 0.09), inset -4px -4px 8px rgba(40, 50, 60, 0.04), inset 4px 4px 8px rgba(255, 255, 255, 0.95);
+  --shadow-clay-btn-pressed: inset -1px -1px 2px rgba(255, 255, 255, 0.75), inset 5px 6px 10px rgba(0, 0, 0, 0.22);
+  
+  /* Color-matched Layered Shadows */
+  --shadow-clay-pink: 3px 4px 8px rgba(224, 115, 131, 0.12), 10px 12px 24px rgba(224, 115, 131, 0.22), inset -6px -6px 12px rgba(0, 0, 0, 0.06), inset 6px 6px 12px rgba(255, 255, 255, 0.5);
+  --shadow-clay-pink-hover: 4px 6px 10px rgba(224, 115, 131, 0.18), 14px 18px 30px rgba(224, 115, 131, 0.35), inset -6px -6px 12px rgba(0, 0, 0, 0.04), inset 6px 6px 12px rgba(255, 255, 255, 0.55);
+  --shadow-clay-mint: 3px 4px 8px rgba(63, 163, 148, 0.12), 10px 12px 24px rgba(63, 163, 148, 0.22), inset -6px -6px 12px rgba(0, 0, 0, 0.06), inset 6px 6px 12px rgba(255, 255, 255, 0.5);
+  --shadow-clay-mint-hover: 4px 6px 10px rgba(63, 163, 148, 0.18), 14px 18px 30px rgba(63, 163, 148, 0.35), inset -6px -6px 12px rgba(0, 0, 0, 0.04), inset 6px 6px 12px rgba(255, 255, 255, 0.55);
+  --shadow-clay-yellow: 3px 4px 8px rgba(212, 169, 25, 0.15), 10px 12px 24px rgba(212, 169, 25, 0.25), inset -6px -6px 12px rgba(0, 0, 0, 0.08), inset 6px 6px 12px rgba(255, 255, 255, 0.5);
+  --shadow-clay-yellow-hover: 4px 6px 10px rgba(212, 169, 25, 0.22), 14px 18px 30px rgba(212, 169, 25, 0.38), inset -6px -6px 12px rgba(0, 0, 0, 0.06), inset 6px 6px 12px rgba(255, 255, 255, 0.55);
+  --shadow-clay-purple: 3px 4px 8px rgba(124, 82, 199, 0.12), 10px 12px 24px rgba(124, 82, 199, 0.22), inset -6px -6px 12px rgba(0, 0, 0, 0.06), inset 6px 6px 12px rgba(255, 255, 255, 0.5);
+  --shadow-clay-purple-hover: 4px 6px 10px rgba(124, 82, 199, 0.18), 14px 18px 30px rgba(124, 82, 199, 0.35), inset -6px -6px 12px rgba(0, 0, 0, 0.04), inset 6px 6px 12px rgba(255, 255, 255, 0.55);
+  --shadow-clay-blue: 3px 4px 8px rgba(63, 114, 175, 0.12), 10px 12px 24px rgba(63, 114, 175, 0.22), inset -6px -6px 12px rgba(0, 0, 0, 0.06), inset 6px 6px 12px rgba(255, 255, 255, 0.5);
+  --shadow-clay-blue-hover: 4px 6px 10px rgba(63, 114, 175, 0.18), 14px 18px 30px rgba(63, 114, 175, 0.35), inset -6px -6px 12px rgba(0, 0, 0, 0.04), inset 6px 6px 12px rgba(255, 255, 255, 0.55);
 }
 
 body {
@@ -81,16 +100,21 @@ body {
   overflow-x: hidden;
   font-weight: 800; /* Friendly chunky text */
   position: relative;
+  box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.03);
 }
 
-/* Playful background texture: Soft pastel sprinkles */
+/* Playful background texture: Soft playmat grid + minty polka dots */
 body::before {
   content: "";
   position: fixed;
   inset: 0;
   z-index: -5;
-  background-image: radial-gradient(rgba(255, 133, 161, 0.1) 2.5px, transparent 2.5px);
-  background-size: 32px 32px;
+  background-image: 
+    radial-gradient(rgba(78, 205, 196, 0.08) 3px, transparent 3px),
+    linear-gradient(rgba(255, 255, 255, 0.55) 1.5px, transparent 1.5px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.55) 1.5px, transparent 1.5px);
+  background-size: 48px 48px, 48px 48px, 48px 48px;
+  background-position: 24px 24px, 0 0, 0 0;
   pointer-events: none;
 }
 
@@ -466,3 +490,34 @@ body::before {
   font-size: 14px;
   line-height: 18px;
 }
+
+/* Brushed clay noise texture overlay applied globally for rich realism */
+.clay-card, .clay-btn, .glass-card, .glass-panel, .clay-bubble, nav {
+  position: relative;
+}
+.clay-card::after, .clay-btn::after, .glass-card::after, .glass-panel::after, .clay-bubble::after, nav::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.02'/%3E%3C/svg%3E");
+  pointer-events: none;
+  mix-blend-mode: overlay;
+  z-index: 10;
+}
+
+/* Decorative Sparkle floating animations */
+@keyframes sparkle-float {
+  0%, 100% { transform: translateY(0) scale(0.8); opacity: 0.4; }
+  50% { transform: translateY(-6px) scale(1.1); opacity: 1; }
+}
+.animate-sparkle-1 {
+  animation: sparkle-float 3.5s infinite ease-in-out;
+}
+.animate-sparkle-2 {
+  animation: sparkle-float 4.2s infinite ease-in-out 1.2s;
+}
+.animate-sparkle-3 {
+  animation: sparkle-float 3.8s infinite ease-in-out 2.1s;
+}
+

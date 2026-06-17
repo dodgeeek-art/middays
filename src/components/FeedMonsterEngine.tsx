@@ -377,7 +377,7 @@ export default function FeedMonsterEngine({ childId, onBack }: FeedMonsterEngine
   };
 
   return (
-    <div className="flex flex-col items-center w-full max-w-2xl mx-auto px-4 select-none justify-between min-h-[72vh] md:min-h-[78vh] py-2">
+    <div className="flex flex-col items-center w-full max-w-2xl mx-auto px-4 select-none justify-between h-full min-h-0 py-2">
       {/* Standardized Header */}
       <div className="flex justify-between items-center w-full mb-3 sm:mb-4 z-10 px-1">
         <button 

@@ -3,6 +3,8 @@
 import React, { useEffect, useState } from "react";
 import { Trophy, Heart, Star, Lock, Sparkles } from "@/components/Icons";
 import { motion, AnimatePresence } from "framer-motion";
+import ClayCard from "@/components/ui/ClayCard";
+import ClayButton from "@/components/ui/ClayButton";
 
 interface Badge {
   id: string;
@@ -204,21 +206,27 @@ export default function ProgressVisualizer({ childId }: { childId?: string }) {
 
       {/* Stats Bento Grid */}
       <div className="grid grid-cols-2 gap-6 mb-8">
-        <div className="col-span-1 p-6 bg-gradient-to-br from-[#ffcad4] to-[#ff85a1]/20 rounded-[2rem] border border-white/20 flex flex-col items-center justify-center text-center shadow-[6px_6px_12px_rgba(255,133,161,0.15),_inset_-4px_-4px_8px_rgba(0,0,0,0.04),_inset_4px_4px_8px_rgba(255,255,255,0.95)]">
+        <ClayCard 
+          variant="primary"
+          className="col-span-1 flex flex-col items-center justify-center text-center"
+        >
           <div className="w-12 h-12 rounded-full bg-white/70 flex items-center justify-center mb-2 shadow-[inset_1px_1px_3px_rgba(255,255,255,0.9),_inset_-1px_-1px_3px_rgba(0,0,0,0.03)] border border-white/20">
             <Trophy className="text-[#ff85a1]" size={24} />
           </div>
           <span className="text-3xl font-black text-[#590d22]">{badges.length}</span>
           <span className="text-xs font-black uppercase tracking-wider text-[#590d22]/70">Badges</span>
-        </div>
+        </ClayCard>
         
-        <div className="col-span-1 p-6 bg-gradient-to-br from-[#fef5d1] to-[#ffd166]/20 rounded-[2rem] border border-white/20 flex flex-col items-center justify-center text-center shadow-[6px_6px_12px_rgba(255,209,102,0.15),_inset_-4px_-4px_8px_rgba(0,0,0,0.04),_inset_4px_4px_8px_rgba(255,255,255,0.95)]">
+        <ClayCard 
+          variant="tertiary"
+          className="col-span-1 flex flex-col items-center justify-center text-center"
+        >
           <div className="w-12 h-12 rounded-full bg-white/70 flex items-center justify-center mb-2 shadow-[inset_1px_1px_3px_rgba(255,255,255,0.9),_inset_-1px_-1px_3px_rgba(0,0,0,0.03)] border border-white/20">
             <Heart className="text-[#ffd166] fill-[#ffd166]" size={24} />
           </div>
           <span className="text-3xl font-black text-[#5c4d00]">{uniqueLettersCount}</span>
           <span className="text-xs font-black uppercase tracking-wider text-[#5c4d00]/70">Daily Habits</span>
-        </div>
+        </ClayCard>
       </div>
 
       {/* Trophy Grid */}
@@ -233,16 +241,15 @@ export default function ProgressVisualizer({ childId }: { childId?: string }) {
           const delayStyle = { animationDelay: `${0.1 + index * 0.2}s` };
           
           return (
-            <motion.div
+            <ClayCard
               key={item.id}
               variants={itemVariants}
-              whileHover={item.isUnlocked ? { scale: 1.02 } : {}}
-              whileTap={item.isUnlocked ? { scale: 0.98, y: 2 } : {}}
+              hoverEffect={item.isUnlocked}
               style={delayStyle}
-              className={`p-6 rounded-[2rem] border flex flex-col items-center justify-center text-center aspect-[1.1] relative transition-all ${
+              className={`p-6 flex flex-col items-center justify-center text-center aspect-[1.1] relative ${
                 item.isUnlocked 
-                  ? "bg-white clay-card border-white/20 hover:scale-102 active:scale-98 cursor-pointer animate-float" 
-                  : "bg-white/40 border-2 border-dashed border-[#9eb1bd]/40 opacity-70"
+                  ? "bg-white border-white/20 animate-float" 
+                  : "bg-white/40 border-2 border-dashed border-[#9eb1bd]/40 opacity-70 shadow-none"
               }`}
             >
               {item.isUnlocked ? (
@@ -280,7 +287,7 @@ export default function ProgressVisualizer({ childId }: { childId?: string }) {
                   </div>
                 </>
               )}
-            </motion.div>
+            </ClayCard>
           );
         })}
       </motion.div>

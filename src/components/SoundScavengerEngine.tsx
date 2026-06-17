@@ -4,7 +4,7 @@ import React, { useState, useRef, useEffect, useCallback } from "react";
 import { ArrowLeft, Volume2, CheckCircle2 } from "@/components/Icons";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
-import { objectDictionary } from "@/lib/svgDictionary";
+import { vocabularyList, VocabularyItem } from "@/lib/svgDictionary";
 import MascotSVG from "./MascotSVG";
 
 interface SoundScavengerEngineProps {
@@ -19,7 +19,7 @@ interface ItemChoice {
 }
 
 interface RoundData {
-  targetLetter: string;
+  targetName: string;
   choices: ItemChoice[];
 }
 
@@ -27,29 +27,28 @@ interface RoundData {
 const getCurrentTime = (): number => Date.now();
 
 function generateRoundData(): RoundData {
-  const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  const target = letters[Math.floor(Math.random() * letters.length)];
+  const targetItem = vocabularyList[Math.floor(Math.random() * vocabularyList.length)];
   
-  // Gather 8 distinct wrong letters (providing 9 total choices in the grid)
-  const wrongList: string[] = [];
+  // Gather 8 distinct wrong choices
+  const wrongList: VocabularyItem[] = [];
   while (wrongList.length < 8) {
-    const char = letters[Math.floor(Math.random() * letters.length)];
-    if (char !== target && !wrongList.includes(char)) {
-      wrongList.push(char);
+    const item = vocabularyList[Math.floor(Math.random() * vocabularyList.length)];
+    if (item.name !== targetItem.name && !wrongList.some(w => w.name === item.name)) {
+      wrongList.push(item);
     }
   }
 
-  const correctObj = objectDictionary[target];
   const choicesList: ItemChoice[] = [
-    { letter: target, name: correctObj.name, icon: correctObj.icon },
-    ...wrongList.map(l => {
-      const obj = objectDictionary[l];
-      return { letter: l, name: obj.name, icon: obj.icon };
-    })
+    { letter: targetItem.letter, name: targetItem.name, icon: targetItem.icon },
+    ...wrongList.map(item => ({
+      letter: item.letter,
+      name: item.name,
+      icon: item.icon
+    }))
   ];
 
   return {
-    targetLetter: target,
+    targetName: targetItem.name,
     choices: choicesList.sort(() => Math.random() - 0.5)
   };
 }
@@ -66,20 +65,20 @@ export default function SoundScavengerEngine({ childId, onBack }: SoundScavenger
   const speakCommand = useCallback(() => {
     if (typeof window !== "undefined" && window.speechSynthesis) {
       window.speechSynthesis.cancel();
-      const targetName = objectDictionary[roundData.targetLetter]?.name || "";
+      const targetName = roundData.targetName;
       const utterance = new SpeechSynthesisUtterance(`Find ${targetName}`);
       utterance.rate = 0.85;
       utterance.pitch = 1.1;
       window.speechSynthesis.speak(utterance);
     }
-  }, [roundData.targetLetter]);
+  }, [roundData.targetName]);
 
   useEffect(() => {
     const t = setTimeout(() => {
       speakCommand();
     }, 400);
     return () => clearTimeout(t);
-  }, [roundData.targetLetter, speakCommand]);
+  }, [roundData.targetName, speakCommand]);
 
   const initAudio = () => {
     if (!audioCtxRef.current) {
@@ -146,14 +145,14 @@ export default function SoundScavengerEngine({ childId, onBack }: SoundScavenger
     setRoundStartTime(getCurrentTime());
   };
 
-  const saveProgress = async (timeSpent: number, target: string) => {
+  const saveProgress = async (timeSpent: number, targetName: string) => {
     if (childId) {
       try {
         await fetch(`/api/progress/${childId}`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            targetLetter: target,
+            targetLetter: targetName,
             tracingScore: 100,
             phonemicScore: 100,
             timeSpentMs: timeSpent
@@ -164,7 +163,7 @@ export default function SoundScavengerEngine({ childId, onBack }: SoundScavenger
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            badgeName: `Scavenger Finder ${target}`
+            badgeName: `Scavenger Finder ${targetName}`
           })
         });
       } catch (e) {
@@ -178,7 +177,7 @@ export default function SoundScavengerEngine({ childId, onBack }: SoundScavenger
     initAudio();
 
     const choice = roundData.choices[idx];
-    if (choice.letter === roundData.targetLetter) {
+    if (choice.name === roundData.targetName) {
       // Correct match!
       setSelectedIdx(idx);
       playSuccessChime();
@@ -203,7 +202,7 @@ export default function SoundScavengerEngine({ childId, onBack }: SoundScavenger
           colors: ["#59a26a", "#eaddfc", "#ffafa6", "#a2ea63"]
         });
         
-        saveProgress(timeSpent, roundData.targetLetter);
+        saveProgress(timeSpent, roundData.targetName);
         
         // Advance to next round
         setTimeout(() => {
@@ -220,7 +219,7 @@ export default function SoundScavengerEngine({ childId, onBack }: SoundScavenger
 
 
   return (
-    <div className="w-full max-w-3xl mx-auto p-5 sm:p-8 clay-card border border-white/20 flex flex-col items-center justify-between min-h-[72vh] md:min-h-[78vh] relative overflow-hidden">
+    <div className="w-full max-w-3xl mx-auto p-3 sm:p-6 clay-card border border-white/20 flex flex-col items-center justify-between h-full min-h-0 relative overflow-hidden">
       {/* Top Bar */}
       <div className="w-full flex justify-between items-center mb-3 sm:mb-4 z-10">
         <button
@@ -256,7 +255,7 @@ export default function SoundScavengerEngine({ childId, onBack }: SoundScavenger
           <h2 className="text-sm sm:text-base font-black text-[#4A5358] tracking-tight uppercase flex items-center gap-1.5 flex-wrap">
             <span>Find the</span>
             <span className="inline-flex items-center justify-center px-3 py-0.5 bg-[#d2f4e6] border border-white/20 rounded-xl text-[#0b4a45] font-black shadow-sm">
-              {objectDictionary[roundData.targetLetter]?.name}
+              {roundData.targetName}
               <Volume2 className="w-3.5 h-3.5 ml-1" />
             </span>
           </h2>

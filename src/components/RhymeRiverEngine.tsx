@@ -183,7 +183,7 @@ export default function RhymeRiverEngine({ childId, onBack }: RhymeRiverEnginePr
   };
 
   return (
-    <div className="w-full max-w-3xl mx-auto flex flex-col justify-between min-h-[75vh] md:min-h-[82vh] rounded-[2.5rem] border border-white/25 relative overflow-hidden bg-transparent p-5 sm:p-8 shadow-[inset_0_4px_16px_rgba(0,0,0,0.06)]">
+    <div className="w-full max-w-3xl mx-auto flex flex-col justify-between h-full min-h-0 rounded-[2.5rem] border border-white/25 relative overflow-hidden bg-transparent p-3 sm:p-6 shadow-[inset_0_4px_16px_rgba(0,0,0,0.06)]">
       
       {/* Animated SVG River Background */}
       <RiverBackgroundSVG />

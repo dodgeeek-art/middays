@@ -4,6 +4,8 @@ import React, { useEffect, useRef, useState, useCallback } from "react";
 import { ArrowLeft, Check, Grid } from "@/components/Icons";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
+import ClayButton from "@/components/ui/ClayButton";
+import ClayCard from "@/components/ui/ClayCard";
 import { alphabetData } from "@/lib/alphabetData";
 import { objectDictionary } from "@/lib/svgDictionary";
 
@@ -382,16 +384,18 @@ export default function ActiveLessonEngine({
   };
 
   return (
-    <div className="flex flex-col items-center w-full max-w-md sm:max-w-lg md:max-w-xl mx-auto relative px-4 py-2 justify-between min-h-[72vh] md:min-h-[78vh]">
+    <div className="flex flex-col items-center w-full max-w-md sm:max-w-lg md:max-w-xl mx-auto relative px-4 py-2 justify-between h-full min-h-0">
       {/* Standardized Header */}
       <div className="flex justify-between items-center w-full mb-3 sm:mb-4 z-10 px-1">
         {onBack ? (
-          <button 
+          <ClayButton 
             onClick={onBack} 
-            className="bg-white clay-btn rounded-full w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center toddler-target border border-white/20 shadow-[4px_4px_8px_rgba(0,0,0,0.05)]"
+            variant="surface"
+            size="icon"
+            className="w-12 h-12 sm:w-14 sm:h-14 shrink-0"
           >
             <ArrowLeft className="w-6 h-6 sm:w-7 sm:h-7 text-[#4A5358]" strokeWidth={3} />
-          </button>
+          </ClayButton>
         ) : (
           <div className="w-12 h-12 sm:w-14 sm:h-14" />
         )}
@@ -404,15 +408,17 @@ export default function ActiveLessonEngine({
           </div>
         </div>
 
-        <button 
+        <ClayButton 
           onClick={() => setShowAlphabetGrid(true)} 
-          className="bg-white clay-btn rounded-full w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center toddler-target border border-white/20 shadow-[4px_4px_8px_rgba(0,0,0,0.05)]"
+          variant="surface"
+          size="icon"
+          className="w-12 h-12 sm:w-14 sm:h-14 shrink-0"
         >
           <Grid className="w-6 h-6 sm:w-7 sm:h-7 text-primary" strokeWidth={3} />
-        </button>
+        </ClayButton>
       </div>
       
-      <div className="w-full max-w-[280px] sm:max-w-[360px] aspect-square clay-card overflow-hidden relative mx-auto border border-white/20">
+      <ClayCard hoverEffect={false} className="w-full max-w-[280px] sm:max-w-[360px] aspect-square overflow-hidden relative mx-auto border-white/20 p-0">
         {/* Hidden SVG for path length calculations */}
         <svg width="0" height="0" className="absolute pointer-events-none">
           <path ref={svgPathRef} d={pathString} />
@@ -437,19 +443,19 @@ export default function ActiveLessonEngine({
             style={{ touchAction: "none" }}
           />
         </div>
-      </div>
+      </ClayCard>
 
-      <button 
+      <ClayButton 
         onClick={handleCheck}
-        className={`mt-3 sm:mt-6 w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center transition-all toddler-target border border-white/20 ${
-          allCheckpointsHit 
-            ? "bg-primary-container text-[#590d22] clay-btn animate-pulse-bounce" 
-            : "bg-gray-100 text-gray-400 cursor-not-allowed opacity-40 shadow-inner"
+        variant={allCheckpointsHit ? "primary" : "surface"}
+        size="icon"
+        isDisabled={!allCheckpointsHit}
+        className={`mt-3 sm:mt-6 w-16 h-16 sm:w-20 sm:h-20 shrink-0 ${
+          allCheckpointsHit ? "animate-pulse-bounce" : ""
         }`}
-        disabled={!allCheckpointsHit}
       >
-        <Check className="w-8 h-8 sm:w-10 sm:h-10" strokeWidth={4} />
-      </button>
+        <Check className="w-8 h-8 sm:w-10 sm:h-10 text-white" strokeWidth={4} />
+      </ClayButton>
 
       <AnimatePresence>
         {isCompleted && (
@@ -459,12 +465,13 @@ export default function ActiveLessonEngine({
             exit={{ opacity: 0 }}
             className="fixed inset-0 bg-[#f3f8fc]/90 backdrop-blur-sm z-[60] flex flex-col items-center justify-center p-6"
           >
-            <motion.div 
+            <ClayCard 
               initial={{ y: 30, scale: 0.8 }}
               animate={{ y: 0, scale: 1 }}
               exit={{ y: 20, scale: 0.8 }}
               transition={{ type: "spring", stiffness: 200, damping: 15 }}
-              className="clay-card border border-white/20 p-8 bg-white max-w-sm w-full text-center flex flex-col items-center gap-6 shadow-[12px_12px_24px_rgba(0,0,0,0.06),_inset_-6px_-6px_12px_rgba(0,0,0,0.06),_inset_6px_6px_12px_rgba(255,255,255,0.9)]"
+              variant="default"
+              className="p-8 max-w-sm w-full text-center flex flex-col items-center gap-6 border-white/20"
             >
               {objectDictionary[letter] && (
                 <>
@@ -479,7 +486,7 @@ export default function ActiveLessonEngine({
                   </div>
                 </>
               )}
-            </motion.div>
+            </ClayCard>
           </motion.div>
         )}
         {showAlphabetGrid && (
@@ -490,11 +497,12 @@ export default function ActiveLessonEngine({
             className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
             onClick={() => setShowAlphabetGrid(false)}
           >
-            <motion.div 
+            <ClayCard 
               initial={{ scale: 0.9, y: 20 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.9, y: 20 }}
-              className="p-6 rounded-[2.5rem] bg-white border border-white/20 max-w-sm w-full shadow-[12px_12px_24px_rgba(0,0,0,0.05),_inset_-6px_-6px_12px_rgba(0,0,0,0.05),_inset_6px_6px_12px_rgba(255,255,255,0.9)] flex flex-col gap-4"
+              variant="default"
+              className="p-6 rounded-[2.5rem] border-white/20 max-w-sm w-full flex flex-col gap-4"
               onClick={(e) => e.stopPropagation()}
             >
               <h2 className="text-xl font-black text-[#4A5358] text-center uppercase tracking-wide">Select Letter</h2>
@@ -519,13 +527,14 @@ export default function ActiveLessonEngine({
                   );
                 })}
               </div>
-              <button 
+              <ClayButton 
                 onClick={() => setShowAlphabetGrid(false)}
-                className="w-full py-2.5 font-extrabold bg-gray-100 text-[#4A5358] rounded-full clay-btn border border-white/10 text-xs uppercase hover:bg-gray-200"
+                variant="surface"
+                className="w-full text-xs uppercase"
               >
                 Cancel
-              </button>
-            </motion.div>
+              </ClayButton>
+            </ClayCard>
           </motion.div>
         )}
       </AnimatePresence>
