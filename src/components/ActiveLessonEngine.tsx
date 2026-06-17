@@ -5,6 +5,7 @@ import { ArrowLeft, Check, Grid } from "@/components/Icons";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 import { alphabetData } from "@/lib/alphabetData";
+import { objectDictionary } from "@/lib/svgDictionary";
 
 interface Point {
   x: number;
@@ -331,6 +332,17 @@ export default function ActiveLessonEngine({
     isDrawing.current = false;
     playSuccessSound();
 
+    // Speak letter association reward (e.g. "A is for Alligator")
+    if (typeof window !== "undefined" && window.speechSynthesis) {
+      window.speechSynthesis.cancel();
+      const obj = objectDictionary[letter];
+      const word = obj ? obj.name : "";
+      const utterance = new SpeechSynthesisUtterance(`${letter} is for ${word}`);
+      utterance.rate = 0.85;
+      utterance.pitch = 1.15;
+      window.speechSynthesis.speak(utterance);
+    }
+
     confetti({
       particleCount: 200,
       spread: 100,
@@ -440,6 +452,36 @@ export default function ActiveLessonEngine({
       </button>
 
       <AnimatePresence>
+        {isCompleted && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-[#f3f8fc]/90 backdrop-blur-sm z-[60] flex flex-col items-center justify-center p-6"
+          >
+            <motion.div 
+              initial={{ y: 30, scale: 0.8 }}
+              animate={{ y: 0, scale: 1 }}
+              exit={{ y: 20, scale: 0.8 }}
+              transition={{ type: "spring", stiffness: 200, damping: 15 }}
+              className="clay-card border border-white/20 p-8 bg-white max-w-sm w-full text-center flex flex-col items-center gap-6 shadow-[12px_12px_24px_rgba(0,0,0,0.06),_inset_-6px_-6px_12px_rgba(0,0,0,0.06),_inset_6px_6px_12px_rgba(255,255,255,0.9)]"
+            >
+              {objectDictionary[letter] && (
+                <>
+                  <div className="w-32 h-32 sm:w-40 sm:h-40 bg-white border border-white/25 rounded-[2rem] flex items-center justify-center shadow-[6px_6px_12px_rgba(0,0,0,0.04),_inset_2px_2px_4px_rgba(255,255,255,0.85)] p-4">
+                    {React.createElement(objectDictionary[letter].icon, { size: "100%" })}
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <h3 className="text-3xl font-black text-[#ff85a1] uppercase">Awesome Tracing!</h3>
+                    <span className="text-xl sm:text-2xl font-black text-[#4A5358] uppercase tracking-wider">
+                      {letter} is for {objectDictionary[letter].name}
+                    </span>
+                  </div>
+                </>
+              )}
+            </motion.div>
+          </motion.div>
+        )}
         {showAlphabetGrid && (
           <motion.div 
             initial={{ opacity: 0 }}

@@ -64,12 +64,12 @@ interface BubbleSpawnConfig {
 
 const getBubbleSpawnConfig = (targetLetter: string, forceTarget: boolean): BubbleSpawnConfig => {
   const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  const isTarget = forceTarget || Math.random() < 0.08;
+  const isTarget = forceTarget || Math.random() < 0.35;
   const distractorLetters = letters.replace(targetLetter, "");
   const letter = isTarget ? targetLetter : distractorLetters[Math.floor(Math.random() * distractorLetters.length)];
   
   const size = 75 + Math.random() * 40; // 75px to 115px
-  const speed = 1.2 + Math.random() * 1.8; // speed
+  const speed = 0.5 + Math.random() * 0.5; // speed (slower, toddler friendly)
   const x = 10 + Math.random() * 80; // offset percentage
   
   const bubbleColors = [
@@ -152,6 +152,14 @@ export default function BubblePopEngine({ childId, onBack }: BubblePopEngineProp
   };
 
   const playLetterSound = useCallback(() => {
+    if (typeof window !== "undefined" && window.speechSynthesis) {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(targetLetter);
+      utterance.rate = 0.85;
+      utterance.pitch = 1.15;
+      window.speechSynthesis.speak(utterance);
+    }
+
     if (!audioCtxRef.current) return;
     const ctx = audioCtxRef.current;
     

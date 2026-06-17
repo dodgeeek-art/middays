@@ -237,6 +237,15 @@ export default function MagicRevealEngine({ childId, onBack }: MagicRevealEngine
     isErasing.current = false;
     stopErasingSound();
     
+    // Speak the letter sound
+    if (typeof window !== "undefined" && window.speechSynthesis) {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(targetLetter);
+      utterance.rate = 0.85;
+      utterance.pitch = 1.15;
+      window.speechSynthesis.speak(utterance);
+    }
+    
     // Clear the remaining frost to fully show the hidden letter
     const canvas = canvasRef.current;
     if (canvas) {
@@ -275,6 +284,16 @@ export default function MagicRevealEngine({ childId, onBack }: MagicRevealEngine
         origin: { y: 0.6 },
         colors: ["#a2ea63", "#ffc4c0", "#eaddfc"]
       });
+
+      // Speak letter sound + association (e.g. "A, Alligator")
+      if (typeof window !== "undefined" && window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+        const obj = objectDictionary[targetLetter];
+        const utterance = new SpeechSynthesisUtterance(`${targetLetter}, ${obj ? obj.name : ""}`);
+        utterance.rate = 0.85;
+        utterance.pitch = 1.15;
+        window.speechSynthesis.speak(utterance);
+      }
 
       if (audioCtxRef.current) {
         const osc = audioCtxRef.current.createOscillator();
@@ -339,11 +358,8 @@ export default function MagicRevealEngine({ childId, onBack }: MagicRevealEngine
         )}
         
         {/* Centered Target Letter Sticker */}
-        <div className="flex items-center gap-1.5 sm:gap-2.5 bg-white border border-white/25 rounded-2xl px-3 py-1.5 sm:px-5 sm:py-2.5 shadow-[4px_4px_10px_rgba(0,0,0,0.04),_inset_2px_2px_4px_rgba(255,255,255,0.8),_inset_-2px_-2px_4px_rgba(0,0,0,0.05)] rotate-[-1.5deg]">
-          <span className="text-xs sm:text-base font-black text-[#4A5358] uppercase tracking-wide">Find:</span>
-          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-primary-container border border-white/20 flex items-center justify-center font-black text-lg sm:text-xl text-[#590d22] shadow-[2px_2px_5px_rgba(0,0,0,0.04),_inset_2px_2px_4px_rgba(255,255,255,0.8)]">
-            {targetLetter}
-          </div>
+        <div className="flex items-center gap-1.5 sm:gap-2.5 bg-white border border-white/25 rounded-2xl px-4 py-1.5 sm:px-5 sm:py-2.5 shadow-[4px_4px_10px_rgba(0,0,0,0.04),_inset_2px_2px_4px_rgba(255,255,255,0.85)] rotate-[-1.5deg]">
+          <span className="text-xs sm:text-base font-black text-[#4A5358] uppercase tracking-wide">Magic Reveal!</span>
         </div>
 
         <button 

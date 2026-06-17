@@ -277,6 +277,16 @@ export default function FeedMonsterEngine({ childId, onBack }: FeedMonsterEngine
         setTimeout(() => {
           setGameState("success");
           playGiggleSound();
+          
+          // Speak letter sound + association (e.g. "A, Alligator")
+          if (typeof window !== "undefined" && window.speechSynthesis) {
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(`${selectedChoice.letter}, ${selectedChoice.name}`);
+            utterance.rate = 0.85;
+            utterance.pitch = 1.15;
+            window.speechSynthesis.speak(utterance);
+          }
+
           confetti({
             particleCount: 80,
             spread: 60,

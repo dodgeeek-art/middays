@@ -1,10 +1,12 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import { ArrowLeft, Volume2, Check } from "@/components/Icons";
 import { motion } from "framer-motion";
 import confetti from "canvas-confetti";
 import { objectDictionary } from "@/lib/svgDictionary";
+import MascotSVG from "./MascotSVG";
+import RiverBackgroundSVG from "./RiverBackgroundSVG";
 
 interface RhymeRiverEngineProps {
   childId: string;
@@ -18,24 +20,41 @@ interface RhymeRound {
 }
 
 const RHYME_ROUNDS: RhymeRound[] = [
-  { promptWord: "BEE", targetLetter: "K", choices: ["K", "C", "D"] },    // Key rhymes with Bee
+  { promptWord: "BOX", targetLetter: "F", choices: ["F", "B", "D"] },    // Fox rhymes with Box
   { promptWord: "LOG", targetLetter: "D", choices: ["D", "P", "S"] },    // Dog rhymes with Log
-  { promptWord: "HAT", targetLetter: "C", choices: ["C", "T", "W"] },    // Cat rhymes with Hat
-  { promptWord: "WIG", targetLetter: "P", choices: ["P", "K", "D"] },    // Pig rhymes with Wig
-  { promptWord: "RAIN", targetLetter: "T", choices: ["T", "S", "C"] },   // Train rhymes with Rain
-  { promptWord: "SNAIL", targetLetter: "W", choices: ["W", "P", "D"] },  // Whale rhymes with Snail
-  { promptWord: "RUN", targetLetter: "S", choices: ["S", "K", "T"] }     // Sun rhymes with Run
+  { promptWord: "HAT", targetLetter: "C", choices: ["C", "F", "Y"] },    // Cat rhymes with Hat
+  { promptWord: "WIG", targetLetter: "P", choices: ["P", "B", "W"] },    // Pig rhymes with Wig
+  { promptWord: "PEAR", targetLetter: "B", choices: ["B", "D", "M"] },   // Bear rhymes with Pear
+  { promptWord: "SNAIL", targetLetter: "W", choices: ["W", "P", "L"] },  // Whale rhymes with Snail
+  { promptWord: "CAKE", targetLetter: "S", choices: ["S", "Y", "D"] },   // Snake rhymes with Cake
+  { promptWord: "SACK", targetLetter: "Y", choices: ["Y", "C", "F"] }    // Yak rhymes with Sack
 ];
 
 export default function RhymeRiverEngine({ childId, onBack }: RhymeRiverEngineProps) {
   const [roundIdx, setRoundIdx] = useState(0);
-  const [gameState, setGameState] = useState<"playing" | "hopping" | "success">("playing");
+  const [gameState, setGameState] = useState<"playing" | "success">("playing");
   const [selectedLetter, setSelectedLetter] = useState<string | null>(null);
   const [wrongSelections, setWrongSelections] = useState<string[]>([]);
-  const [frogPosition, setFrogPosition] = useState<"start" | "stone0" | "stone1" | "stone2" | "finish">("start");
   
   const currentRound = RHYME_ROUNDS[roundIdx];
   const audioCtxRef = useRef<AudioContext | null>(null);
+
+  const speakCommand = useCallback(() => {
+    if (typeof window !== "undefined" && window.speechSynthesis) {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(`Find the stone that rhymes with ${currentRound.promptWord}`);
+      utterance.rate = 0.85;
+      utterance.pitch = 1.1;
+      window.speechSynthesis.speak(utterance);
+    }
+  }, [currentRound.promptWord]);
+
+  useEffect(() => {
+    const t = setTimeout(() => {
+      speakCommand();
+    }, 450);
+    return () => clearTimeout(t);
+  }, [roundIdx, speakCommand]);
 
   const initAudio = () => {
     if (!audioCtxRef.current) {
@@ -66,27 +85,6 @@ export default function RhymeRiverEngine({ childId, onBack }: RhymeRiverEnginePr
     
     osc.start();
     osc.stop(ctx.currentTime + 0.22);
-  };
-
-  const playHopSound = () => {
-    if (!audioCtxRef.current) return;
-    const ctx = audioCtxRef.current;
-    
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    
-    osc.type = "triangle";
-    osc.frequency.setValueAtTime(150, ctx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(320, ctx.currentTime + 0.18);
-    
-    gain.gain.setValueAtTime(0.25, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.005, ctx.currentTime + 0.2);
-    
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    
-    osc.start();
-    osc.stop(ctx.currentTime + 0.2);
   };
 
   const playSuccessChime = () => {
@@ -139,47 +137,43 @@ export default function RhymeRiverEngine({ childId, onBack }: RhymeRiverEnginePr
     }
   };
 
-  const handleStoneClick = (letter: string, index: number) => {
+  const handleStoneClick = (letter: string) => {
     if (gameState !== "playing" || selectedLetter !== null || wrongSelections.includes(letter)) return;
     initAudio();
 
     if (letter === currentRound.targetLetter) {
       // Correct!
       setSelectedLetter(letter);
-      setGameState("hopping");
-      playHopSound();
+      setGameState("success");
+      playSuccessChime();
       
-      // Determine hopping position
-      const stonePos = `stone${index}` as "stone0" | "stone1" | "stone2";
-      setFrogPosition(stonePos);
+      // Speak rhyming success matching
+      if (typeof window !== "undefined" && window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+        const targetObj = objectDictionary[letter];
+        const targetName = targetObj ? targetObj.name : "";
+        const utterance = new SpeechSynthesisUtterance(`Yes! ${currentRound.promptWord} rhymes with ${targetName}!`);
+        utterance.rate = 0.85;
+        utterance.pitch = 1.15;
+        window.speechSynthesis.speak(utterance);
+      }
 
+      confetti({
+        particleCount: 40,
+        spread: 40,
+        origin: { y: 0.75 },
+        colors: ["#59a26a", "#eaddfc", "#ffafa6"]
+      });
+
+      saveProgress();
+
+      // Advance to next round after 2.2 seconds
       setTimeout(() => {
-        playWaterSplash();
-        setGameState("success");
-        playSuccessChime();
-        
-        confetti({
-          particleCount: 40,
-          spread: 40,
-          origin: { y: 0.75 },
-          colors: ["#59a26a", "#eaddfc", "#ffafa6"]
-        });
-
-        saveProgress();
-
-        // Advance to next round after 2 seconds
-        setTimeout(() => {
-          setFrogPosition("finish");
-          setTimeout(() => {
-            setRoundIdx(prev => (prev + 1) % RHYME_ROUNDS.length);
-            setFrogPosition("start");
-            setSelectedLetter(null);
-            setWrongSelections([]);
-            setGameState("playing");
-          }, 800);
-        }, 1500);
-
-      }, 500);
+        setRoundIdx(prev => (prev + 1) % RHYME_ROUNDS.length);
+        setSelectedLetter(null);
+        setWrongSelections([]);
+        setGameState("playing");
+      }, 2200);
 
     } else {
       // Wrong card
@@ -188,33 +182,19 @@ export default function RhymeRiverEngine({ childId, onBack }: RhymeRiverEnginePr
     }
   };
 
-  // Coordinates for the frog's positions
-  // Left shore, 3 stones, right shore
-  const getFrogCoords = () => {
-    switch (frogPosition) {
-      case "stone0":
-        return { left: "20%", bottom: "25%" };
-      case "stone1":
-        return { left: "50%", bottom: "25%" };
-      case "stone2":
-        return { left: "80%", bottom: "25%" };
-      case "finish":
-        return { left: "100%", bottom: "52%" };
-      case "start":
-      default:
-        return { left: "-10%", bottom: "52%" };
-    }
-  };
-
   return (
-    <div className="w-full max-w-3xl mx-auto p-5 sm:p-8 clay-card border border-white/20 flex flex-col items-center justify-between min-h-[72vh] md:min-h-[78vh] relative overflow-hidden">
+    <div className="w-full max-w-3xl mx-auto flex flex-col justify-between min-h-[75vh] md:min-h-[82vh] rounded-[2.5rem] border border-white/25 relative overflow-hidden bg-transparent p-5 sm:p-8 shadow-[inset_0_4px_16px_rgba(0,0,0,0.06)]">
+      
+      {/* Animated SVG River Background */}
+      <RiverBackgroundSVG />
+
       {/* Top Bar */}
-      <div className="w-full flex justify-between items-center mb-3 sm:mb-4 z-10">
+      <div className="w-full flex justify-between items-center z-10">
         <button
           onClick={onBack}
-          className="flex items-center gap-2 font-black text-xs uppercase px-4 py-2 bg-white border border-white/20 rounded-full clay-btn hover:scale-102 active:scale-96 transition-all cursor-pointer shadow-[3px_3px_6px_rgba(0,0,0,0.04)]"
+          className="flex items-center gap-2 font-black text-xs uppercase px-4 py-2 bg-white border border-white/20 rounded-full clay-btn hover:scale-102 active:scale-96 transition-all cursor-pointer shadow-[3px_3px_6px_rgba(0,0,0,0.04)] text-[#4A5358]"
         >
-          <ArrowLeft className="w-4 h-4 text-[#4A5358]" />
+          <ArrowLeft className="w-4 h-4" />
           <span>Back</span>
         </button>
         <span className="text-[10px] font-black uppercase tracking-wider text-[#590d22]/80 bg-[#ffcad4]/50 px-3 py-1.5 rounded-full border border-white/20">
@@ -222,103 +202,96 @@ export default function RhymeRiverEngine({ childId, onBack }: RhymeRiverEnginePr
         </span>
       </div>
 
-      {/* Prompter Banner */}
-      <div className="w-full max-w-lg bg-white border border-white/20 rounded-3xl p-3.5 sm:p-5 mb-4 sm:mb-6 text-center shadow-[4px_4px_12px_rgba(0,0,0,0.04),_inset_2px_2px_4px_rgba(255,255,255,0.85)] relative z-10">
-        <p className="text-[10px] font-black text-[#ff85a1] uppercase tracking-widest mb-1">
-          Nursery Rhymes
-        </p>
-        <h2 className="text-xl sm:text-2xl font-black text-[#4A5358] tracking-tight uppercase flex justify-center items-center gap-2 flex-wrap">
-          <span>Find the stone that rhymes with:</span>
-          <span className="inline-flex items-center justify-center px-4 py-1 bg-[#ffcad4] border border-white/20 rounded-2xl text-[#590d22] text-2xl font-black relative group cursor-pointer active:scale-95 transition-all shadow-[2px_2px_5px_rgba(0,0,0,0.04),_inset_2px_2px_4px_rgba(255,255,255,0.8)]" onClick={() => playHopSound()}>
-            {currentRound.promptWord}
-            <Volume2 className="w-4.5 h-4.5 ml-1.5 opacity-60 group-hover:opacity-100 transition-opacity" />
-          </span>
-        </h2>
-      </div>
-
-      {/* The River Crossing Scene */}
-      <div className="w-full h-56 sm:h-72 bg-[#bfdbfe]/30 border border-white/20 rounded-[2.5rem] relative mb-4 sm:mb-6 shadow-[inset_0_4px_12px_rgba(0,0,0,0.05)] overflow-hidden flex flex-col justify-between">
+      {/* Mascot Command (Hovering Mascot + Speech Bubble next to it, no surrounding card box) */}
+      <div 
+        onClick={speakCommand}
+        className="w-full max-w-xl mx-auto flex items-center gap-4 mt-2 mb-4 z-10 cursor-pointer select-none active:scale-[0.99] transition-all"
+      >
+        {/* Hovering Mascot SVG */}
+        <div className="w-16 h-16 sm:w-24 sm:h-24 shrink-0 drop-shadow-md">
+          <MascotSVG className="w-full h-full" />
+        </div>
         
-        {/* River Water Texture Background */}
-        <div className="absolute inset-0 bg-[#bfdbfe]/40 flex flex-col justify-around py-4 opacity-40">
-          <div className="h-0.5 w-[200%] bg-white/30 animate-[slide-horizontal_16s_linear_infinite]" style={{ animationName: "river-flow" }}></div>
-          <div className="h-0.5 w-[200%] bg-white/30 animate-[slide-horizontal_20s_linear_infinite]" style={{ animationName: "river-flow-reverse" }}></div>
+        {/* Speech Bubble */}
+        <div className="flex-1 relative bg-white border border-[#4a5358]/10 p-3.5 sm:p-4 rounded-[2rem] shadow-[4px_4px_12px_rgba(0,0,0,0.03),_inset_2px_2px_4px_rgba(255,255,255,0.9)] text-left">
+          {/* Bubble Tail */}
+          <div className="absolute top-1/2 -left-3 -translate-y-1/2 w-0 h-0 border-t-[8px] border-t-transparent border-r-[12px] border-r-white border-b-[8px] border-b-transparent filter drop-shadow-[-1px_0_0_rgba(74,83,88,0.06)]"></div>
+          
+          <p className="text-[10px] font-black text-primary uppercase tracking-widest mb-0.5">
+            Guide says:
+          </p>
+          <h2 className="text-sm sm:text-base font-black text-[#4A5358] tracking-tight uppercase flex items-center gap-1.5 flex-wrap">
+            <span>Find the stone that rhymes with</span>
+            <span className="inline-flex items-center justify-center px-3 py-0.5 bg-[#ffcad4] border border-white/20 rounded-xl text-[#590d22] font-black shadow-sm">
+              {currentRound.promptWord}
+              <Volume2 className="w-3.5 h-3.5 ml-1" />
+            </span>
+          </h2>
         </div>
-
-        {/* River Banks */}
-        <div className="absolute left-0 top-0 bottom-0 w-[8%] bg-[#EAE5DB] border-r border-white/20 z-0"></div>
-        <div className="absolute right-0 top-0 bottom-0 w-[8%] bg-[#EAE5DB] border-l border-white/20 z-0"></div>
-
-        {/* Stepping Stones and Choices Grid */}
-        <div className="w-full h-full flex justify-around items-center px-6 relative z-10">
-          {currentRound.choices.map((letter, index) => {
-            const obj = objectDictionary[letter];
-            const isSelected = selectedLetter === letter;
-            const isWrong = wrongSelections.includes(letter);
-            
-            return (
-              <div key={letter + "-" + index} className="flex flex-col items-center gap-2 w-1/4">
-                
-                {/* Visual Card */}
-                <motion.button
-                  whileHover={gameState === "playing" && !isWrong ? { scale: 1.05 } : {}}
-                  whileTap={gameState === "playing" && !isWrong ? { scale: 0.95 } : {}}
-                  onClick={() => handleStoneClick(letter, index)}
-                  disabled={gameState !== "playing" || isWrong}
-                  className={`w-20 h-20 sm:w-32 sm:h-32 rounded-[1.75rem] border border-white/20 p-2 sm:p-3 flex flex-col items-center justify-center transition-all duration-300 relative ${
-                    isWrong 
-                      ? "bg-white/10 border-white/10 opacity-30 cursor-default scale-95" 
-                      : isSelected 
-                        ? "bg-[#d2f4e6] shadow-[4px_4px_12px_rgba(78,205,196,0.25),_inset_3px_3px_6px_rgba(255,255,255,0.9),_inset_-3px_-3px_6px_rgba(0,0,0,0.03)]"
-                        : "bg-white shadow-[4px_4px_10px_rgba(0,0,0,0.04),_inset_3px_3px_6px_rgba(255,255,255,0.9),_inset_-3px_-3px_6px_rgba(0,0,0,0.04)]"
-                  }`}
-                  animate={isWrong ? { rotate: [0, -8, 8, -8, 8, 0] } : {}}
-                  transition={{ duration: 0.4 }}
-                >
-                  <div className="w-full h-full flex items-center justify-center">
-                    {React.createElement(obj.icon, { size: "90%" })}
-                  </div>
-
-                  {isSelected && (
-                    <div className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-white border border-white/20 flex items-center justify-center text-[#4ecdc4] shadow-sm">
-                      <Check className="w-4 h-4" strokeWidth={3} />
-                    </div>
-                  )}
-                </motion.button>
-
-                {/* The Stepping Stone base */}
-                <div className="w-14 h-4 sm:w-20 sm:h-5 bg-[#bfdbfe] border border-white/20 rounded-full shadow-[0_4px_8px_rgba(0,0,0,0.05),_inset_1px_1px_2px_rgba(255,255,255,0.8)] z-0"></div>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Animated Dui Frog mascot */}
-        <motion.div
-          className="absolute w-10 h-10 sm:w-12 sm:h-12 z-20 pointer-events-none"
-          initial={getFrogCoords()}
-          animate={getFrogCoords()}
-          transition={{ type: "spring", stiffness: 120, damping: 12 }}
-        >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img 
-            alt="Dui Mascot" 
-            className="w-full h-full object-contain" 
-            src="/dui.png" 
-          />
-        </motion.div>
       </div>
 
-      <style>{`
-        @keyframes river-flow {
-          0% { transform: translateX(-50%); }
-          100% { transform: translateX(0%); }
-        }
-        @keyframes river-flow-reverse {
-          0% { transform: translateX(0%); }
-          100% { transform: translateX(-50%); }
-        }
-      `}</style>
+      {/* Lily Pads Stepping Stones Choices Area */}
+      <div className="flex-1 w-full flex justify-around items-center px-8 relative z-10 my-4">
+        {currentRound.choices.map((letter, index) => {
+          const obj = objectDictionary[letter];
+          const isSelected = selectedLetter === letter;
+          const isWrong = wrongSelections.includes(letter);
+          
+          return (
+            <div key={letter + "-" + index} className="flex flex-col items-center relative w-20 sm:w-28">
+              {/* Floating Water Ripple Ring */}
+              {!isWrong && !isSelected && (
+                <div 
+                  className="absolute -inset-2 rounded-full border border-white/10 bg-white/5 animate-ping opacity-20 pointer-events-none" 
+                  style={{ animationDuration: "3s", animationDelay: `${index * 0.8}s` }} 
+                />
+              )}
+
+              {/* 3D Lily Pad Button - Enlarged for better touch target */}
+              <motion.button
+                whileHover={gameState === "playing" && !isWrong ? { scale: 1.06, y: -4 } : {}}
+                whileTap={gameState === "playing" && !isWrong ? { scale: 0.94 } : {}}
+                onClick={() => handleStoneClick(letter)}
+                disabled={gameState !== "playing" || isWrong}
+                animate={isWrong ? { rotate: [0, -8, 8, -8, 8, 0], scale: 0.95 } : { y: [0, -3, 0] }}
+                transition={isWrong ? { duration: 0.4 } : {
+                  y: {
+                    duration: 2.2,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                    delay: index * 0.4
+                  }
+                }}
+                className={`w-20 h-20 sm:w-28 sm:h-28 rounded-full border-2 p-3 sm:p-4.5 flex items-center justify-center transition-all duration-300 relative ${
+                  isWrong 
+                    ? "bg-stone-200/40 border-stone-300/40 opacity-30 cursor-default" 
+                    : isSelected 
+                      ? "bg-[#d2f4e6] border-[#4ecdc4] shadow-[0_8px_16px_rgba(78,205,196,0.3),_inset_3px_3px_6px_rgba(255,255,255,0.9)]"
+                      : "bg-[#e8f5e9] border-[#a1d99b] shadow-[0_6px_0_#81c784,0_10px_16px_rgba(0,0,0,0.1),_inset_3px_3px_6px_rgba(255,255,255,0.9)]"
+                }`}
+              >
+                {/* Lily Pad Leaf Notch Detail */}
+                {!isWrong && (
+                  <div 
+                    className="absolute top-0.5 left-2 w-3.5 h-3.5 border-r-2 border-b-2 border-[#a1d99b] rounded-full transform -rotate-45" 
+                    style={{ backgroundColor: isSelected ? "#d2f4e6" : "#e8f5e9" }}
+                  />
+                )}
+
+                <div className="w-[85%] h-[85%] flex items-center justify-center relative z-10">
+                  {React.createElement(obj.icon, { size: "100%" })}
+                </div>
+
+                {isSelected && (
+                  <div className="absolute -top-1.5 -right-1.5 w-6 h-6 rounded-full bg-white border-2 border-[#4ecdc4] flex items-center justify-center text-[#4ecdc4] shadow-sm z-20">
+                    <Check className="w-3.5 h-3.5 text-[#4ecdc4]" strokeWidth={4} />
+                  </div>
+                )}
+              </motion.button>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }

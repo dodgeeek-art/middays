@@ -20,14 +20,14 @@ interface SyllableWord {
 const DRUMMER_WORDS: SyllableWord[] = [
   { word: "MONKEY", syllables: ["MON", "KEY"], targetLetter: "M" },
   { word: "ELEPHANT", syllables: ["EL", "E", "PHANT"], targetLetter: "E" },
-  { word: "APPLE", syllables: ["AP", "PLE"], targetLetter: "A" },
+  { word: "ALLIGATOR", syllables: ["AL", "LI", "GA", "TOR"], targetLetter: "A" },
   { word: "LION", syllables: ["LI", "ON"], targetLetter: "L" },
   { word: "RABBIT", syllables: ["RAB", "BIT"], targetLetter: "R" },
   { word: "ZEBRA", syllables: ["ZE", "BRA"], targetLetter: "Z" }
 ];
 
 export default function SyllableDrummerEngine({ childId, onBack }: SyllableDrummerEngineProps) {
-  const [wordIdx, setWordIdx] = useState(0);
+  const [wordIdx, setWordIdx] = useState(() => Math.floor(Math.random() * DRUMMER_WORDS.length));
   const [gameState, setGameState] = useState<"playing" | "success">("playing");
   const [currentTapIdx, setCurrentTapIdx] = useState(0);
   const [roundStartTime, setRoundStartTime] = useState<number>(() => Date.now());
@@ -105,6 +105,16 @@ export default function SyllableDrummerEngine({ childId, onBack }: SyllableDrumm
     const pitch = 300 + currentTapIdx * 60;
     playWoodBlockSound(pitch, 0.18);
 
+    // Speak the current syllable sound!
+    const syllable = currentWord.syllables[currentTapIdx];
+    if (syllable && typeof window !== "undefined" && window.speechSynthesis) {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(syllable.toLowerCase());
+      utterance.rate = 0.8;
+      utterance.pitch = 1.2;
+      window.speechSynthesis.speak(utterance);
+    }
+
     const nextTap = currentTapIdx + 1;
     setCurrentTapIdx(nextTap);
 
@@ -120,11 +130,29 @@ export default function SyllableDrummerEngine({ childId, onBack }: SyllableDrumm
           colors: ["#faf5eb", "#59a26a", "#ffafa6"]
         });
 
+        // Speak full word as a final completion reward
+        if (typeof window !== "undefined" && window.speechSynthesis) {
+          setTimeout(() => {
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(currentWord.word.toLowerCase());
+            utterance.rate = 0.85;
+            utterance.pitch = 1.15;
+            window.speechSynthesis.speak(utterance);
+          }, 350);
+        }
+
         saveProgress();
 
         // Advance to next word
         setTimeout(() => {
-          setWordIdx(prev => (prev + 1) % DRUMMER_WORDS.length);
+          setWordIdx(prev => {
+            if (DRUMMER_WORDS.length <= 1) return 0;
+            let nextIdx = prev;
+            while (nextIdx === prev) {
+              nextIdx = Math.floor(Math.random() * DRUMMER_WORDS.length);
+            }
+            return nextIdx;
+          });
           setCurrentTapIdx(0);
           setGameState("playing");
           setRoundStartTime(Date.now());

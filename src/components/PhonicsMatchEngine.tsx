@@ -169,6 +169,16 @@ export default function PhonicsMatchEngine({ childId, onBack }: PhonicsMatchEngi
     }
   };
 
+  const speakText = (text: string) => {
+    if (typeof window !== "undefined" && window.speechSynthesis) {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = 0.85;
+      utterance.pitch = 1.15;
+      window.speechSynthesis.speak(utterance);
+    }
+  };
+
   const handleCardClick = (id: number) => {
     if (gameState !== "playing" || selectedIds.length >= 2) return;
     initAudio();
@@ -179,6 +189,14 @@ export default function PhonicsMatchEngine({ childId, onBack }: PhonicsMatchEngi
     if (clickedCard.isFlipped || clickedCard.isMatched) return;
 
     playFlipSound();
+
+    // Speak flipped card item
+    if (clickedCard.type === "letter") {
+      speakText(clickedCard.letter);
+    } else {
+      const obj = objectDictionary[clickedCard.letter];
+      speakText(obj ? obj.name : "");
+    }
 
     // Flip card
     setCards(prev => prev.map(c => c.id === id ? { ...c, isFlipped: true } : c));
@@ -193,6 +211,11 @@ export default function PhonicsMatchEngine({ childId, onBack }: PhonicsMatchEngi
         // MATCH!
         setTimeout(() => {
           playMatchSound();
+          
+          const obj = objectDictionary[cardA.letter];
+          const objectName = obj ? obj.name : "";
+          speakText(`Match! ${cardA.letter} and ${objectName}`);
+
           setCards(prev => prev.map(c => c.letter === cardA.letter ? { ...c, isMatched: true } : c));
           setSelectedIds([]);
           

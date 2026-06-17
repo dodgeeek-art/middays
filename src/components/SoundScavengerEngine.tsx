@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import { ArrowLeft, Volume2, CheckCircle2 } from "@/components/Icons";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 import { objectDictionary } from "@/lib/svgDictionary";
+import MascotSVG from "./MascotSVG";
 
 interface SoundScavengerEngineProps {
   childId: string;
@@ -29,9 +30,9 @@ function generateRoundData(): RoundData {
   const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   const target = letters[Math.floor(Math.random() * letters.length)];
   
-  // Gather 5 distinct wrong letters
+  // Gather 8 distinct wrong letters (providing 9 total choices in the grid)
   const wrongList: string[] = [];
-  while (wrongList.length < 5) {
+  while (wrongList.length < 8) {
     const char = letters[Math.floor(Math.random() * letters.length)];
     if (char !== target && !wrongList.includes(char)) {
       wrongList.push(char);
@@ -61,6 +62,24 @@ export default function SoundScavengerEngine({ childId, onBack }: SoundScavenger
   const [wrongSelections, setWrongSelections] = useState<number[]>([]);
   
   const audioCtxRef = useRef<AudioContext | null>(null);
+
+  const speakCommand = useCallback(() => {
+    if (typeof window !== "undefined" && window.speechSynthesis) {
+      window.speechSynthesis.cancel();
+      const targetName = objectDictionary[roundData.targetLetter]?.name || "";
+      const utterance = new SpeechSynthesisUtterance(`Find ${targetName}`);
+      utterance.rate = 0.85;
+      utterance.pitch = 1.1;
+      window.speechSynthesis.speak(utterance);
+    }
+  }, [roundData.targetLetter]);
+
+  useEffect(() => {
+    const t = setTimeout(() => {
+      speakCommand();
+    }, 400);
+    return () => clearTimeout(t);
+  }, [roundData.targetLetter, speakCommand]);
 
   const initAudio = () => {
     if (!audioCtxRef.current) {
@@ -163,6 +182,16 @@ export default function SoundScavengerEngine({ childId, onBack }: SoundScavenger
       // Correct match!
       setSelectedIdx(idx);
       playSuccessChime();
+      
+      // Speak phonic / word success reward
+      if (typeof window !== "undefined" && window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(`Excellent! ${choice.name}`);
+        utterance.rate = 0.85;
+        utterance.pitch = 1.15;
+        window.speechSynthesis.speak(utterance);
+      }
+
       const timeSpent = getCurrentTime() - roundStartTime;
       
       setTimeout(() => {
@@ -179,7 +208,7 @@ export default function SoundScavengerEngine({ childId, onBack }: SoundScavenger
         // Advance to next round
         setTimeout(() => {
           startNewRound();
-        }, 2500);
+        }, 2200);
       }, 800);
     } else {
       // Incorrect match
@@ -188,16 +217,7 @@ export default function SoundScavengerEngine({ childId, onBack }: SoundScavenger
     }
   };
 
-  // Convert letter to phonic helper sound label
-  const getPhonicSound = (char: string) => {
-    const dict: Record<string, string> = {
-      A: "ah", B: "buh", C: "cuh", D: "duh", E: "eh", F: "fuh", G: "guh",
-      H: "huh", I: "ih", J: "juh", K: "kuh", L: "luh", M: "muh", N: "nuh",
-      O: "ah", P: "puh", Q: "quh", R: "ruh", S: "ss", T: "tuh", U: "uh",
-      V: "vuh", W: "wuh", X: "ks", Y: "yuh", Z: "zuh"
-    };
-    return dict[char] || char.toLowerCase();
-  };
+
 
   return (
     <div className="w-full max-w-3xl mx-auto p-5 sm:p-8 clay-card border border-white/20 flex flex-col items-center justify-between min-h-[72vh] md:min-h-[78vh] relative overflow-hidden">
@@ -215,18 +235,32 @@ export default function SoundScavengerEngine({ childId, onBack }: SoundScavenger
         </span>
       </div>
 
-      {/* Prompter Banner */}
-      <div className="w-full max-w-lg bg-white border border-white/20 rounded-3xl p-3 sm:p-5 mb-4 sm:mb-6 text-center shadow-[4px_4px_12px_rgba(0,0,0,0.04),_inset_2px_2px_4px_rgba(255,255,255,0.85)] relative z-10">
-        <p className="text-[10px] font-black text-[#ff85a1] uppercase tracking-widest mb-1">
-          Auditory Challenge
-        </p>
-        <h2 className="text-xl sm:text-2xl font-black text-[#4A5358] tracking-tight uppercase flex justify-center items-center gap-2">
-          <span>Find the target sound:</span>
-          <span className="inline-flex items-center justify-center px-4 py-1 bg-[#d2f4e6] border border-white/20 rounded-2xl text-[#0b4a45] text-2xl font-black relative group cursor-pointer active:scale-95 transition-all shadow-[2px_2px_5px_rgba(0,0,0,0.04),_inset_2px_2px_4px_rgba(255,255,255,0.8)]" onClick={() => playWoodBlockSound(300 + (roundData.targetLetter.charCodeAt(0) - 65) * 8, 0.2)}>
-            /{getPhonicSound(roundData.targetLetter)}/
-            <Volume2 className="w-4 h-4 ml-1.5 opacity-60 group-hover:opacity-100 transition-opacity" />
-          </span>
-        </h2>
+      {/* Mascot Command (Hovering Mascot + Speech Bubble next to it, no surrounding card box) */}
+      <div 
+        onClick={speakCommand}
+        className="w-full max-w-xl flex items-center gap-4 mb-4 sm:mb-6 z-10 cursor-pointer select-none active:scale-[0.99] transition-all"
+      >
+        {/* Hovering Mascot SVG */}
+        <div className="w-16 h-16 sm:w-24 sm:h-24 shrink-0 drop-shadow-md">
+          <MascotSVG className="w-full h-full" />
+        </div>
+        
+        {/* Speech Bubble */}
+        <div className="flex-1 relative bg-white border border-[#4a5358]/10 p-3.5 sm:p-4 rounded-[2rem] shadow-[4px_4px_12px_rgba(0,0,0,0.03),_inset_2px_2px_4px_rgba(255,255,255,0.9)] text-left">
+          {/* Bubble Tail */}
+          <div className="absolute top-1/2 -left-3 -translate-y-1/2 w-0 h-0 border-t-[8px] border-t-transparent border-r-[12px] border-r-white border-b-[8px] border-b-transparent filter drop-shadow-[-1px_0_0_rgba(74,83,88,0.06)]"></div>
+          
+          <p className="text-[10px] font-black text-primary uppercase tracking-widest mb-0.5">
+            Guide says:
+          </p>
+          <h2 className="text-sm sm:text-base font-black text-[#4A5358] tracking-tight uppercase flex items-center gap-1.5 flex-wrap">
+            <span>Find the</span>
+            <span className="inline-flex items-center justify-center px-3 py-0.5 bg-[#d2f4e6] border border-white/20 rounded-xl text-[#0b4a45] font-black shadow-sm">
+              {objectDictionary[roundData.targetLetter]?.name}
+              <Volume2 className="w-3.5 h-3.5 ml-1" />
+            </span>
+          </h2>
+        </div>
       </div>
 
       {/* Grid of Choices */}

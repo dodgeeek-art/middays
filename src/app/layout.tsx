@@ -10,6 +10,10 @@ const quicksand = Quicksand({
 
 export const viewport: Viewport = {
   themeColor: "#FF6B6B",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
 };
 
 export const metadata: Metadata = {
