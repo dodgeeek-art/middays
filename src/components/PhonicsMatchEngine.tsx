@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef } from "react";
-import { ArrowLeft, HelpCircle } from "lucide-react";
+import { ArrowLeft, HelpCircle, Trophy } from "@/components/Icons";
 import { motion } from "framer-motion";
 import confetti from "canvas-confetti";
 import { objectDictionary } from "@/lib/svgDictionary";
@@ -206,7 +206,7 @@ export default function PhonicsMatchEngine({ childId, onBack }: PhonicsMatchEngi
                 particleCount: 60,
                 spread: 50,
                 origin: { y: 0.6 },
-                colors: ["#8E9F85", "#C8D3C4", "#FAF5EB", "#E5B6A8"]
+                colors: ["#59a26a", "#eaddfc", "#ffafa6", "#a2ea63"]
               });
               
               const timeSpent = getCurrentTime() - roundStartTime;
@@ -231,27 +231,27 @@ export default function PhonicsMatchEngine({ childId, onBack }: PhonicsMatchEngi
   };
 
   return (
-    <div className="w-full max-w-3xl mx-auto bg-[#FAF9F5] border-2 border-[#3A413A] rounded-[2.5rem] p-5 sm:p-8 shadow-[4px_4px_0px_0px_rgba(58,65,58,1)] flex flex-col items-center justify-between min-h-[72vh] md:min-h-[78vh] relative overflow-hidden">
+    <div className="w-full max-w-3xl mx-auto p-5 sm:p-8 clay-card border border-white/20 flex flex-col items-center justify-between min-h-[72vh] md:min-h-[78vh] relative overflow-hidden">
       {/* Top Bar */}
       <div className="w-full flex justify-between items-center mb-3 sm:mb-4 z-10">
         <button
           onClick={onBack}
-          className="flex items-center gap-2 font-black text-xs uppercase px-4 py-2 bg-white border-2 border-[#3A413A] rounded-full shadow-[2px_2px_0px_0px_rgba(58,65,58,1)] active:translate-y-0.5 active:shadow-[1px_1px_0px_0px_rgba(58,65,58,1)] transition-all cursor-pointer"
+          className="flex items-center gap-2 font-black text-xs uppercase px-4 py-2 bg-white border border-white/20 rounded-full clay-btn hover:scale-102 active:scale-96 transition-all cursor-pointer shadow-[3px_3px_6px_rgba(0,0,0,0.04)]"
         >
-          <ArrowLeft className="w-4 h-4" />
+          <ArrowLeft className="w-4 h-4 text-[#4A5358]" />
           <span>Back</span>
         </button>
-        <span className="text-[10px] font-black uppercase tracking-wider text-[#3A413A]/50 bg-[#E8E4D9]/40 px-3 py-1.5 rounded-full border border-[#3A413A]/10">
+        <span className="text-[10px] font-black uppercase tracking-wider text-[#3c1e70]/80 bg-[#e9d5ff]/60 px-3 py-1.5 rounded-full border border-white/20">
           Phonics Match
         </span>
       </div>
 
       {/* Prompter Banner */}
-      <div className="w-full max-w-lg bg-white border-2 border-[#3A413A] rounded-3xl p-3 sm:p-4 mb-4 sm:mb-6 text-center shadow-[3px_3px_0px_0px_rgba(58,65,58,1)] relative z-10">
-        <p className="text-[10px] font-black text-[#8E9F85] uppercase tracking-widest mb-1">
+      <div className="w-full max-w-lg bg-white border border-white/20 rounded-3xl p-3 sm:p-4 mb-4 sm:mb-6 text-center shadow-[4px_4px_12px_rgba(0,0,0,0.04),_inset_2px_2px_4px_rgba(255,255,255,0.85)] relative z-10">
+        <p className="text-[10px] font-black text-[#4ecdc4] uppercase tracking-widest mb-1">
           Working Memory
         </p>
-        <h2 className="text-xl sm:text-2xl font-black text-[#3A413A] tracking-tight uppercase">
+        <h2 className="text-xl sm:text-2xl font-black text-[#4A5358] tracking-tight uppercase">
           Match the letters to their sounds!
         </h2>
       </div>
@@ -277,20 +277,20 @@ export default function PhonicsMatchEngine({ childId, onBack }: PhonicsMatchEngi
                 transition={{ type: "spring", stiffness: 150, damping: 15 }}
               >
                 {/* CARD BACK */}
-                <div className="absolute inset-0 backface-hidden bg-white border-2 border-[#3A413A] rounded-[2rem] flex flex-col items-center justify-center shadow-[3px_3px_0px_0px_rgba(58,65,58,1)]">
-                  <div className="w-10 h-10 rounded-2xl bg-[#C8D3C4]/30 border border-[#3A413A]/20 flex items-center justify-center text-[#3A413A]/50">
-                    <HelpCircle className="w-6 h-6" />
+                <div className="absolute inset-0 backface-hidden bg-white border border-white/20 rounded-[2rem] flex flex-col items-center justify-center shadow-[6px_6px_12px_rgba(0,0,0,0.05),_inset_-4px_-4px_8px_rgba(0,0,0,0.05),_inset_4px_4px_8px_rgba(255,255,255,0.95)]">
+                  <div className="w-12 h-12 rounded-2xl bg-primary/20 border border-white/20 flex items-center justify-center text-primary/70 shadow-[inset_1px_1px_3px_rgba(255,255,255,0.9),_inset_-1px_-1px_3px_rgba(0,0,0,0.03)]">
+                    <HelpCircle className="w-7 h-7" />
                   </div>
                 </div>
 
                 {/* CARD FRONT */}
                 <div 
-                  className={`absolute inset-0 backface-hidden rotateY-180 border-2 border-[#3A413A] rounded-[2rem] flex flex-col items-center justify-center shadow-[3px_3px_0px_0px_rgba(58,65,58,1)] transition-colors duration-300 ${
-                    isMatched ? "bg-[#C8D3C4]" : "bg-white"
+                  className={`absolute inset-0 backface-hidden rotateY-180 border border-white/20 rounded-[2rem] flex flex-col items-center justify-center shadow-[6px_6px_12px_rgba(0,0,0,0.05),_inset_-4px_-4px_8px_rgba(0,0,0,0.05),_inset_4px_4px_8px_rgba(255,255,255,0.95)] transition-colors duration-300 ${
+                    isMatched ? "bg-[#d2f4e6]" : "bg-white"
                   }`}
                 >
                   {card.type === "letter" ? (
-                    <span className="text-5xl font-black text-[#3A413A] select-none">
+                    <span className="text-5xl font-black text-[#4A5358] select-none">
                       {card.letter}
                     </span>
                   ) : (
@@ -299,7 +299,7 @@ export default function PhonicsMatchEngine({ childId, onBack }: PhonicsMatchEngi
                         {React.createElement(obj.icon, { size: "100%" })}
                       </div>
                       {isMatched && (
-                        <span className="text-[10px] font-black uppercase text-[#3A413A] mt-1 select-none">
+                        <span className="text-[10px] font-black uppercase text-[#4A5358] mt-1 select-none">
                           {obj.name}
                         </span>
                       )}
@@ -312,6 +312,27 @@ export default function PhonicsMatchEngine({ childId, onBack }: PhonicsMatchEngi
           );
         })}
       </div>
+
+      {gameState === "success" && (
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="absolute inset-0 bg-[#f3f8fc]/90 backdrop-blur-sm z-20 flex flex-col items-center justify-center p-6"
+        >
+          <motion.div 
+            initial={{ y: 30, scale: 0.8 }}
+            animate={{ y: 0, scale: 1 }}
+            transition={{ type: "spring", stiffness: 200, damping: 15 }}
+            className="clay-card border border-white/20 p-8 bg-white max-w-sm w-full text-center flex flex-col items-center gap-4"
+          >
+            <div className="w-20 h-20 rounded-full bg-secondary-container flex items-center justify-center text-secondary shadow-[inset_2px_2px_4px_rgba(255,255,255,0.8),_inset_-2px_-2px_4px_rgba(0,0,0,0.05)] border border-white/10 animate-bounce">
+              <Trophy size={40} className="fill-current text-[#4ecdc4]" />
+            </div>
+            <h3 className="text-2xl font-black text-[#4A5358] uppercase">Awesome Job!</h3>
+            <p className="text-sm font-bold text-[#4A5358]/70">You matched all the cards! Get ready for the next round...</p>
+          </motion.div>
+        </motion.div>
+      )}
 
       {/* Custom styles for Backface Hidden and 3D Rotation */}
       <style>{`

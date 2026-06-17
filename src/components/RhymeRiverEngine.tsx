@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef } from "react";
-import { ArrowLeft, Volume2, Check } from "lucide-react";
+import { ArrowLeft, Volume2, Check } from "@/components/Icons";
 import { motion } from "framer-motion";
 import confetti from "canvas-confetti";
 import { objectDictionary } from "@/lib/svgDictionary";
@@ -162,7 +162,7 @@ export default function RhymeRiverEngine({ childId, onBack }: RhymeRiverEnginePr
           particleCount: 40,
           spread: 40,
           origin: { y: 0.75 },
-          colors: ["#8E9F85", "#C8D3C4", "#FAF5EB"]
+          colors: ["#59a26a", "#eaddfc", "#ffafa6"]
         });
 
         saveProgress();
@@ -207,29 +207,29 @@ export default function RhymeRiverEngine({ childId, onBack }: RhymeRiverEnginePr
   };
 
   return (
-    <div className="w-full max-w-3xl mx-auto bg-[#FAF9F5] border-2 border-[#3A413A] rounded-[2.5rem] p-5 sm:p-8 shadow-[4px_4px_0px_0px_rgba(58,65,58,1)] flex flex-col items-center justify-between min-h-[72vh] md:min-h-[78vh] relative overflow-hidden">
+    <div className="w-full max-w-3xl mx-auto p-5 sm:p-8 clay-card border border-white/20 flex flex-col items-center justify-between min-h-[72vh] md:min-h-[78vh] relative overflow-hidden">
       {/* Top Bar */}
       <div className="w-full flex justify-between items-center mb-3 sm:mb-4 z-10">
         <button
           onClick={onBack}
-          className="flex items-center gap-2 font-black text-xs uppercase px-4 py-2 bg-white border-2 border-[#3A413A] rounded-full shadow-[2px_2px_0px_0px_rgba(58,65,58,1)] active:translate-y-0.5 active:shadow-[1px_1px_0px_0px_rgba(58,65,58,1)] transition-all cursor-pointer"
+          className="flex items-center gap-2 font-black text-xs uppercase px-4 py-2 bg-white border border-white/20 rounded-full clay-btn hover:scale-102 active:scale-96 transition-all cursor-pointer shadow-[3px_3px_6px_rgba(0,0,0,0.04)]"
         >
-          <ArrowLeft className="w-4 h-4" />
+          <ArrowLeft className="w-4 h-4 text-[#4A5358]" />
           <span>Back</span>
         </button>
-        <span className="text-[10px] font-black uppercase tracking-wider text-[#3A413A]/50 bg-[#E8E4D9]/40 px-3 py-1.5 rounded-full border border-[#3A413A]/10">
+        <span className="text-[10px] font-black uppercase tracking-wider text-[#590d22]/80 bg-[#ffcad4]/50 px-3 py-1.5 rounded-full border border-white/20">
           Rhyme River
         </span>
       </div>
 
       {/* Prompter Banner */}
-      <div className="w-full max-w-lg bg-white border-2 border-[#3A413A] rounded-3xl p-3.5 sm:p-5 mb-4 sm:mb-6 text-center shadow-[3px_3px_0px_0px_rgba(58,65,58,1)] relative z-10">
-        <p className="text-[10px] font-black text-[#E5B6A8] uppercase tracking-widest mb-1">
+      <div className="w-full max-w-lg bg-white border border-white/20 rounded-3xl p-3.5 sm:p-5 mb-4 sm:mb-6 text-center shadow-[4px_4px_12px_rgba(0,0,0,0.04),_inset_2px_2px_4px_rgba(255,255,255,0.85)] relative z-10">
+        <p className="text-[10px] font-black text-[#ff85a1] uppercase tracking-widest mb-1">
           Nursery Rhymes
         </p>
-        <h2 className="text-xl sm:text-2xl font-black text-[#3A413A] tracking-tight uppercase flex justify-center items-center gap-2 flex-wrap">
+        <h2 className="text-xl sm:text-2xl font-black text-[#4A5358] tracking-tight uppercase flex justify-center items-center gap-2 flex-wrap">
           <span>Find the stone that rhymes with:</span>
-          <span className="inline-flex items-center justify-center px-4 py-1 bg-[#E5B6A8] border-2 border-[#3A413A] rounded-xl text-[#3A413A] text-2xl font-black relative group cursor-pointer active:scale-95 transition-all" onClick={() => playHopSound()}>
+          <span className="inline-flex items-center justify-center px-4 py-1 bg-[#ffcad4] border border-white/20 rounded-2xl text-[#590d22] text-2xl font-black relative group cursor-pointer active:scale-95 transition-all shadow-[2px_2px_5px_rgba(0,0,0,0.04),_inset_2px_2px_4px_rgba(255,255,255,0.8)]" onClick={() => playHopSound()}>
             {currentRound.promptWord}
             <Volume2 className="w-4.5 h-4.5 ml-1.5 opacity-60 group-hover:opacity-100 transition-opacity" />
           </span>
@@ -237,17 +237,17 @@ export default function RhymeRiverEngine({ childId, onBack }: RhymeRiverEnginePr
       </div>
 
       {/* The River Crossing Scene */}
-      <div className="w-full h-56 sm:h-72 bg-[#C8D3C4]/20 border-2 border-[#3A413A] rounded-[2rem] relative mb-4 sm:mb-6 shadow-inner overflow-hidden flex flex-col justify-between">
+      <div className="w-full h-56 sm:h-72 bg-[#bfdbfe]/30 border border-white/20 rounded-[2.5rem] relative mb-4 sm:mb-6 shadow-[inset_0_4px_12px_rgba(0,0,0,0.05)] overflow-hidden flex flex-col justify-between">
         
         {/* River Water Texture Background */}
-        <div className="absolute inset-0 bg-[#9BB2B1]/10 flex flex-col justify-around py-4 opacity-40">
+        <div className="absolute inset-0 bg-[#bfdbfe]/40 flex flex-col justify-around py-4 opacity-40">
           <div className="h-0.5 w-[200%] bg-white/30 animate-[slide-horizontal_16s_linear_infinite]" style={{ animationName: "river-flow" }}></div>
           <div className="h-0.5 w-[200%] bg-white/30 animate-[slide-horizontal_20s_linear_infinite]" style={{ animationName: "river-flow-reverse" }}></div>
         </div>
 
         {/* River Banks */}
-        <div className="absolute left-0 top-0 bottom-0 w-[8%] bg-[#E8E4D9] border-r border-[#3A413A] z-0"></div>
-        <div className="absolute right-0 top-0 bottom-0 w-[8%] bg-[#E8E4D9] border-l border-[#3A413A] z-0"></div>
+        <div className="absolute left-0 top-0 bottom-0 w-[8%] bg-[#EAE5DB] border-r border-white/20 z-0"></div>
+        <div className="absolute right-0 top-0 bottom-0 w-[8%] bg-[#EAE5DB] border-l border-white/20 z-0"></div>
 
         {/* Stepping Stones and Choices Grid */}
         <div className="w-full h-full flex justify-around items-center px-6 relative z-10">
@@ -265,12 +265,12 @@ export default function RhymeRiverEngine({ childId, onBack }: RhymeRiverEnginePr
                   whileTap={gameState === "playing" && !isWrong ? { scale: 0.95 } : {}}
                   onClick={() => handleStoneClick(letter, index)}
                   disabled={gameState !== "playing" || isWrong}
-                  className={`w-20 h-20 sm:w-32 sm:h-32 rounded-2xl sm:rounded-3xl border-2 border-[#3A413A] p-2 sm:p-3 flex flex-col items-center justify-center transition-all duration-300 relative ${
+                  className={`w-20 h-20 sm:w-32 sm:h-32 rounded-[1.75rem] border border-white/20 p-2 sm:p-3 flex flex-col items-center justify-center transition-all duration-300 relative ${
                     isWrong 
-                      ? "bg-white/10 opacity-30 cursor-default scale-95" 
+                      ? "bg-white/10 border-white/10 opacity-30 cursor-default scale-95" 
                       : isSelected 
-                        ? "bg-[#C8D3C4] shadow-[0_4px_12px_rgba(142,159,133,0.3)]"
-                        : "bg-white shadow-[3px_3px_0px_0px_rgba(58,65,58,1)]"
+                        ? "bg-[#d2f4e6] shadow-[4px_4px_12px_rgba(78,205,196,0.25),_inset_3px_3px_6px_rgba(255,255,255,0.9),_inset_-3px_-3px_6px_rgba(0,0,0,0.03)]"
+                        : "bg-white shadow-[4px_4px_10px_rgba(0,0,0,0.04),_inset_3px_3px_6px_rgba(255,255,255,0.9),_inset_-3px_-3px_6px_rgba(0,0,0,0.04)]"
                   }`}
                   animate={isWrong ? { rotate: [0, -8, 8, -8, 8, 0] } : {}}
                   transition={{ duration: 0.4 }}
@@ -280,14 +280,14 @@ export default function RhymeRiverEngine({ childId, onBack }: RhymeRiverEnginePr
                   </div>
 
                   {isSelected && (
-                    <div className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-white border-2 border-[#3A413A] flex items-center justify-center text-[#8E9F85]">
+                    <div className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-white border border-white/20 flex items-center justify-center text-[#4ecdc4] shadow-sm">
                       <Check className="w-4 h-4" strokeWidth={3} />
                     </div>
                   )}
                 </motion.button>
 
                 {/* The Stepping Stone base */}
-                <div className="w-14 h-4 sm:w-20 sm:h-5 bg-[#FAF5EB] border-2 border-[#3A413A] rounded-full shadow-[0_3px_0px_0px_rgba(58,65,58,0.7)] z-0"></div>
+                <div className="w-14 h-4 sm:w-20 sm:h-5 bg-[#bfdbfe] border border-white/20 rounded-full shadow-[0_4px_8px_rgba(0,0,0,0.05),_inset_1px_1px_2px_rgba(255,255,255,0.8)] z-0"></div>
               </div>
             );
           })}

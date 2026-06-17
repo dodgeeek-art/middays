@@ -1,10 +1,9 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
-import { ArrowLeft, Play, ArrowRight, Volume2 } from "lucide-react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
+import { ArrowLeft, Play, ArrowRight, Volume2 } from "@/components/Icons";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
-import { alphabetData } from "@/lib/alphabetData";
 import { objectDictionary } from "@/lib/svgDictionary";
 
 interface Bubble {
@@ -35,6 +34,56 @@ interface BubblePopEngineProps {
   onBack: () => void;
 }
 
+const getCurrentTime = (): number => Date.now();
+
+const getRandomTargetLetter = (): string => {
+  const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  return letters[Math.floor(Math.random() * letters.length)];
+};
+
+interface ParticleSpawnConfig {
+  angle: number;
+  speed: number;
+  size: number;
+}
+
+const getParticleSpawnConfig = (i: number, count: number): ParticleSpawnConfig => {
+  const angle = (i / count) * Math.PI * 2 + (Math.random() - 0.5) * 0.5;
+  const speed = 2 + Math.random() * 4;
+  const size = 8 + Math.random() * 8;
+  return { angle, speed, size };
+};
+
+interface BubbleSpawnConfig {
+  letter: string;
+  size: number;
+  speed: number;
+  x: number;
+  color: string;
+}
+
+const getBubbleSpawnConfig = (targetLetter: string, forceTarget: boolean): BubbleSpawnConfig => {
+  const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const isTarget = forceTarget || Math.random() < 0.08;
+  const distractorLetters = letters.replace(targetLetter, "");
+  const letter = isTarget ? targetLetter : distractorLetters[Math.floor(Math.random() * distractorLetters.length)];
+  
+  const size = 75 + Math.random() * 40; // 75px to 115px
+  const speed = 1.2 + Math.random() * 1.8; // speed
+  const x = 10 + Math.random() * 80; // offset percentage
+  
+  const bubbleColors = [
+    "rgba(78, 205, 196, 0.25)", // soft teal
+    "rgba(255, 107, 107, 0.25)", // soft red
+    "rgba(255, 217, 61, 0.25)", // soft yellow
+    "rgba(155, 229, 100, 0.25)", // lime green
+    "rgba(228, 216, 248, 0.25)" // soft lavender
+  ];
+  const color = bubbleColors[Math.floor(Math.random() * bubbleColors.length)];
+
+  return { letter, size, speed, x, color };
+};
+
 export default function BubblePopEngine({ childId, onBack }: BubblePopEngineProps) {
   const [gameState, setGameState] = useState<"start" | "playing" | "victory">("start");
   const [targetLetter, setTargetLetter] = useState("A");
@@ -52,7 +101,7 @@ export default function BubblePopEngine({ childId, onBack }: BubblePopEngineProp
   // Initialize Web Audio API
   const initAudio = () => {
     if (!audioCtxRef.current) {
-      audioCtxRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+      audioCtxRef.current = new (window.AudioContext || (window as Window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext)();
     }
     if (audioCtxRef.current.state === "suspended") {
       audioCtxRef.current.resume();
@@ -102,7 +151,7 @@ export default function BubblePopEngine({ childId, onBack }: BubblePopEngineProp
     osc.stop(ctx.currentTime + 0.25);
   };
 
-  const playLetterSound = () => {
+  const playLetterSound = useCallback(() => {
     if (!audioCtxRef.current) return;
     const ctx = audioCtxRef.current;
     
@@ -126,7 +175,7 @@ export default function BubblePopEngine({ childId, onBack }: BubblePopEngineProp
     playTone(baseFreq, 0, 0.15);
     playTone(baseFreq * 1.25, 0.1, 0.15);
     playTone(baseFreq * 1.5, 0.2, 0.25);
-  };
+  }, [targetLetter]);
 
   const playSuccessSound = () => {
     if (!audioCtxRef.current) return;
@@ -154,14 +203,12 @@ export default function BubblePopEngine({ childId, onBack }: BubblePopEngineProp
   // Start the Game
   const startNewGame = () => {
     initAudio();
-    const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    const randomLetter = letters[Math.floor(Math.random() * letters.length)];
-    setTargetLetter(randomLetter);
+    setTargetLetter(getRandomTargetLetter());
     setBubbles([]);
     setParticles([]);
     setPoppedCount(0);
     setGameState("playing");
-    setStartTime(Date.now());
+    setStartTime(getCurrentTime());
   };
 
   // Trigger Particle Burst
@@ -170,8 +217,7 @@ export default function BubblePopEngine({ childId, onBack }: BubblePopEngineProp
     const count = 10;
     
     for (let i = 0; i < count; i++) {
-      const angle = (i / count) * Math.PI * 2 + (Math.random() - 0.5) * 0.5;
-      const speed = 2 + Math.random() * 4;
+      const { angle, speed, size } = getParticleSpawnConfig(i, count);
       newParticles.push({
         id: particleIdCounter.current++,
         x,
@@ -179,7 +225,7 @@ export default function BubblePopEngine({ childId, onBack }: BubblePopEngineProp
         vx: Math.cos(angle) * speed,
         vy: Math.sin(angle) * speed + 1, // slight float up
         color,
-        size: 8 + Math.random() * 8,
+        size,
         alpha: 1.0
       });
     }
@@ -187,25 +233,8 @@ export default function BubblePopEngine({ childId, onBack }: BubblePopEngineProp
   };
 
   // Spawn Bubble
-  const spawnBubble = (forceTarget = false) => {
-    const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    // 8% chance to spawn target letter, otherwise random distractor (excluding targetLetter)
-    const isTarget = forceTarget || Math.random() < 0.08;
-    const distractorLetters = letters.replace(targetLetter, "");
-    const letter = isTarget ? targetLetter : distractorLetters[Math.floor(Math.random() * distractorLetters.length)];
-    
-    const size = 75 + Math.random() * 40; // 75px to 115px
-    const speed = 1.2 + Math.random() * 1.8; // speed
-    const x = 10 + Math.random() * 80; // offset percentage
-    
-    const bubbleColors = [
-      "rgba(78, 205, 196, 0.25)", // soft teal
-      "rgba(255, 107, 107, 0.25)", // soft red
-      "rgba(255, 217, 61, 0.25)", // soft yellow
-      "rgba(155, 229, 100, 0.25)", // lime green
-      "rgba(228, 216, 248, 0.25)" // soft lavender
-    ];
-    const color = bubbleColors[Math.floor(Math.random() * bubbleColors.length)];
+  const spawnBubble = useCallback((forceTarget = false) => {
+    const { letter, size, speed, x, color } = getBubbleSpawnConfig(targetLetter, forceTarget);
 
     setBubbles(prev => [
       ...prev,
@@ -221,7 +250,7 @@ export default function BubblePopEngine({ childId, onBack }: BubblePopEngineProp
         shakeOffset: 0
       }
     ]);
-  };
+  }, [targetLetter]);
 
   // Tap Handler
   const handleBubbleTap = (bubbleId: number) => {
@@ -272,10 +301,10 @@ export default function BubblePopEngine({ childId, onBack }: BubblePopEngineProp
       particleCount: 150,
       spread: 90,
       origin: { y: 0.6 },
-      colors: ["#9be564", "#e4d8f8", "#ffc3c0", "#FFFFFF"]
+      colors: ["#a2ea63", "#eaddfc", "#ffc4c0", "#FFFFFF"]
     });
 
-    const elapsed = Date.now() - startTime;
+    const elapsed = getCurrentTime() - startTime;
 
     if (childId) {
       try {
@@ -335,7 +364,7 @@ export default function BubblePopEngine({ childId, onBack }: BubblePopEngineProp
           
           if (b.shaking) {
             // Shake back and forth between -8px and 8px
-            shakeOffset = Math.sin(Date.now() / 20) * 8;
+            shakeOffset = Math.sin(getCurrentTime() / 20) * 8;
           } else {
             shakeOffset = 0;
           }
@@ -384,16 +413,17 @@ export default function BubblePopEngine({ childId, onBack }: BubblePopEngineProp
         cancelAnimationFrame(animationFrameRef.current);
       }
     };
-  }, [gameState, bubbles.length]);
+  }, [gameState, bubbles.length, spawnBubble]);
 
   // Handle initial sound presentation
+  const isPlaying = gameState === "playing";
   useEffect(() => {
-    if (gameState === "playing") {
+    if (isPlaying) {
       // Brief delay before playing target letter audio beep
       const t = setTimeout(playLetterSound, 500);
       return () => clearTimeout(t);
     }
-  }, [targetLetter, gameState]);
+  }, [isPlaying, playLetterSound]);
 
   // Object associated with target letter
   const targetObject = objectDictionary[targetLetter];
@@ -404,16 +434,16 @@ export default function BubblePopEngine({ childId, onBack }: BubblePopEngineProp
       <div className="flex justify-between items-center w-full mb-3 sm:mb-4 z-10 px-1">
         <button 
           onClick={onBack} 
-          className="bg-white squishy-press rounded-full w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center toddler-target border-2 border-slate-dark"
+          className="bg-white clay-btn rounded-full w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center toddler-target border border-white/20 shadow-[4px_4px_8px_rgba(0,0,0,0.05)]"
         >
-          <ArrowLeft className="w-6 h-6 sm:w-7 sm:h-7" strokeWidth={3} />
+          <ArrowLeft className="w-6 h-6 sm:w-7 sm:h-7 text-[#4A5358]" strokeWidth={3} />
         </button>
         
         {/* Centered Speech/Find Target Sticker */}
         {gameState === "playing" ? (
-          <div className="flex items-center gap-1.5 sm:gap-3 bg-white border-2 border-slate-dark rounded-full px-3 py-1.5 sm:px-5 sm:py-2.5 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-            <span className="text-xs sm:text-base font-black text-slate-dark uppercase tracking-wide">Find:</span>
-            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-[var(--light-mint)] border-2 border-slate-dark flex items-center justify-center font-black text-lg sm:text-xl text-slate-dark shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+          <div className="flex items-center gap-1.5 sm:gap-3 bg-white border border-white/25 rounded-2xl px-3 py-1.5 sm:px-5 sm:py-2.5 shadow-[4px_4px_10px_rgba(0,0,0,0.04),_inset_2px_2px_4px_rgba(255,255,255,0.85)] rotate-[-1.5deg]">
+            <span className="text-xs sm:text-base font-black text-[#4A5358] uppercase tracking-wide">Find:</span>
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-[var(--light-mint)] border border-white/20 flex items-center justify-center font-black text-lg sm:text-xl text-[#0b4a45] shadow-[2px_2px_5px_rgba(0,0,0,0.04),_inset_2px_2px_4px_rgba(255,255,255,0.8)]">
               {targetLetter}
             </div>
             {/* Progress dots inside header */}
@@ -421,24 +451,24 @@ export default function BubblePopEngine({ childId, onBack }: BubblePopEngineProp
               {Array.from({ length: 5 }).map((_, idx) => (
                 <div 
                   key={idx}
-                  className={`w-2.5 h-2.5 sm:w-3.5 sm:h-3.5 rounded-full border border-slate-dark transition-all duration-300 ${
+                  className={`w-2.5 h-2.5 sm:w-3.5 sm:h-3.5 rounded-full border border-white/25 transition-all duration-300 ${
                     idx < poppedCount 
-                      ? "bg-[#9be564] scale-110 shadow-sm" 
-                      : "bg-gray-100"
+                      ? "bg-[#4ecdc4] scale-110 shadow-sm" 
+                      : "bg-gray-100 shadow-inner"
                   }`}
                 />
               ))}
             </div>
           </div>
         ) : (
-          <div className="flex items-center gap-2.5 bg-white border-2 border-slate-dark rounded-full px-6 py-2.5 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] opacity-0 pointer-events-none">
+          <div className="flex items-center gap-2.5 bg-white border border-white/25 rounded-2xl px-6 py-2.5 shadow-[4px_4px_10px_rgba(0,0,0,0.04)] opacity-0 pointer-events-none">
             <span className="w-10 h-10" />
           </div>
         )}
 
         <button 
           onClick={playLetterSound}
-          className={`bg-white squishy-press rounded-full w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center toddler-target border-2 border-slate-dark ${
+          className={`bg-white clay-btn rounded-full w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center toddler-target border border-white/20 shadow-[4px_4px_8px_rgba(0,0,0,0.05)] ${
             gameState !== "playing" ? "opacity-50 pointer-events-none" : ""
           }`}
         >
@@ -456,17 +486,17 @@ export default function BubblePopEngine({ childId, onBack }: BubblePopEngineProp
             className="w-full flex flex-col items-center gap-6"
           >
             {/* Giant bouncy sticker */}
-            <div className="w-full max-w-sm glass-panel card-wavy-1 p-6 sm:p-8 flex flex-col items-center text-center mt-3 sm:mt-6 bg-[#e1f5ec]/90 backdrop-blur-md">
-              <h2 className="text-3xl sm:text-4xl font-black text-slate-dark uppercase tracking-wide mb-2">Bubble Pop!</h2>
-              <p className="text-base sm:text-lg font-bold text-slate-dark/70 mb-4 sm:mb-6">Pop the floating letters to find the match!</p>
+            <div className="w-full max-w-sm clay-card p-6 sm:p-8 flex flex-col items-center text-center mt-3 sm:mt-6 bg-[#d2f4e6]/90 backdrop-blur-md border border-white/20">
+              <h2 className="text-3xl sm:text-4xl font-black text-[#0b4a45] uppercase tracking-wide mb-2">Bubble Pop!</h2>
+              <p className="text-base sm:text-lg font-bold text-[#0b4a45]/70 mb-4 sm:mb-6">Pop the floating letters to find the match!</p>
               
-              <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full bg-white border-2 border-slate-dark flex items-center justify-center shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] mb-6 sm:mb-8 animate-bounce">
+              <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full bg-white border border-white/20 flex items-center justify-center shadow-[4px_4px_10px_rgba(0,0,0,0.04),_inset_3px_3px_6px_rgba(255,255,255,0.85),_inset_-3px_-3px_6px_rgba(0,0,0,0.04)] mb-6 sm:mb-8 animate-bounce">
                 <span className="text-4xl sm:text-6xl font-black text-slate-dark">🎈</span>
               </div>
               
               <button
                 onClick={startNewGame}
-                className="w-full py-4 sm:py-5 text-xl sm:text-2xl font-black uppercase tracking-wider bg-[#9be564] text-slate-dark rounded-full border-2 border-slate-dark shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] transition-all flex items-center justify-center gap-3"
+                className="w-full py-4 sm:py-5 text-xl sm:text-2xl font-black uppercase tracking-wider bg-[#a2ea63] text-[#0b4a45] rounded-full clay-btn border border-white/10 hover:scale-102 active:scale-96 transition-all flex items-center justify-center gap-3"
               >
                 <Play className="w-6 h-6 sm:w-7 sm:h-7" fill="currentColor" />
                 <span>Play</span>
@@ -486,14 +516,14 @@ export default function BubblePopEngine({ childId, onBack }: BubblePopEngineProp
             {/* Bubble Canvas/Floating Area */}
             <div 
               ref={bubbleContainerRef}
-              className="w-full h-[40vh] sm:h-[48vh] md:h-[52vh] relative border-2 border-dashed border-slate-dark/30 rounded-[2rem] bg-gradient-to-b from-[#f0f9ff]/50 via-white/20 to-[#f8faf7] overflow-hidden shadow-[inset_0_4px_16px_rgba(0,0,0,0.06)] touch-none [--bubble-scale:0.65] sm:[--bubble-scale:1]"
+              className="w-full h-[40vh] sm:h-[48vh] md:h-[52vh] relative border border-dashed border-[#4a5358]/20 rounded-[2.5rem] bg-gradient-to-b from-[#f0f9ff]/50 via-white/20 to-[#faf9f5] overflow-hidden shadow-[inset_0_4px_16px_rgba(0,0,0,0.06)] touch-none [--bubble-scale:0.65] sm:[--bubble-scale:1]"
             >
                {/* Render floating bubbles */}
               {bubbles.map(bubble => (
                 <button
                   key={bubble.id}
                   onClick={() => handleBubbleTap(bubble.id)}
-                  className="absolute rounded-full flex items-center justify-center select-none group focus:outline-none border-2 border-slate-dark/30 cursor-pointer"
+                  className="absolute rounded-full flex items-center justify-center select-none group focus:outline-none border border-white/20 cursor-pointer"
                   style={{
                     left: `${bubble.x}%`,
                     bottom: `${bubble.y}px`,
@@ -548,17 +578,17 @@ export default function BubblePopEngine({ childId, onBack }: BubblePopEngineProp
             className="w-full flex flex-col items-center gap-6"
           >
             {/* Victory Sticker */}
-            <div className="w-full max-w-sm glass-panel card-wavy-2 p-6 sm:p-8 flex flex-col items-center text-center mt-3 sm:mt-6 bg-[#e4d8f8]/90 backdrop-blur-md">
-              <h2 className="text-3xl sm:text-4xl font-black text-slate-dark uppercase tracking-wide mb-1">Awesome!</h2>
-              <p className="text-base sm:text-lg font-bold text-slate-dark/70 mb-4 sm:mb-6">You popped all the letter {targetLetter}&apos;s!</p>
+            <div className="w-full max-w-sm clay-card p-6 sm:p-8 flex flex-col items-center text-center mt-3 sm:mt-6 bg-[#eaddfc]/90 backdrop-blur-md border border-white/20">
+              <h2 className="text-3xl sm:text-4xl font-black text-[#3c1e70] uppercase tracking-wide mb-1">Awesome!</h2>
+              <p className="text-base sm:text-lg font-bold text-[#3c1e70]/70 mb-4 sm:mb-6">You popped all the letter {targetLetter}&apos;s!</p>
               
               {/* Display visual word association illustration */}
               {targetObject && (
                 <div className="flex flex-col items-center gap-3 mb-6 sm:mb-8">
-                  <div className="w-32 h-32 sm:w-40 sm:h-40 bg-white border-2 border-slate-dark rounded-[1.5rem] sm:rounded-[2rem] flex items-center justify-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-4">
+                  <div className="w-32 h-32 sm:w-40 sm:h-40 bg-white border border-white/25 rounded-[2rem] flex items-center justify-center shadow-[6px_6px_12px_rgba(0,0,0,0.04),_inset_2px_2px_4px_rgba(255,255,255,0.85)] p-4">
                     <targetObject.icon className="w-20 h-20 sm:w-32 sm:h-32" />
                   </div>
-                  <span className="text-xl sm:text-3xl font-black text-slate-dark uppercase tracking-wider">
+                  <span className="text-xl sm:text-3xl font-black text-[#3c1e70] uppercase tracking-wider">
                     {targetLetter} is for {targetObject.name}
                   </span>
                 </div>
@@ -566,7 +596,7 @@ export default function BubblePopEngine({ childId, onBack }: BubblePopEngineProp
               
               <button
                 onClick={startNewGame}
-                className="w-full py-4 sm:py-5 text-xl sm:text-2xl font-black uppercase tracking-wider bg-[#9be564] text-slate-dark rounded-full border-2 border-slate-dark shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] transition-all flex items-center justify-center gap-3"
+                className="w-full py-4 sm:py-5 text-xl sm:text-2xl font-black uppercase tracking-wider bg-[#a2ea63] text-[#0b4a45] rounded-full clay-btn border border-white/10 hover:scale-102 active:scale-96 transition-all flex items-center justify-center gap-3"
               >
                 <span>Play Again</span>
                 <ArrowRight className="w-6 h-6 sm:w-7 sm:h-7" strokeWidth={3} />

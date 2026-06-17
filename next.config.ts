@@ -7,8 +7,11 @@ const withPWA = withPWAInit({
   register: true,
 });
 
-const nextConfig: any = {
-  allowedDevOrigins: ['192.168.1.161'],
+const nextConfig: NextConfig = {
+  experimental: {
+    // @ts-expect-error: allowedDevOrigins is not typed in ExperimentalConfig but used by next-pwa/runtime
+    allowedDevOrigins: ['192.168.1.161'],
+  },
   turbopack: {},
 };
 

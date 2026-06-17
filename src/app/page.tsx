@@ -15,7 +15,7 @@ import RhymeRiverEngine from "@/components/RhymeRiverEngine";
 import PhonicsMatchEngine from "@/components/PhonicsMatchEngine";
 import SyllableDrummerEngine from "@/components/SyllableDrummerEngine";
 import { motion, AnimatePresence } from "framer-motion";
-import { Lock, Play, Trophy, Settings, ArrowLeft } from "lucide-react";
+import { Lock, Play, Trophy, Settings, ArrowLeft } from "@/components/Icons";
 
 interface ProgressRecord {
   id: string;
@@ -46,7 +46,7 @@ export default function Home() {
   const [pendingTab, setPendingTab] = useState<"trophies" | "dashboard" | null>(null);
   const [showGate, setShowGate] = useState(false);
   const [holdProgress, setHoldProgress] = useState(0);
-  const timerRef = useRef<any>(null);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const startGateTimer = () => {
     if (timerRef.current) clearInterval(timerRef.current);
@@ -58,7 +58,7 @@ export default function Home() {
       const progress = Math.min((elapsed / duration) * 100, 100);
       setHoldProgress(progress);
       if (progress >= 100) {
-        clearInterval(timerRef.current);
+        if (timerRef.current) clearInterval(timerRef.current);
         timerRef.current = null;
         if (pendingTab) setView(pendingTab);
         setShowGate(false);
@@ -132,15 +132,15 @@ export default function Home() {
     <div className="min-h-[100dvh] flex flex-col font-sans relative overflow-hidden bg-background text-foreground">
       {/* Animated Ambient Background Blobs from Stitch */}
       <div 
-        className="fixed -z-10 bg-[#abf773] w-96 h-96 rounded-full blur-[80px] opacity-40 -top-20 -left-20"
+        className="fixed -z-10 bg-[#a2ea63] w-96 h-96 rounded-full blur-[80px] opacity-45 -top-20 -left-20"
         style={{ animation: "float 20s infinite alternate ease-in-out" }}
       ></div>
       <div 
-        className="fixed -z-10 bg-[#ffdad8] w-[500px] h-[500px] rounded-full blur-[100px] opacity-45 -bottom-32 -right-32"
+        className="fixed -z-10 bg-[#ffc4c0] w-[500px] h-[500px] rounded-full blur-[100px] opacity-50 -bottom-32 -right-32"
         style={{ animation: "float 20s infinite alternate ease-in-out", animationDelay: "-5s" }}
       ></div>
       <div 
-        className="fixed -z-10 bg-[#e9ddfd] w-80 h-80 rounded-full blur-[70px] opacity-35 top-1/2 left-1/4"
+        className="fixed -z-10 bg-[#eaddfc] w-80 h-80 rounded-full blur-[70px] opacity-40 top-1/2 left-1/4"
         style={{ animation: "float 20s infinite alternate ease-in-out", animationDelay: "-10s" }}
       ></div>
 
@@ -152,7 +152,7 @@ export default function Home() {
             <>
               <button 
                 onClick={() => setView("lesson")}
-                className="flex items-center gap-2 text-on-surface-variant font-label-lg neo-brutal-press bg-white border-2 border-slate-dark rounded-full px-4 py-2 transition-all text-xs"
+                className="flex items-center gap-2 text-on-surface-variant font-label-lg clay-btn bg-white px-4 py-2 transition-all text-xs"
               >
                 <ArrowLeft className="w-4 h-4" strokeWidth={2.5} />
                 <span>Back to Play</span>
@@ -166,11 +166,11 @@ export default function Home() {
                 <h1 className="font-display-lg-mobile text-display-lg-mobile md:font-display-lg md:text-display-lg text-primary tracking-tight font-black uppercase leading-none">Midday</h1>
               </div>
               <div className="flex items-center gap-3">
-                <div className="bg-primary-container px-4 py-1.5 rounded-full flex items-center gap-2 border-2 border-slate-dark shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                <div className="bg-primary-container/80 px-4 py-1.5 rounded-full flex items-center gap-2 border border-white/30 shadow-[4px_4px_8px_rgba(0,0,0,0.04),_inset_2px_2px_4px_rgba(255,255,255,0.8),_inset_-2px_-2px_4px_rgba(0,0,0,0.05)]">
                   <span className="text-primary font-black">⭐</span>
                   <span className="font-label-lg text-on-primary-container text-xs sm:text-sm">{starsCount}</span>
                 </div>
-                <div className="w-10 h-10 rounded-full border-2 border-slate-dark overflow-hidden bg-white">
+                <div className="w-10 h-10 rounded-full overflow-hidden bg-white clay-card">
                   <img 
                     alt="Profile" 
                     className="w-full h-full object-cover" 
@@ -183,7 +183,7 @@ export default function Home() {
             /* General / Kid's Trophy Room Header */
             <>
               <div className="flex items-center gap-3 select-none">
-                <div className="w-11 h-11 rounded-2xl border-2 border-slate-dark overflow-hidden bg-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] p-0.5">
+                <div className="w-11 h-11 rounded-2xl overflow-hidden bg-white p-0.5 clay-card">
                   <img 
                     alt="Midday Logo" 
                     className="w-full h-full object-contain" 
@@ -192,10 +192,10 @@ export default function Home() {
                 </div>
                 <div className="flex flex-col items-start leading-none">
                   <span className="font-display-lg text-display-lg-mobile text-primary tracking-tight font-black uppercase">Midday</span>
-                  <span className="text-[9px] font-black uppercase tracking-wider text-slate-dark/50">Playbook</span>
+                  <span className="text-[9px] font-black uppercase tracking-wider text-slate-dark/30">Playbook</span>
                 </div>
               </div>
-              <div className="flex items-center bg-secondary-container px-4 py-2 rounded-full border-2 border-slate-dark shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] squishy-press">
+              <div className="flex items-center bg-secondary-container/80 px-4 py-2 rounded-full border border-white/30 shadow-[4px_4px_8px_rgba(0,0,0,0.04),_inset_2px_2px_4px_rgba(255,255,255,0.8),_inset_-2px_-2px_4px_rgba(0,0,0,0.05)] active:scale-95 duration-200 cursor-pointer">
                 <span className="text-tertiary mr-2">⭐</span>
                 <span className="font-label-lg text-label-lg-mobile text-on-secondary-container">{starsCount} stars</span>
               </div>
@@ -293,7 +293,7 @@ export default function Home() {
 
       {/* BottomNavBar Shell matching Stitch layout */}
       {activeGame === "menu" && (
-        <nav className="fixed bottom-4 left-1/2 -translate-x-1/2 w-[90%] max-w-md pt-3 pb-3 z-50 rounded-[2rem] bg-white/90 backdrop-blur-md border-2 border-slate-dark shadow-[0_12px_30px_rgba(0,0,0,0.12)]">
+        <nav className="fixed bottom-5 left-1/2 -translate-x-1/2 w-[90%] max-w-md pt-3 pb-3 z-50 rounded-full bg-white/80 backdrop-blur-md border border-white/40 shadow-[8px_8px_24px_rgba(0,0,0,0.06),_inset_-4px_-4px_8px_rgba(0,0,0,0.04),_inset_4px_4px_8px_rgba(255,255,255,0.95)]">
           <div className="flex justify-around items-center px-4">
             {(["lesson", "trophies", "dashboard"] as const).map((tab) => {
               const isActive = view === tab;
@@ -307,24 +307,21 @@ export default function Home() {
                 <div 
                   key={tab} 
                   onClick={() => handleTabClick(tab)}
-                  className="flex flex-col items-center gap-1 flex-1 cursor-pointer py-0.5"
+                  className="flex flex-col items-center gap-1 flex-1 cursor-pointer py-0.5 group"
                 >
                   <motion.button 
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    className={`w-12 h-12 rounded-full border-2 border-slate-dark flex items-center justify-center pointer-events-none transition-all ${
+                    className={`w-12 h-12 rounded-full border border-white/20 flex items-center justify-center pointer-events-none transition-all duration-200 ${
                       isActive 
-                        ? "bg-primary-container -translate-y-1 shadow-[0_4px_12px_-4px_rgba(155,229,100,0.6)]" 
-                        : "bg-white"
+                        ? "bg-primary-container -translate-y-1 shadow-[4px_6px_12px_rgba(255,133,161,0.2),_inset_3px_3px_6px_rgba(255,255,255,0.95),_inset_-3px_-3px_6px_rgba(0,0,0,0.05)]" 
+                        : "bg-white/95 shadow-[2px_2px_5px_rgba(0,0,0,0.03),_inset_2px_2px_4px_rgba(255,255,255,0.95),_inset_-2px_-2px_4px_rgba(0,0,0,0.04)] group-hover:-translate-y-1 group-hover:shadow-[4px_6px_10px_rgba(0,0,0,0.05),_inset_2px_2px_4px_rgba(255,255,255,0.95)]"
                     }`}
-                    style={{
-                      boxShadow: isActive ? "0 4px 0 0 var(--slate-dark)" : "0 2px 0 0 var(--slate-dark)"
-                    }}
                   >
                     <Icon className="w-5 h-5 text-foreground" strokeWidth={3} />
                   </motion.button>
                   <span className={`text-[9px] font-black uppercase tracking-wider transition-colors duration-150 ${
-                    isActive ? "text-primary" : "text-slate-dark/50"
+                    isActive ? "text-primary" : "text-slate-dark/30"
                   }`}>
                     {label}
                   </span>
@@ -342,16 +339,16 @@ export default function Home() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md p-6"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-md p-6"
           >
             <motion.div 
               initial={{ scale: 0.9, y: 20 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.9, y: 20 }}
-              className="p-8 max-w-sm w-full border-2 border-slate-dark shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] flex flex-col items-center gap-6 rounded-[32px] bg-[#e9ddfd]"
+              className="p-8 max-w-sm w-full flex flex-col items-center gap-6 rounded-[2.5rem] bg-[#e9d5ff] border border-white/30 shadow-[12px_18px_32px_rgba(0,0,0,0.06),_inset_-6px_-6px_12px_rgba(0,0,0,0.05),_inset_6px_6px_12px_rgba(255,255,255,0.95)]"
             >
-              <h2 className="text-3xl font-black text-center text-foreground uppercase tracking-wide">Adults Only!</h2>
-              <p className="text-base text-center font-bold text-on-secondary-container">Press and hold the lock for 3 seconds to unlock.</p>
+              <h2 className="text-3xl font-black text-center text-[#4A5358] uppercase tracking-wide">Adults Only!</h2>
+              <p className="text-sm text-center font-black text-on-secondary-container">Press and hold the lock for 3 seconds to unlock.</p>
               
               <div className="relative w-36 h-36 flex items-center justify-center">
                 {/* Hold progress circle outline */}
@@ -360,7 +357,7 @@ export default function Home() {
                     cx="72" 
                     cy="72" 
                     r="64" 
-                    stroke="rgba(0,0,0,0.08)" 
+                    stroke="rgba(0,0,0,0.04)" 
                     strokeWidth="8" 
                     fill="none" 
                   />
@@ -382,9 +379,9 @@ export default function Home() {
                   onPointerDown={startGateTimer}
                   onPointerUp={stopGateTimer}
                   onPointerLeave={stopGateTimer}
-                  className={`w-24 h-24 rounded-full flex items-center justify-center transition-all duration-150 border-2 border-slate-dark relative active:scale-95 ${holdProgress >= 100 ? "bg-primary-container text-foreground animate-pulse" : "bg-tertiary-container text-foreground"}`}
+                  className={`w-24 h-24 rounded-full flex items-center justify-center transition-all duration-200 border border-white/20 relative active:scale-95 shadow-[6px_6px_12px_rgba(0,0,0,0.05),_inset_-4px_-4px_8px_rgba(0,0,0,0.05),_inset_4px_4px_8px_rgba(255,255,255,0.95)] hover:-translate-y-1.5 hover:shadow-[8px_14px_22px_rgba(0,0,0,0.08),_inset_-4px_-4px_8px_rgba(0,0,0,0.04),_inset_4px_4px_8px_rgba(255,255,255,0.95)] active:translate-y-1.5 active:shadow-[inset_-2px_-2px_4px_rgba(255,255,255,0.8),_inset_4px_4px_8px_rgba(0,0,0,0.15)] ${holdProgress >= 100 ? "bg-primary-container text-foreground animate-pulse" : "bg-tertiary-container text-foreground"}`}
                   style={{
-                    boxShadow: holdProgress > 0 ? `0 0 20px var(--primary)` : 'none',
+                    boxShadow: holdProgress > 0 ? `0 0 20px var(--primary)` : undefined,
                     touchAction: "none"
                   }}
                 >
@@ -394,7 +391,7 @@ export default function Home() {
 
               <button 
                 onClick={() => { setShowGate(false); setPendingTab(null); }}
-                className="mt-2 w-full py-4 text-xl font-extrabold bg-white hover:bg-gray-100 rounded-full border-2 border-slate-dark shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] transition-all"
+                className="mt-2 w-full py-4 text-xl font-black bg-white text-[#4A5358] rounded-full clay-btn border border-white/20 transition-all"
               >
                 Go Back
               </button>

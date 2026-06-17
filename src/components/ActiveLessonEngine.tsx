@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState, useCallback } from "react";
-import { ArrowLeft, Check, Grid } from "lucide-react";
+import { ArrowLeft, Check, Grid } from "@/components/Icons";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 import { alphabetData } from "@/lib/alphabetData";
@@ -26,7 +26,6 @@ export default function ActiveLessonEngine({
   childId, 
   letter, 
   pathString, 
-  audioUrl, 
   onBack, 
   onNext,
   currentLetterIndex,
@@ -36,6 +35,13 @@ export default function ActiveLessonEngine({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isCompleted, setIsCompleted] = useState(false);
   const [allCheckpointsHit, setAllCheckpointsHit] = useState(false);
+  const [prevLetter, setPrevLetter] = useState(letter);
+
+  if (letter !== prevLetter) {
+    setPrevLetter(letter);
+    setIsCompleted(false);
+    setAllCheckpointsHit(false);
+  }
 
   // Audio Context
   const audioCtxRef = useRef<AudioContext | null>(null);
@@ -45,42 +51,7 @@ export default function ActiveLessonEngine({
   const checkpointsRef = useRef<{x: number, y: number, hit: boolean}[]>([]);
   const particles = useRef<{x: number, y: number, color: string, alpha: number, vx: number, vy: number}[]>([]);
 
-  useEffect(() => {
-    path2D.current = new Path2D(pathString);
-    drawnPoints.current = [];
-    setIsCompleted(false);
-    setAllCheckpointsHit(false);
-    particles.current = [];
-    initAudio();
-    
-    // Give canvas a tiny bit of time to mount
-    setTimeout(() => {
-      drawBaseCanvas();
-      
-      // Generate checkpoints for foolproof completion
-      if (svgPathRef.current) {
-        const length = svgPathRef.current.getTotalLength();
-        const pts = [];
-        // Generate 20 checkpoints along the path
-        for(let i = 0; i <= 20; i++) {
-          const p = svgPathRef.current.getPointAtLength((i / 20) * length);
-          pts.push({ x: p.x, y: p.y, hit: false });
-        }
-        checkpointsRef.current = pts;
-      }
-    }, 100);
-  }, [letter, pathString]);
-
-  // Animation frame loop for continuous particles and rendering
-  useEffect(() => {
-    let animFrameId: number;
-    const tick = () => {
-      drawBaseCanvas();
-      animFrameId = requestAnimationFrame(tick);
-    };
-    animFrameId = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(animFrameId);
-  }, []);
+  // useEffect blocks relocated below drawBaseCanvas to satisfy hook declaration order rules
 
   const isDrawing = useRef(false);
   const lastValidPoint = useRef<Point | null>(null);
@@ -91,7 +62,7 @@ export default function ActiveLessonEngine({
   // Initialize Web Audio API
   const initAudio = () => {
     if (!audioCtxRef.current) {
-      audioCtxRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+      audioCtxRef.current = new (window.AudioContext || (window as Window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext)();
     }
   };
 
@@ -151,7 +122,7 @@ export default function ActiveLessonEngine({
   };
 
   const addParticles = (x: number, y: number, count = 3) => {
-    const colors = ["#FF6B6B", "#4ECDC4", "#FFD93D", "#FFFFFF", "#118AB2"];
+    const colors = ["#a2ea63", "#ffc4c0", "#eaddfc", "#5fa3d9", "#faf9f5"];
     for (let i = 0; i < count; i++) {
       particles.current.push({
         x,
@@ -174,7 +145,7 @@ export default function ActiveLessonEngine({
 
     // Draw the dotted path as a guide
     ctx.lineWidth = 60; // Massive hit region visually represented
-    ctx.strokeStyle = "rgba(78, 205, 196, 0.15)"; // Soft Teal with opacity
+    ctx.strokeStyle = "rgba(95, 163, 217, 0.15)"; // Soft themed blue guide overlay
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
     ctx.stroke(path2D.current);
@@ -182,14 +153,14 @@ export default function ActiveLessonEngine({
     // Draw a thinner dotted line inside
     ctx.lineWidth = 10;
     ctx.setLineDash([20, 20]);
-    ctx.strokeStyle = "#4ECDC4";
+    ctx.strokeStyle = "rgba(78, 205, 196, 0.4)"; // Soft translucent secondary mint green
     ctx.stroke(path2D.current);
     ctx.setLineDash([]); // Reset dash for drawing
 
     // Redraw user's valid path as separate strokes
     if (drawnPoints.current.length > 0) {
       ctx.lineWidth = 40; // Vibrant thick stroke
-      ctx.strokeStyle = "#FF6B6B"; // Vibrant Coral/Red
+      ctx.strokeStyle = "#ff85a1"; // Bubblegum pink drawing stroke
       ctx.lineCap = "round";
       ctx.lineJoin = "round";
 
@@ -223,6 +194,41 @@ export default function ActiveLessonEngine({
     });
   }, []);
 
+  useEffect(() => {
+    path2D.current = new Path2D(pathString);
+    drawnPoints.current = [];
+    particles.current = [];
+    initAudio();
+    
+    // Give canvas a tiny bit of time to mount
+    setTimeout(() => {
+      drawBaseCanvas();
+      
+      // Generate checkpoints for foolproof completion
+      if (svgPathRef.current) {
+        const length = svgPathRef.current.getTotalLength();
+        const pts = [];
+        // Generate 20 checkpoints along the path
+        for(let i = 0; i <= 20; i++) {
+          const p = svgPathRef.current.getPointAtLength((i / 20) * length);
+          pts.push({ x: p.x, y: p.y, hit: false });
+        }
+        checkpointsRef.current = pts;
+      }
+    }, 100);
+  }, [letter, pathString, drawBaseCanvas]);
+
+  // Animation frame loop for continuous particles and rendering
+  useEffect(() => {
+    let animFrameId: number;
+    const tick = () => {
+      drawBaseCanvas();
+      animFrameId = requestAnimationFrame(tick);
+    };
+    animFrameId = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(animFrameId);
+  }, [drawBaseCanvas]);
+
   const getCanvasCoordinates = (e: React.PointerEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
     if (!canvas) return { x: 0, y: 0 };
@@ -236,7 +242,7 @@ export default function ActiveLessonEngine({
     };
   };
 
-  const validatePoint = (ctx: CanvasRenderingContext2D, point: Point): boolean => {
+  const validatePoint = (): boolean => {
     // Highly forgiving: allow free drawing anywhere on canvas
     return true;
   };
@@ -251,7 +257,7 @@ export default function ActiveLessonEngine({
 
     const pt = getCanvasCoordinates(e);
 
-    if (validatePoint(ctx, pt)) {
+    if (validatePoint()) {
       isDrawing.current = true;
       lastValidPoint.current = pt;
       drawnPoints.current.push([pt]);
@@ -268,7 +274,7 @@ export default function ActiveLessonEngine({
 
     const pt = getCanvasCoordinates(e);
 
-    if (validatePoint(ctx, pt)) {
+    if (validatePoint()) {
       const currentStrokeIndex = drawnPoints.current.length - 1;
       if (currentStrokeIndex >= 0) {
         drawnPoints.current[currentStrokeIndex].push(pt);
@@ -329,7 +335,7 @@ export default function ActiveLessonEngine({
       particleCount: 200,
       spread: 100,
       origin: { y: 0.5 },
-      colors: ["#FF6B6B", "#4ECDC4", "#FFD93D", "#FFFFFF"]
+      colors: ["#a2ea63", "#ffc4c0", "#eaddfc", "#faf9f5"]
     });
 
     if (childId) {
@@ -370,31 +376,31 @@ export default function ActiveLessonEngine({
         {onBack ? (
           <button 
             onClick={onBack} 
-            className="bg-white squishy-press rounded-full w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center toddler-target border-2 border-slate-dark"
+            className="bg-white clay-btn rounded-full w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center toddler-target border border-white/20 shadow-[4px_4px_8px_rgba(0,0,0,0.05)]"
           >
-            <ArrowLeft className="w-6 h-6 sm:w-7 sm:h-7" strokeWidth={3} />
+            <ArrowLeft className="w-6 h-6 sm:w-7 sm:h-7 text-[#4A5358]" strokeWidth={3} />
           </button>
         ) : (
           <div className="w-12 h-12 sm:w-14 sm:h-14" />
         )}
         
         {/* Centered Target Letter Sticker */}
-        <div className="flex items-center gap-1.5 sm:gap-2.5 bg-white border-2 border-slate-dark rounded-xl px-3 py-1.5 sm:px-5 sm:py-2.5 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rotate-[-1.5deg]">
-          <span className="text-xs sm:text-base font-black text-slate-dark uppercase tracking-wide">Trace:</span>
-          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-[var(--lime-green)] border-2 border-slate-dark flex items-center justify-center font-black text-lg sm:text-xl text-slate-dark shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+        <div className="flex items-center gap-1.5 sm:gap-2.5 bg-white border border-white/20 rounded-2xl px-3 py-1.5 sm:px-5 sm:py-2.5 shadow-[4px_4px_10px_rgba(0,0,0,0.04),_inset_2px_2px_4px_rgba(255,255,255,0.8),_inset_-2px_-2px_4px_rgba(0,0,0,0.05)] rotate-[-1.5deg]">
+          <span className="text-xs sm:text-base font-black text-[#4A5358] uppercase tracking-wide">Trace:</span>
+          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-primary-container border border-white/20 flex items-center justify-center font-black text-lg sm:text-xl text-[#590d22] shadow-[2px_2px_5px_rgba(0,0,0,0.04),_inset_2px_2px_4px_rgba(255,255,255,0.8)]">
             {letter}
           </div>
         </div>
 
         <button 
           onClick={() => setShowAlphabetGrid(true)} 
-          className="bg-white squishy-press rounded-full w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center toddler-target border-2 border-slate-dark"
+          className="bg-white clay-btn rounded-full w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center toddler-target border border-white/20 shadow-[4px_4px_8px_rgba(0,0,0,0.05)]"
         >
           <Grid className="w-6 h-6 sm:w-7 sm:h-7 text-primary" strokeWidth={3} />
         </button>
       </div>
       
-      <div className="w-full max-w-[280px] sm:max-w-[360px] aspect-square card-3d overflow-hidden relative border-2 border-[var(--slate-dark)] shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] mx-auto">
+      <div className="w-full max-w-[280px] sm:max-w-[360px] aspect-square clay-card overflow-hidden relative mx-auto border border-white/20">
         {/* Hidden SVG for path length calculations */}
         <svg width="0" height="0" className="absolute pointer-events-none">
           <path ref={svgPathRef} d={pathString} />
@@ -423,10 +429,10 @@ export default function ActiveLessonEngine({
 
       <button 
         onClick={handleCheck}
-        className={`mt-3 sm:mt-6 w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center transition-all toddler-target border-2 border-slate-dark ${
+        className={`mt-3 sm:mt-6 w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center transition-all toddler-target border border-white/20 ${
           allCheckpointsHit 
-            ? "bg-[var(--primary-container)] squishy-press animate-pulse-bounce text-slate-dark" 
-            : "bg-gray-100 text-gray-400 cursor-not-allowed opacity-50"
+            ? "bg-primary-container text-[#590d22] clay-btn animate-pulse-bounce" 
+            : "bg-gray-100 text-gray-400 cursor-not-allowed opacity-40 shadow-inner"
         }`}
         disabled={!allCheckpointsHit}
       >
@@ -439,17 +445,17 @@ export default function ActiveLessonEngine({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
             onClick={() => setShowAlphabetGrid(false)}
           >
             <motion.div 
               initial={{ scale: 0.9, y: 20 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.9, y: 20 }}
-              className="bg-white border-2 border-slate-dark p-6 rounded-[2rem] max-w-sm w-full shadow-purple flex flex-col gap-4"
+              className="p-6 rounded-[2.5rem] bg-white border border-white/20 max-w-sm w-full shadow-[12px_12px_24px_rgba(0,0,0,0.05),_inset_-6px_-6px_12px_rgba(0,0,0,0.05),_inset_6px_6px_12px_rgba(255,255,255,0.9)] flex flex-col gap-4"
               onClick={(e) => e.stopPropagation()}
             >
-              <h2 className="text-xl font-black text-slate-dark text-center uppercase tracking-wide">Select Letter</h2>
+              <h2 className="text-xl font-black text-[#4A5358] text-center uppercase tracking-wide">Select Letter</h2>
               <div className="grid grid-cols-5 gap-2 max-h-[60vh] overflow-y-auto p-1">
                 {alphabetData.map((data, index) => {
                   const isSelected = currentLetterIndex === index;
@@ -460,10 +466,10 @@ export default function ActiveLessonEngine({
                         if (onSelectLetterIndex) onSelectLetterIndex(index);
                         setShowAlphabetGrid(false);
                       }}
-                      className={`w-11 h-11 rounded-xl flex items-center justify-center text-lg font-black transition-all border-2 border-slate-dark ${
+                      className={`w-11 h-11 rounded-2xl flex items-center justify-center text-lg font-black transition-all border border-white/20 ${
                         isSelected 
-                          ? "bg-primary-container text-slate-dark shadow-[2px_2px_0px_0px_var(--slate-dark)] scale-105" 
-                          : "bg-white text-slate-dark shadow-[1px_1px_0px_0px_var(--slate-dark)] hover:scale-105"
+                          ? "bg-primary-container text-[#590d22] shadow-[4px_4px_8px_rgba(0,0,0,0.04),_inset_2px_2px_4px_rgba(255,255,255,0.8),_inset_-2px_-2px_4px_rgba(0,0,0,0.05)] scale-105" 
+                          : "bg-white text-[#4A5358] shadow-[2px_2px_5px_rgba(0,0,0,0.03),_inset_2px_2px_4px_rgba(255,255,255,0.95)] hover:scale-105"
                       }`}
                     >
                       {data.letter}
@@ -473,7 +479,7 @@ export default function ActiveLessonEngine({
               </div>
               <button 
                 onClick={() => setShowAlphabetGrid(false)}
-                className="w-full py-2.5 font-extrabold bg-gray-100 hover:bg-gray-200 rounded-full border-2 border-slate-dark text-xs uppercase"
+                className="w-full py-2.5 font-extrabold bg-gray-100 text-[#4A5358] rounded-full clay-btn border border-white/10 text-xs uppercase hover:bg-gray-200"
               >
                 Cancel
               </button>

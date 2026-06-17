@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Trophy, Heart, Star, Lock, Sparkles, StarHalf } from "lucide-react";
+import { Trophy, Heart, Star, Lock, Sparkles } from "@/components/Icons";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface Badge {
@@ -191,34 +191,38 @@ export default function ProgressVisualizer({ childId }: { childId?: string }) {
                     height: sp.size
                   }}
                 >
-                  <Sparkles size={sp.size} className="text-[#9be564]" style={{ fill: "#9be564" }} />
+                  <Sparkles size={sp.size} className="text-[#a2ea63]" style={{ fill: "#a2ea63" }} />
                 </motion.div>
               ))}
             </AnimatePresence>
           </div>
         </div>
         
-        <h1 className="font-display-lg text-display-lg-mobile text-primary mb-1 tracking-tight">My Trophy Room</h1>
-        <p className="font-body-md text-on-surface-variant max-w-[280px]">Look at all the amazing things you&apos;ve done today!</p>
+        <h1 className="text-4xl font-black text-[#ff85a1] uppercase mb-1 tracking-tight">My Trophy Room</h1>
+        <p className="text-sm font-bold text-[#4A5358]/70 max-w-[280px]">Look at all the amazing things you&apos;ve done today!</p>
       </section>
 
       {/* Stats Bento Grid */}
       <div className="grid grid-cols-2 gap-6 mb-8">
-        <div className="col-span-1 bg-primary-container p-6 rounded-[32px] border-2 border-primary-fixed-variant squishy-press flex flex-col items-center justify-center text-center">
-          <Trophy className="text-on-primary-container text-4xl mb-2 fill-on-primary-container" size={38} />
-          <span className="font-headline-md text-on-primary-container">{badges.length}</span>
-          <span className="font-label-lg text-on-primary-container/80">Badges</span>
+        <div className="col-span-1 p-6 bg-gradient-to-br from-[#ffcad4] to-[#ff85a1]/20 rounded-[2rem] border border-white/20 flex flex-col items-center justify-center text-center shadow-[6px_6px_12px_rgba(255,133,161,0.15),_inset_-4px_-4px_8px_rgba(0,0,0,0.04),_inset_4px_4px_8px_rgba(255,255,255,0.95)]">
+          <div className="w-12 h-12 rounded-full bg-white/70 flex items-center justify-center mb-2 shadow-[inset_1px_1px_3px_rgba(255,255,255,0.9),_inset_-1px_-1px_3px_rgba(0,0,0,0.03)] border border-white/20">
+            <Trophy className="text-[#ff85a1]" size={24} />
+          </div>
+          <span className="text-3xl font-black text-[#590d22]">{badges.length}</span>
+          <span className="text-xs font-black uppercase tracking-wider text-[#590d22]/70">Badges</span>
         </div>
         
-        <div className="col-span-1 bg-tertiary-container p-6 rounded-[32px] border-2 border-on-tertiary-fixed-variant squishy-press flex flex-col items-center justify-center text-center">
-          <Heart className="text-tertiary text-4xl mb-2 fill-tertiary" size={38} />
-          <span className="font-headline-md text-on-tertiary-container">{uniqueLettersCount}</span>
-          <span className="font-label-lg text-on-tertiary-container/80">Daily Habits</span>
+        <div className="col-span-1 p-6 bg-gradient-to-br from-[#fef5d1] to-[#ffd166]/20 rounded-[2rem] border border-white/20 flex flex-col items-center justify-center text-center shadow-[6px_6px_12px_rgba(255,209,102,0.15),_inset_-4px_-4px_8px_rgba(0,0,0,0.04),_inset_4px_4px_8px_rgba(255,255,255,0.95)]">
+          <div className="w-12 h-12 rounded-full bg-white/70 flex items-center justify-center mb-2 shadow-[inset_1px_1px_3px_rgba(255,255,255,0.9),_inset_-1px_-1px_3px_rgba(0,0,0,0.03)] border border-white/20">
+            <Heart className="text-[#ffd166] fill-[#ffd166]" size={24} />
+          </div>
+          <span className="text-3xl font-black text-[#5c4d00]">{uniqueLettersCount}</span>
+          <span className="text-xs font-black uppercase tracking-wider text-[#5c4d00]/70">Daily Habits</span>
         </div>
       </div>
 
       {/* Trophy Grid */}
-      <h2 className="font-headline-md text-on-surface mb-6 px-2">Earned Trophies</h2>
+      <h2 className="text-2xl font-black text-[#4A5358] uppercase mb-6 px-2">Earned Trophies</h2>
       <motion.div 
         variants={containerVariants} 
         initial="hidden" 
@@ -235,15 +239,15 @@ export default function ProgressVisualizer({ childId }: { childId?: string }) {
               whileHover={item.isUnlocked ? { scale: 1.02 } : {}}
               whileTap={item.isUnlocked ? { scale: 0.98, y: 2 } : {}}
               style={delayStyle}
-              className={`p-6 rounded-[28px] border-2 border-outline-variant flex flex-col items-center justify-center text-center aspect-[1.1] relative transition-all ${
+              className={`p-6 rounded-[2rem] border flex flex-col items-center justify-center text-center aspect-[1.1] relative transition-all ${
                 item.isUnlocked 
-                  ? "bg-white squishy-press animate-float cursor-pointer" 
-                  : "bg-surface-container-low border-dashed opacity-70"
+                  ? "bg-white clay-card border-white/20 hover:scale-102 active:scale-98 cursor-pointer animate-float" 
+                  : "bg-white/40 border-2 border-dashed border-[#9eb1bd]/40 opacity-70"
               }`}
             >
               {item.isUnlocked ? (
                 <>
-                  <div className={`w-16 h-16 rounded-full flex items-center justify-center mb-3 ${item.bgClass}`}>
+                  <div className={`w-16 h-16 rounded-full flex items-center justify-center mb-3 shadow-[inset_2px_2px_4px_rgba(255,255,255,0.85),_inset_-2px_-2px_4px_rgba(0,0,0,0.05)] border border-white/10 ${item.bgClass}`}>
                     {item.iconType === "image" && item.imageUrl ? (
                       <img className="w-12 h-12 object-contain" src={item.imageUrl} alt={item.name} />
                     ) : item.iconType === "star" ? (
@@ -256,19 +260,19 @@ export default function ProgressVisualizer({ childId }: { childId?: string }) {
                       <span className="text-2xl font-black">🔤</span>
                     )}
                   </div>
-                  <span className="font-label-lg text-on-surface">{item.name}</span>
-                  <div className="flex items-center mt-1">
+                  <span className="text-base font-black text-[#4A5358]">{item.name}</span>
+                  <div className="flex items-center mt-1 text-primary">
                     <Star className="text-primary w-3.5 h-3.5 fill-primary mr-1" />
-                    <span className="text-xs font-bold text-outline">{item.subtitle}</span>
+                    <span className="text-xs font-black uppercase text-[#4A5358]/60">{item.subtitle}</span>
                   </div>
                 </>
               ) : (
                 <>
-                  <div className="w-16 h-16 bg-surface-variant rounded-full flex items-center justify-center mb-3">
-                    <Lock className="text-outline" size={28} />
+                  <div className="w-16 h-16 bg-[#dbe8f2]/40 rounded-full flex items-center justify-center mb-3 shadow-inner border border-dashed border-[#9eb1bd]/30">
+                    <Lock className="text-[#9eb1bd]" size={28} />
                   </div>
-                  <span className="font-label-lg text-outline">Keep Playing!</span>
-                  <div className="bg-secondary-container h-1.5 w-16 rounded-full mt-3 overflow-hidden p-0.5 border border-outline-variant/20">
+                  <span className="text-sm font-black uppercase tracking-wider text-[#9eb1bd]">Keep Playing!</span>
+                  <div className="bg-[#dbe8f2] h-2.5 w-20 rounded-full mt-3 overflow-hidden p-0.5 border border-white/20 shadow-inner">
                     <div 
                       className="bg-primary h-full rounded-full" 
                       style={{ width: `${item.progressPercent || 0}%` }}

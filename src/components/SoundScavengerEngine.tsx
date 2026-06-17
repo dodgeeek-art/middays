@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef } from "react";
-import { ArrowLeft, Volume2, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, Volume2, CheckCircle2 } from "@/components/Icons";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 import { objectDictionary } from "@/lib/svgDictionary";
@@ -171,7 +171,7 @@ export default function SoundScavengerEngine({ childId, onBack }: SoundScavenger
           particleCount: 50,
           spread: 50,
           origin: { y: 0.6 },
-          colors: ["#8E9F85", "#C8D3C4", "#FAF5EB", "#E5B6A8"]
+          colors: ["#59a26a", "#eaddfc", "#ffafa6", "#a2ea63"]
         });
         
         saveProgress(timeSpent, roundData.targetLetter);
@@ -200,29 +200,29 @@ export default function SoundScavengerEngine({ childId, onBack }: SoundScavenger
   };
 
   return (
-    <div className="w-full max-w-3xl mx-auto bg-[#FAF9F5] border-2 border-[#3A413A] rounded-[2.5rem] p-5 sm:p-8 shadow-[4px_4px_0px_0px_rgba(58,65,58,1)] flex flex-col items-center justify-between min-h-[72vh] md:min-h-[78vh] relative overflow-hidden">
+    <div className="w-full max-w-3xl mx-auto p-5 sm:p-8 clay-card border border-white/20 flex flex-col items-center justify-between min-h-[72vh] md:min-h-[78vh] relative overflow-hidden">
       {/* Top Bar */}
       <div className="w-full flex justify-between items-center mb-3 sm:mb-4 z-10">
         <button
           onClick={onBack}
-          className="flex items-center gap-2 font-black text-xs uppercase px-4 py-2 bg-white border-2 border-[#3A413A] rounded-full shadow-[2px_2px_0px_0px_rgba(58,65,58,1)] active:translate-y-0.5 active:shadow-[1px_1px_0px_0px_rgba(58,65,58,1)] transition-all cursor-pointer"
+          className="flex items-center gap-2 font-black text-xs uppercase px-4 py-2 bg-white border border-white/20 rounded-full clay-btn hover:scale-102 active:scale-96 transition-all cursor-pointer shadow-[3px_3px_6px_rgba(0,0,0,0.04)]"
         >
-          <ArrowLeft className="w-4 h-4" />
+          <ArrowLeft className="w-4 h-4 text-[#4A5358]" />
           <span>Back</span>
         </button>
-        <span className="text-[10px] font-black uppercase tracking-wider text-[#3A413A]/50 bg-[#E8E4D9]/40 px-3 py-1.5 rounded-full border border-[#3A413A]/10">
+        <span className="text-[10px] font-black uppercase tracking-wider text-[#0b4a45]/80 bg-[#bfdbfe]/50 px-3 py-1.5 rounded-full border border-white/20">
           Sound Scavenger
         </span>
       </div>
 
       {/* Prompter Banner */}
-      <div className="w-full max-w-lg bg-white border-2 border-[#3A413A] rounded-3xl p-3 sm:p-5 mb-4 sm:mb-6 text-center shadow-[3px_3px_0px_0px_rgba(58,65,58,1)] relative z-10">
-        <p className="text-[10px] font-black text-[#8E9F85] uppercase tracking-widest mb-1">
+      <div className="w-full max-w-lg bg-white border border-white/20 rounded-3xl p-3 sm:p-5 mb-4 sm:mb-6 text-center shadow-[4px_4px_12px_rgba(0,0,0,0.04),_inset_2px_2px_4px_rgba(255,255,255,0.85)] relative z-10">
+        <p className="text-[10px] font-black text-[#ff85a1] uppercase tracking-widest mb-1">
           Auditory Challenge
         </p>
-        <h2 className="text-xl sm:text-2xl font-black text-[#3A413A] tracking-tight uppercase flex justify-center items-center gap-2">
+        <h2 className="text-xl sm:text-2xl font-black text-[#4A5358] tracking-tight uppercase flex justify-center items-center gap-2">
           <span>Find the target sound:</span>
-          <span className="inline-flex items-center justify-center px-4 py-1 bg-[#C8D3C4] border-2 border-[#3A413A] rounded-2xl text-[#3A413A] text-2xl font-black relative group cursor-pointer active:scale-95 transition-all" onClick={() => playWoodBlockSound(300 + (roundData.targetLetter.charCodeAt(0) - 65) * 8, 0.2)}>
+          <span className="inline-flex items-center justify-center px-4 py-1 bg-[#d2f4e6] border border-white/20 rounded-2xl text-[#0b4a45] text-2xl font-black relative group cursor-pointer active:scale-95 transition-all shadow-[2px_2px_5px_rgba(0,0,0,0.04),_inset_2px_2px_4px_rgba(255,255,255,0.8)]" onClick={() => playWoodBlockSound(300 + (roundData.targetLetter.charCodeAt(0) - 65) * 8, 0.2)}>
             /{getPhonicSound(roundData.targetLetter)}/
             <Volume2 className="w-4 h-4 ml-1.5 opacity-60 group-hover:opacity-100 transition-opacity" />
           </span>
@@ -243,12 +243,12 @@ export default function SoundScavengerEngine({ childId, onBack }: SoundScavenger
                 whileTap={gameState === "playing" && !isWrong ? { scale: 0.97 } : {}}
                 onClick={() => handleChoiceClick(idx)}
                 disabled={gameState !== "playing" || isWrong}
-                className={`relative aspect-square rounded-[2rem] border-2 border-[#3A413A] p-2.5 sm:p-4 flex flex-col items-center justify-center transition-all duration-300 ${
+                className={`relative aspect-square rounded-[2rem] border border-white/20 p-2.5 sm:p-4 flex flex-col items-center justify-center transition-all duration-300 ${
                   isWrong 
-                    ? "bg-[#E8E4D9]/20 border-[#3A413A]/30 opacity-40 cursor-default" 
+                    ? "bg-[#E8E4D9]/20 border-white/20 opacity-30 cursor-default" 
                     : isSelected 
-                      ? "bg-[#C8D3C4] shadow-[0_0_20px_rgba(142,159,133,0.3)]" 
-                      : "bg-white shadow-[3px_3px_0px_0px_rgba(58,65,58,1)]"
+                      ? "bg-[#d2f4e6] shadow-[4px_4px_12px_rgba(78,205,196,0.25),_inset_3px_3px_6px_rgba(255,255,255,0.9),_inset_-3px_-3px_6px_rgba(0,0,0,0.03)]" 
+                      : "bg-white shadow-[4px_4px_10px_rgba(0,0,0,0.04),_inset_3px_3px_6px_rgba(255,255,255,0.9),_inset_-3px_-3px_6px_rgba(0,0,0,0.04)]"
                 }`}
                 animate={isWrong ? { rotate: [0, -6, 6, -6, 6, 0] } : {}}
                 transition={{ duration: 0.4 }}
@@ -260,15 +260,15 @@ export default function SoundScavengerEngine({ childId, onBack }: SoundScavenger
 
                 {/* Subtitle name (appears on correct tap or after round) */}
                 <span className={`text-[10px] sm:text-xs font-black uppercase tracking-wider mt-1 sm:mt-2 transition-opacity duration-300 ${
-                  isSelected || gameState === "success" ? "opacity-100 text-[#3A413A]" : "opacity-0"
+                  isSelected || gameState === "success" ? "opacity-100 text-[#4A5358]" : "opacity-0"
                 }`}>
                   {choice.name}
                 </span>
 
                 {/* Success Overlay Indicator */}
                 {isSelected && (
-                  <div className="absolute top-3 right-3 text-[#8E9F85]">
-                    <CheckCircle2 className="w-6 h-6 fill-white stroke-[#3A413A]" strokeWidth={2.5} />
+                  <div className="absolute top-3 right-3 text-[#4ecdc4]">
+                    <CheckCircle2 className="w-6 h-6 fill-white stroke-[#4A5358]" strokeWidth={2.5} />
                   </div>
                 )}
               </motion.button>
@@ -278,8 +278,8 @@ export default function SoundScavengerEngine({ childId, onBack }: SoundScavenger
       </div>
 
       {/* Ambient Zen Wave Decor */}
-      <div className="absolute -bottom-16 -right-16 w-48 h-48 rounded-full border border-[#3A413A]/5 bg-gradient-to-tr from-[#C8D3C4]/10 to-[#FAF5EB]/10 pointer-events-none" />
-      <div className="absolute -bottom-24 -left-24 w-64 h-64 rounded-full border border-[#3A413A]/5 bg-gradient-to-tr from-[#E5B6A8]/5 to-[#FAF5EB]/10 pointer-events-none" />
+      <div className="absolute -bottom-16 -right-16 w-48 h-48 rounded-full border border-white/5 bg-gradient-to-tr from-[#ffcad4]/10 to-[#FAF5EC]/10 pointer-events-none" />
+      <div className="absolute -bottom-24 -left-24 w-64 h-64 rounded-full border border-white/5 bg-gradient-to-tr from-[#ffafa6]/5 to-[#FAF5EC]/10 pointer-events-none" />
     </div>
   );
 }

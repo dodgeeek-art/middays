@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef } from "react";
-import { ArrowLeft, Music } from "lucide-react";
+import { ArrowLeft, Music, Trophy } from "@/components/Icons";
 import { motion } from "framer-motion";
 import confetti from "canvas-confetti";
 import { objectDictionary } from "@/lib/svgDictionary";
@@ -117,7 +117,7 @@ export default function SyllableDrummerEngine({ childId, onBack }: SyllableDrumm
           particleCount: 50,
           spread: 45,
           origin: { y: 0.6 },
-          colors: ["#FAF5EB", "#8E9F85", "#E5B6A8"]
+          colors: ["#faf5eb", "#59a26a", "#ffafa6"]
         });
 
         saveProgress();
@@ -167,27 +167,27 @@ export default function SyllableDrummerEngine({ childId, onBack }: SyllableDrumm
   const obj = objectDictionary[currentWord.targetLetter];
 
   return (
-    <div className="w-full max-w-3xl mx-auto bg-[#FAF9F5] border-2 border-[#3A413A] rounded-[2.5rem] p-5 sm:p-8 shadow-[4px_4px_0px_0px_rgba(58,65,58,1)] flex flex-col items-center justify-between min-h-[72vh] md:min-h-[78vh] relative overflow-hidden">
+    <div className="w-full max-w-3xl mx-auto p-5 sm:p-8 clay-card border border-white/20 flex flex-col items-center justify-between min-h-[72vh] md:min-h-[78vh] relative overflow-hidden">
       {/* Top Bar */}
       <div className="w-full flex justify-between items-center mb-3 sm:mb-4 z-10">
         <button
           onClick={onBack}
-          className="flex items-center gap-2 font-black text-xs uppercase px-4 py-2 bg-white border-2 border-[#3A413A] rounded-full shadow-[2px_2px_0px_0px_rgba(58,65,58,1)] active:translate-y-0.5 active:shadow-[1px_1px_0px_0px_rgba(58,65,58,1)] transition-all cursor-pointer"
+          className="flex items-center gap-2 font-black text-xs uppercase px-4 py-2 bg-white border border-white/20 rounded-full clay-btn hover:scale-102 active:scale-96 transition-all cursor-pointer shadow-[3px_3px_6px_rgba(0,0,0,0.04)] text-[#4A5358]"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>Back</span>
         </button>
-        <span className="text-[10px] font-black uppercase tracking-wider text-[#3A413A]/50 bg-[#E8E4D9]/40 px-3 py-1.5 rounded-full border border-[#3A413A]/10">
+        <span className="text-[10px] font-black uppercase tracking-wider text-[#3c1e70]/80 bg-[#e9d5ff]/60 px-3 py-1.5 rounded-full border border-white/20">
           Syllable Drummer
         </span>
       </div>
 
       {/* Prompter Banner */}
-      <div className="w-full max-w-lg bg-white border-2 border-[#3A413A] rounded-3xl p-3 sm:p-4 mb-4 sm:mb-6 text-center shadow-[3px_3px_0px_0px_rgba(58,65,58,1)] relative z-10">
-        <p className="text-[10px] font-black text-[#8E9F85] uppercase tracking-widest mb-1">
+      <div className="w-full max-w-lg bg-white border border-white/20 rounded-3xl p-3 sm:p-4 mb-4 sm:mb-6 text-center shadow-[4px_4px_12px_rgba(0,0,0,0.04),_inset_2px_2px_4px_rgba(255,255,255,0.85)] relative z-10">
+        <p className="text-[10px] font-black text-secondary uppercase tracking-widest mb-1">
           Rhythm & Claps
         </p>
-        <h2 className="text-xl sm:text-2xl font-black text-[#3A413A] tracking-tight uppercase">
+        <h2 className="text-xl sm:text-2xl font-black text-[#4A5358] tracking-tight uppercase">
           Tap the drum for each part!
         </h2>
       </div>
@@ -199,14 +199,14 @@ export default function SyllableDrummerEngine({ childId, onBack }: SyllableDrumm
         <motion.div
           animate={isDrumActive ? { scale: [1, 1.15, 1], rotate: [0, -2, 2, 0] } : {}}
           transition={{ duration: 0.15 }}
-          className="w-28 h-28 sm:w-40 sm:h-40 bg-white border-2 border-[#3A413A] rounded-full flex items-center justify-center shadow-[4px_4px_0px_0px_rgba(58,65,58,1)] p-4 relative"
+          className="w-28 h-28 sm:w-40 sm:h-40 bg-white border border-white/20 rounded-full flex items-center justify-center shadow-[6px_6px_12px_rgba(0,0,0,0.05),_inset_-4px_-4px_8px_rgba(0,0,0,0.05),_inset_4px_4px_8px_rgba(255,255,255,0.95)] p-4 relative"
         >
           {React.createElement(obj.icon, { size: "90%" })}
           {gameState === "success" && (
             <motion.div 
               initial={{ scale: 0 }} 
               animate={{ scale: 1 }} 
-              className="absolute -top-2 -right-2 bg-[#C8D3C4] border-2 border-[#3A413A] rounded-full p-2 text-[#3A413A]"
+              className="absolute -top-2 -right-2 bg-secondary-container border border-white/20 rounded-full p-2.5 text-secondary shadow-[2px_2px_4px_rgba(0,0,0,0.05)]"
             >
               <Music className="w-5 h-5" />
             </motion.div>
@@ -224,12 +224,12 @@ export default function SyllableDrummerEngine({ childId, onBack }: SyllableDrumm
                 key={syl + "-" + index}
                 animate={isActive ? { scale: [1, 1.05, 1] } : {}}
                 transition={{ repeat: Infinity, duration: 1.2 }}
-                className={`px-5 py-2.5 rounded-2xl border-2 border-[#3A413A] font-black text-xl sm:text-2xl transition-colors duration-300 ${
+                className={`px-5 py-2.5 rounded-2xl border border-white/20 font-black text-xl sm:text-2xl transition-colors duration-300 ${
                   isPassed 
-                    ? "bg-[#C8D3C4] text-[#3A413A]" 
+                    ? "bg-[#d2f4e6] text-[#0b4a45] shadow-inner" 
                     : isActive 
-                      ? "bg-[#E5B6A8] text-[#3A413A] shadow-[2px_2px_0px_0px_rgba(58,65,58,1)]" 
-                      : "bg-white text-[#3A413A]/30 border-dashed"
+                      ? "bg-[#ffcad4] text-[#590d22] shadow-[0_4px_8px_rgba(255,133,161,0.2),_inset_2px_2px_4px_rgba(255,255,255,0.85)] animate-pulse" 
+                      : "bg-white/40 text-[#4a5358]/20 border-dashed border-[#9eb1bd]/40"
                 }`}
               >
                 {syl}
@@ -242,24 +242,45 @@ export default function SyllableDrummerEngine({ childId, onBack }: SyllableDrumm
         <button
           onClick={handleDrumTap}
           disabled={gameState !== "playing"}
-          className={`w-36 h-36 sm:w-48 sm:h-48 rounded-full border-4 border-[#3A413A] bg-gradient-to-b from-[#FAF5EB] to-[#E8E4D9] flex items-center justify-center relative shadow-[0_8px_0px_0px_rgba(58,65,58,1)] sm:shadow-[0_12px_0px_0px_rgba(58,65,58,1)] active:shadow-[0_4px_0px_0px_rgba(58,65,58,1)] active:translate-y-2 transition-all cursor-pointer ${
+          className={`w-36 h-36 sm:w-48 sm:h-48 rounded-full border-4 border-white/40 bg-gradient-to-b from-[#fef5d1] to-[#ffd166] flex items-center justify-center relative shadow-[0_12px_24px_rgba(255,209,102,0.3),_inset_-6px_-6px_12px_rgba(0,0,0,0.06),_inset_6px_6px_12px_rgba(255,255,255,0.95)] active:shadow-[0_4px_8px_rgba(255,209,102,0.25),_inset_-3px_-3px_6px_rgba(255,255,255,0.9),_inset_4px_4px_8px_rgba(0,0,0,0.12)] active:translate-y-2 transition-all cursor-pointer ${
             isDrumActive ? "brightness-95 scale-95" : ""
           }`}
           style={{ touchAction: "none" }}
         >
           {/* Inner ring */}
-          <div className="w-26 h-26 sm:w-36 sm:h-36 rounded-full border-2 border-dashed border-[#3A413A]/20 flex items-center justify-center">
-            <span className="font-black text-[#3A413A]/40 uppercase tracking-widest text-xs">
+          <div className="w-26 h-26 sm:w-36 sm:h-36 rounded-full border border-dashed border-white/40 flex items-center justify-center">
+            <span className="font-black text-white/70 uppercase tracking-widest text-xs">
               TAP DRUM
             </span>
           </div>
           
           {/* Drum sticks visual decor */}
-          <div className="absolute top-2 left-6 w-1 h-12 sm:h-16 bg-[#3A413A]/10 rounded-full transform -rotate-45 pointer-events-none" />
-          <div className="absolute top-2 right-6 w-1 h-12 sm:h-16 bg-[#3A413A]/10 rounded-full transform rotate-45 pointer-events-none" />
+          <div className="absolute top-2 left-6 w-1 h-12 sm:h-16 bg-white/15 rounded-full transform -rotate-45 pointer-events-none" />
+          <div className="absolute top-2 right-6 w-1 h-12 sm:h-16 bg-white/15 rounded-full transform rotate-45 pointer-events-none" />
         </button>
 
       </div>
+
+      {gameState === "success" && (
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="absolute inset-0 bg-[#f3f8fc]/90 backdrop-blur-sm z-20 flex flex-col items-center justify-center p-6"
+        >
+          <motion.div 
+            initial={{ y: 30, scale: 0.8 }}
+            animate={{ y: 0, scale: 1 }}
+            transition={{ type: "spring", stiffness: 200, damping: 15 }}
+            className="clay-card border border-white/20 p-8 bg-white max-w-sm w-full text-center flex flex-col items-center gap-4"
+          >
+            <div className="w-20 h-20 rounded-full bg-secondary-container flex items-center justify-center text-secondary shadow-[inset_2px_2px_4px_rgba(255,255,255,0.8),_inset_-2px_-2px_4px_rgba(0,0,0,0.05)] border border-white/10 animate-bounce">
+              <Trophy size={40} className="fill-current text-[#4ecdc4]" />
+            </div>
+            <h3 className="text-2xl font-black text-[#4A5358] uppercase">Great Rhythm!</h3>
+            <p className="text-sm font-bold text-[#4A5358]/70">You drummed all the syllables! Get ready for the next word...</p>
+          </motion.div>
+        </motion.div>
+      )}
     </div>
   );
 }

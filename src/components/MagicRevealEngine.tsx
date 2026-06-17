@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
 import confetti from "canvas-confetti";
-import { ArrowLeft, RefreshCw } from "lucide-react";
+import { ArrowLeft, RefreshCw } from "@/components/Icons";
 import { motion, AnimatePresence } from "framer-motion";
 import { objectDictionary } from "../lib/svgDictionary";
 
@@ -14,12 +14,37 @@ interface MagicRevealEngineProps {
   onBack?: () => void;
 }
 
+interface ChoiceItem {
+  letter: string;
+  name: string;
+  icon: React.ComponentType<{ size?: string | number; className?: string }>;
+}
+
+const getCurrentTime = (): number => Date.now();
+
+const getRandomLetter = (exclude?: string): string => {
+  const letters = exclude 
+    ? "ABCDEFGHIJKLMNOPQRSTUVWXYZ".replace(exclude, "") 
+    : "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  return letters[Math.floor(Math.random() * letters.length)];
+};
+
+const getShuffledChoices = (target: string, wrong: string): ChoiceItem[] => {
+  const correctObj = objectDictionary[target];
+  const wrongObj = objectDictionary[wrong];
+  const items: ChoiceItem[] = [
+    { letter: target, name: correctObj.name, icon: correctObj.icon },
+    { letter: wrong, name: wrongObj.name, icon: wrongObj.icon }
+  ];
+  return Math.random() > 0.5 ? items : [items[1], items[0]];
+};
+
 export default function MagicRevealEngine({ childId, onBack }: MagicRevealEngineProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [gameState, setGameState] = useState<"erasing" | "choosing" | "success">("erasing");
-  const [targetLetter, setTargetLetter] = useState("A");
-  const [choices, setChoices] = useState<any[]>([]);
-  const [startTime, setStartTime] = useState<number>(0);
+  const [targetLetter, setTargetLetter] = useState(() => getRandomLetter());
+  const [choices, setChoices] = useState<ChoiceItem[]>([]);
+  const [startTime, setStartTime] = useState<number>(() => getCurrentTime());
   
   const isErasing = useRef(false);
   const lastPoint = useRef<Point | null>(null);
@@ -31,7 +56,7 @@ export default function MagicRevealEngine({ childId, onBack }: MagicRevealEngine
 
   const initAudio = () => {
     if (!audioCtxRef.current) {
-      audioCtxRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+      audioCtxRef.current = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
     }
     if (audioCtxRef.current.state === "suspended") {
       audioCtxRef.current.resume();
@@ -75,9 +100,9 @@ export default function MagicRevealEngine({ childId, onBack }: MagicRevealEngine
     
     // Beautiful diagonal pastel gradient
     const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-    grad.addColorStop(0, "#c9f0df"); // Pastel frost mint
-    grad.addColorStop(0.5, "#e5ddf8"); // Pastel frost lavender
-    grad.addColorStop(1, "#ffd8d6"); // Pastel frost peach
+    grad.addColorStop(0, "#d2f4e6"); // Pastel frost mint
+    grad.addColorStop(0.5, "#eaddfc"); // Pastel frost lavender
+    grad.addColorStop(1, "#ffc4c0"); // Pastel frost peach
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     
@@ -106,17 +131,12 @@ export default function MagicRevealEngine({ childId, onBack }: MagicRevealEngine
   };
 
   const startNewRound = () => {
-    const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    const newLetter = letters[Math.floor(Math.random() * letters.length)];
+    const newLetter = getRandomLetter();
     setTargetLetter(newLetter);
     setGameState("erasing");
     eraseCount.current = 0;
-    setStartTime(Date.now());
+    setStartTime(getCurrentTime());
   };
-
-  useEffect(() => {
-    startNewRound();
-  }, []);
 
   useEffect(() => {
     if (gameState === "erasing") {
@@ -240,18 +260,8 @@ export default function MagicRevealEngine({ childId, onBack }: MagicRevealEngine
       osc.stop(audioCtxRef.current.currentTime + 0.8);
     }
 
-    const correctChoice = objectDictionary[targetLetter];
-    const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".replace(targetLetter, "");
-    const wrongLetter = letters[Math.floor(Math.random() * letters.length)];
-    const wrongChoice = objectDictionary[wrongLetter];
-
-    const shuffledChoices = Math.random() > 0.5 ? [
-      { ...correctChoice, letter: targetLetter },
-      { ...wrongChoice, letter: wrongLetter }
-    ] : [
-      { ...wrongChoice, letter: wrongLetter },
-      { ...correctChoice, letter: targetLetter }
-    ];
+    const wrongLetter = getRandomLetter(targetLetter);
+    const shuffledChoices = getShuffledChoices(targetLetter, wrongLetter);
     setChoices(shuffledChoices);
   };
 
@@ -263,7 +273,7 @@ export default function MagicRevealEngine({ childId, onBack }: MagicRevealEngine
         particleCount: 150,
         spread: 80,
         origin: { y: 0.6 },
-        colors: ["#A8E6CF", "#FF6B6B", "#FFD93D"]
+        colors: ["#a2ea63", "#ffc4c0", "#eaddfc"]
       });
 
       if (audioCtxRef.current) {
@@ -281,7 +291,7 @@ export default function MagicRevealEngine({ childId, onBack }: MagicRevealEngine
         osc.stop(audioCtxRef.current.currentTime + 0.8);
       }
 
-      const elapsed = Date.now() - startTime;
+      const elapsed = getCurrentTime() - startTime;
       if (childId) {
         try {
           await fetch(`/api/progress/${childId}`, {
@@ -320,35 +330,35 @@ export default function MagicRevealEngine({ childId, onBack }: MagicRevealEngine
         {onBack ? (
           <button 
             onClick={onBack} 
-            className="bg-white squishy-press rounded-full w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center toddler-target border-2 border-slate-dark"
+            className="bg-white clay-btn rounded-full w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center toddler-target border border-white/20 shadow-[4px_4px_8px_rgba(0,0,0,0.05)]"
           >
-            <ArrowLeft className="w-6 h-6 sm:w-7 sm:h-7" strokeWidth={3} />
+            <ArrowLeft className="w-6 h-6 sm:w-7 sm:h-7 text-[#4A5358]" strokeWidth={3} />
           </button>
         ) : (
           <div className="w-12 h-12 sm:w-14 sm:h-14" />
         )}
         
         {/* Centered Target Letter Sticker */}
-        <div className="flex items-center gap-1.5 sm:gap-2.5 bg-white border-2 border-slate-dark rounded-full px-3 py-1.5 sm:px-6 sm:py-2.5 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-          <span className="text-xs sm:text-base font-black text-slate-dark uppercase tracking-wide">Reveal:</span>
-          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-[var(--light-purple)] border-2 border-slate-dark flex items-center justify-center font-black text-lg sm:text-xl text-slate-dark shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+        <div className="flex items-center gap-1.5 sm:gap-2.5 bg-white border border-white/25 rounded-2xl px-3 py-1.5 sm:px-5 sm:py-2.5 shadow-[4px_4px_10px_rgba(0,0,0,0.04),_inset_2px_2px_4px_rgba(255,255,255,0.8),_inset_-2px_-2px_4px_rgba(0,0,0,0.05)] rotate-[-1.5deg]">
+          <span className="text-xs sm:text-base font-black text-[#4A5358] uppercase tracking-wide">Find:</span>
+          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-primary-container border border-white/20 flex items-center justify-center font-black text-lg sm:text-xl text-[#590d22] shadow-[2px_2px_5px_rgba(0,0,0,0.04),_inset_2px_2px_4px_rgba(255,255,255,0.8)]">
             {targetLetter}
           </div>
         </div>
 
         <button 
           onClick={startNewRound} 
-          className="bg-[var(--tertiary-container)] text-[var(--on-tertiary-container)] squishy-press rounded-full w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center toddler-target border-2 border-slate-dark"
+          className="bg-[var(--tertiary-container)] text-[var(--on-tertiary-container)] clay-btn rounded-full w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center toddler-target border border-white/20"
         >
           <RefreshCw className="w-5 h-5 sm:w-6 sm:h-6" strokeWidth={3} />
         </button>
       </div>
       
       <div className="flex flex-col items-center w-full gap-4 sm:gap-6">
-        <div className="relative w-full max-w-[280px] sm:max-w-[360px] aspect-square card-3d overflow-hidden border-2 border-[var(--slate-dark)] shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] mx-auto">
+        <div className="relative w-full max-w-[280px] sm:max-w-[360px] aspect-square clay-card overflow-hidden border border-white/20 mx-auto">
           {/* Hidden Letter Background */}
           <div className="absolute inset-0 flex items-center justify-center bg-[var(--surface-container-lowest)] select-none">
-            <span className="text-[130px] sm:text-[180px] font-black leading-none select-none drop-shadow-[4px_4px_0px_var(--slate-dark)]" style={{ color: "var(--lime-green)" }}>
+            <span className="text-[130px] sm:text-[180px] font-black leading-none select-none drop-shadow-[4px_4px_10px_rgba(0,0,0,0.06)]" style={{ color: "var(--primary)" }}>
               {targetLetter}
             </span>
           </div>
@@ -386,15 +396,14 @@ export default function MagicRevealEngine({ childId, onBack }: MagicRevealEngine
                     whileTap={{ scale: 0.97, y: 4 }}
                     key={i}
                     onClick={() => handleChoice(choice.letter)}
-                    className={`card-organic ${wavyClass} relative p-2.5 sm:p-5 flex flex-col items-center justify-center border-2 border-[var(--slate-dark)] h-24 sm:h-36 w-full`}
+                    className={`clay-card ${wavyClass} relative p-2.5 sm:p-5 flex flex-col items-center justify-center border border-white/20 h-24 sm:h-36 w-full`}
                     style={{
-                      backgroundColor: isCorrect ? "var(--lime-green)" : "white",
-                      boxShadow: "4px 4px 0px 0px var(--slate-dark)"
+                      backgroundColor: isCorrect ? "var(--lime-green)" : "white"
                     }}
                   >
                     {/* Playful letter association badge */}
-                    <div className="absolute top-2 left-2 sm:top-3 sm:left-3 w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-[var(--light-purple)] border border-[var(--slate-dark)] flex items-center justify-center shadow-sm">
-                      <span className="text-xs sm:text-lg font-black text-[var(--slate-dark)]">{choice.letter}</span>
+                    <div className="absolute top-2 left-2 sm:top-3 sm:left-3 w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-[var(--light-purple)] border border-white/25 flex items-center justify-center shadow-[2px_2px_5px_rgba(0,0,0,0.03),_inset_2px_2px_4px_rgba(255,255,255,0.85)]">
+                      <span className="text-xs sm:text-lg font-black text-[#3c1e70]">{choice.letter}</span>
                     </div>
 
                     <div className="flex items-center justify-center w-full h-full max-h-[70%] mt-2">
