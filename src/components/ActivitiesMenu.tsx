@@ -1,7 +1,7 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { Sparkles, PenTool, Eraser, Smile, ChevronRight, Search, Music, Layers, Volume2 } from '@/components/Icons';
+import { Sparkles, PenTool, Eraser, Smile, Search, Music, Layers, Volume2 } from '@/components/Icons';
 import ClayCard from '@/components/ui/ClayCard';
 import MascotSVG from '@/components/MascotSVG';
 
@@ -187,7 +187,7 @@ export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps
             if (act.id === "scavenger-advanced") {
               router.push("/advanced-search");
             } else {
-              onSelectActivity(act.id as any);
+              onSelectActivity(act.id as "tracing" | "reveal" | "bubbles" | "monster" | "scavenger" | "rhyme" | "match" | "drummer");
             }
           }}
           className={`relative overflow-hidden aspect-[1.1] p-5 sm:p-6 flex flex-col items-center justify-center text-center w-full ${
