@@ -7,7 +7,7 @@ interface CartoonSVGProps extends React.SVGProps<SVGSVGElement> {
 }
 
 // Playful, vibrant child-friendly SVG wrapper standardising sizes, colors, and claymorphic 3D rendering
-const CartoonSVG = ({ children, size = 100, animClass = "anim-float", ...props }: CartoonSVGProps) => {
+export const CartoonSVG = ({ children, size = 100, animClass = "anim-float", ...props }: CartoonSVGProps) => {
   return (
     <svg 
       xmlns="http://www.w3.org/2000/svg" 

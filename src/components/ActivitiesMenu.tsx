@@ -1,4 +1,5 @@
 import React from 'react';
+import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { Sparkles, PenTool, Eraser, Smile, ChevronRight, Search, Music, Layers, Volume2 } from '@/components/Icons';
 import ClayCard from '@/components/ui/ClayCard';
@@ -11,7 +12,7 @@ interface ActivitiesMenuProps {
 }
 
 interface ActivityItem {
-  id: "tracing" | "reveal" | "bubbles" | "monster" | "scavenger" | "rhyme" | "match" | "drummer";
+  id: "tracing" | "reveal" | "bubbles" | "monster" | "scavenger" | "scavenger-advanced" | "rhyme" | "match" | "drummer";
   name: string;
   subtitle: string;
   icon: React.ReactNode;
@@ -23,6 +24,7 @@ interface ActivityItem {
 }
 
 export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps) {
+  const router = useRouter();
   const activities: ActivityItem[] = [
     { 
       id: "tracing", 
@@ -78,6 +80,17 @@ export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps
       pillBg: "bg-white/90",
       disabled: false,
       floatDuration: 5.5
+    },
+    { 
+      id: "scavenger-advanced", 
+      name: "Search+", 
+      subtitle: "Advanced Words",
+      icon: <Search className="w-6 h-6 sm:w-7 sm:h-7 text-[#8a6cd6]" strokeWidth={3.5} />, 
+      clayVariant: "purple",
+      textColor: "text-[#3c1e70]",
+      pillBg: "bg-white/90",
+      disabled: false,
+      floatDuration: 5.0
     },
     { 
       id: "rhyme", 
@@ -169,7 +182,14 @@ export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps
           key={act.id}
           variant={act.disabled ? "default" : act.clayVariant}
           hoverEffect={!act.disabled}
-          onClick={() => !act.disabled && onSelectActivity(act.id)}
+          onClick={() => {
+            if (act.disabled) return;
+            if (act.id === "scavenger-advanced") {
+              router.push("/advanced-search");
+            } else {
+              onSelectActivity(act.id as any);
+            }
+          }}
           className={`relative overflow-hidden aspect-[1.1] p-5 sm:p-6 flex flex-col items-center justify-center text-center w-full ${
             act.disabled ? "opacity-55 saturate-50 cursor-not-allowed border-dashed border-[#9eb1bd]/40" : "cursor-pointer"
           }`}
