@@ -96,65 +96,9 @@ const playSynthesizedSound = (type: "correct" | "wrong" | "levelUp" | "click" | 
 // Custom Fluent-style Shelter SVGs
 
 
-const Bird = (props: React.SVGProps<SVGSVGElement>) => (
-  <CartoonSVG animClass="anim-float" {...props}>
-    <g fill="none">
-      <circle cx="16" cy="18" r="9" fill="#FFD166" />
-      <circle cx="12" cy="19" r="2.5" fill="#FFB02E" opacity="0.6" />
-      <circle cx="20" cy="15" r="1.2" fill="#1C1C1C" />
-      <path d="M24 14 L28 16 L24 18 Z" fill="#FF822D" />
-      <ellipse cx="12" cy="19" rx="5" ry="3.5" fill="#FFB02E" transform="rotate(-15 12 19)" />
-      <path d="M7 18 L3 16 L4 21 Z" fill="#FFB02E" />
-    </g>
-  </CartoonSVG>
-);
-
-const Spider = (props: React.SVGProps<SVGSVGElement>) => (
-  <CartoonSVG animClass="anim-sway" {...props}>
-    <g fill="none">
-      <path d="M10 14 Q6 10 8 6" stroke="#4A5358" strokeWidth="1.5" strokeLinecap="round" />
-      <path d="M9 17 Q4 15 6 11" stroke="#4A5358" strokeWidth="1.5" strokeLinecap="round" />
-      <path d="M9 20 Q4 21 6 25" stroke="#4A5358" strokeWidth="1.5" strokeLinecap="round" />
-      <path d="M10 23 Q6 27 8 30" stroke="#4A5358" strokeWidth="1.5" strokeLinecap="round" />
-      <path d="M22 14 Q26 10 24 6" stroke="#4A5358" strokeWidth="1.5" strokeLinecap="round" />
-      <path d="M23 17 Q28 15 26 11" stroke="#4A5358" strokeWidth="1.5" strokeLinecap="round" />
-      <path d="M23 20 Q28 21 26 25" stroke="#4A5358" strokeWidth="1.5" strokeLinecap="round" />
-      <path d="M22 23 Q26 27 24 30" stroke="#4A5358" strokeWidth="1.5" strokeLinecap="round" />
-      <circle cx="16" cy="18" r="8" fill="#321B41" />
-      <circle cx="13" cy="16" r="2.5" fill="#FFFFFF" />
-      <circle cx="13" cy="16" r="1.2" fill="#1C1C1C" />
-      <circle cx="19" cy="16" r="2.5" fill="#FFFFFF" />
-      <circle cx="19" cy="16" r="1.2" fill="#1C1C1C" />
-      <path d="M14 21 Q16 23 18 21" stroke="#FFFFFF" strokeWidth="1" strokeLinecap="round" />
-    </g>
-  </CartoonSVG>
-);
-
-const Squirrel = (props: React.SVGProps<SVGSVGElement>) => (
-  <CartoonSVG animClass="anim-breathe" {...props}>
-    <g fill="none">
-      <path d="M11 23 C6 23 5 13 9 9 C13 5 19 6 20 10 C21 13 18 17 14 19 Z" fill="#D3883E" />
-      <path d="M11 21 C8 21 7 14 10 11 C13 8 17 8 18 11 C19 13 17 16 13 17 Z" fill="#FFDEA7" opacity="0.4" />
-      <ellipse cx="13" cy="20" rx="6" ry="7" fill="#A56953" />
-      <circle cx="16" cy="13" r="5" fill="#A56953" />
-      <path d="M13 9 L15 5 L16 9 Z" fill="#8C5543" />
-      <path d="M17 9 L19 5 L20 9 Z" fill="#8C5543" />
-      <circle cx="18" cy="12" r="1" fill="#1C1C1C" />
-      <circle cx="16" cy="14.5" r="1.5" fill="#FFDEA7" />
-      <circle cx="14" cy="18.5" r="2" fill="#D3883E" />
-      <circle cx="12" cy="20" r="1.2" fill="#8C5543" />
-      <circle cx="15" cy="20" r="1.2" fill="#8C5543" />
-    </g>
-  </CartoonSVG>
-);
-
 // Helpers to lookup Fluent icons
 const getAnimalIcon = (name: string): React.FC<any> | null => {
   const lowerName = name.toLowerCase();
-  if (lowerName === "squirrel") return Squirrel;
-  if (lowerName === "spider") return Spider;
-  if (lowerName === "bird") return Bird;
-
   const item = vocabularyList.find(v => v.name.toLowerCase() === lowerName);
   return item ? item.icon : null;
 };
@@ -187,9 +131,9 @@ const shelterPool: ShelterQuestion[] = [
     ]
   },
   {
-    animal: "squirrel",
-    animalEmoji: "🐿️",
-    questionText: "Where does the squirrel live?",
+    animal: "monkey",
+    animalEmoji: "🐒",
+    questionText: "Where does the monkey live?",
     correctShelter: { emoji: "🌳", name: "Tree", label: "Tree" },
     wrongShelters: [
       { emoji: "🌊", name: "Ocean", label: "Ocean" },
@@ -207,9 +151,9 @@ const shelterPool: ShelterQuestion[] = [
     ]
   },
   {
-    animal: "bird",
-    animalEmoji: "🐦",
-    questionText: "Where does the bird live?",
+    animal: "owl",
+    animalEmoji: "🦉",
+    questionText: "Where does the owl live?",
     correctShelter: { emoji: "🪺", name: "Nest", label: "Nest" },
     wrongShelters: [
       { emoji: "🚜", name: "Farm", label: "Farm" },
@@ -257,13 +201,13 @@ const shelterPool: ShelterQuestion[] = [
     ]
   },
   {
-    animal: "spider",
-    animalEmoji: "🕷️",
-    questionText: "Where does the spider live?",
-    correctShelter: { emoji: "🕸️", name: "Web", label: "Web" },
+    animal: "octopus",
+    animalEmoji: "🐙",
+    questionText: "Where does the octopus live?",
+    correctShelter: { emoji: "🌊", name: "Ocean", label: "Ocean" },
     wrongShelters: [
       { emoji: "🚜", name: "Farm", label: "Farm" },
-      { emoji: "🌊", name: "Ocean", label: "Ocean" }
+      { emoji: "🏠", name: "Doghouse", label: "Doghouse" }
     ]
   },
   {
