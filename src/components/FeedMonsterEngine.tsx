@@ -377,9 +377,9 @@ export default function FeedMonsterEngine({ childId, onBack }: FeedMonsterEngine
   };
 
   return (
-    <div className="flex flex-col items-center w-full max-w-2xl mx-auto px-4 select-none justify-between h-full min-h-0 py-2">
+    <div className="flex flex-col items-center w-full max-w-2xl mx-auto px-4 select-none justify-start h-full min-h-0 py-2 gap-3 sm:gap-4">
       {/* Standardized Header */}
-      <div className="flex justify-between items-center w-full mb-2 z-10 px-1">
+      <div className="flex justify-between items-center w-full z-10 px-1">
         <button 
           onClick={onBack} 
           className="bg-white clay-btn rounded-full w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center border border-white/20 shadow-[4px_4px_8px_rgba(0,0,0,0.05)]"
@@ -397,28 +397,25 @@ export default function FeedMonsterEngine({ childId, onBack }: FeedMonsterEngine
         </button>
       </div>
 
-      {/* Main Board */}
-      <div className="w-full relative flex flex-col items-center gap-3 sm:gap-4 mt-1">
+      {/* Prominent Wide instruction card matching the user's diagram rectangle */}
+      <div className="w-full max-w-md sm:max-w-lg bg-white/95 border-white/60 border-[3px] rounded-[2.2rem] px-6 sm:px-8 py-3.5 sm:py-4.5 shadow-[0_15px_30px_rgba(0,0,0,0.02),_inset_2px_2px_4px_rgba(255,255,255,0.8)] flex items-center justify-between gap-4 shrink-0">
+        <div className="flex flex-col text-left">
+          <span className="text-[10px] sm:text-xs font-black text-[#d4a919] uppercase tracking-widest leading-none mb-1.5">Buddy's Request:</span>
+          <p className="text-[#3fa394] font-black text-sm sm:text-base leading-snug">
+            Find the letter to feed the monster!
+          </p>
+        </div>
         
-        {/* Prominent Wide instruction card matching the user's diagram rectangle */}
-        <div className="w-full max-w-md sm:max-w-lg bg-white/95 border-white/60 border-[3px] rounded-[2.2rem] px-6 sm:px-8 py-3.5 sm:py-4.5 shadow-[0_15px_30px_rgba(0,0,0,0.02),_inset_2px_2px_4px_rgba(255,255,255,0.8)] flex items-center justify-between gap-4 mt-1 mb-2">
-          <div className="flex flex-col text-left">
-            <span className="text-[10px] sm:text-xs font-black text-[#d4a919] uppercase tracking-widest leading-none mb-1.5">Buddy's Request:</span>
-            <p className="text-[#3fa394] font-black text-sm sm:text-base leading-snug">
-              Find the letter to feed the monster!
-            </p>
-          </div>
-          
-          <div className="flex items-center gap-2 shrink-0">
-            <span className="text-[11px] sm:text-xs font-black text-[#4A5358]/60 uppercase tracking-widest">Feed me:</span>
-            <div className="w-11 h-11 sm:w-13 sm:h-13 rounded-2xl bg-gradient-to-br from-[#ffd5e5] to-[#fcd5ce] border-white/90 border-2 flex items-center justify-center font-black text-2xl sm:text-3xl text-[#CA0B4A] shadow-[inset_2px_2px_4px_rgba(255,255,255,0.7),_2px_4px_8px_rgba(202,11,74,0.15)]">
-              {targetLetter}
-            </div>
+        <div className="flex items-center gap-2 shrink-0">
+          <span className="text-[11px] sm:text-xs font-black text-[#4A5358]/60 uppercase tracking-widest">Feed me:</span>
+          <div className="w-11 h-11 sm:w-13 sm:h-13 rounded-2xl bg-gradient-to-br from-[#ffd5e5] to-[#fcd5ce] border-white/90 border-2 flex items-center justify-center font-black text-2xl sm:text-3xl text-[#CA0B4A] shadow-[inset_2px_2px_4px_rgba(255,255,255,0.7),_2px_4px_8px_rgba(202,11,74,0.15)]">
+            {targetLetter}
           </div>
         </div>
+      </div>
 
-        {/* Dynamic Monster Canvas Area matching the user's diagram oval */}
-        <div className="w-full h-[250px] sm:h-[330px] md:h-[370px] relative flex justify-center items-center overflow-visible">
+      {/* Dynamic Monster Canvas Area matching the user's diagram oval */}
+      <div className="w-full flex-grow relative flex justify-center items-center overflow-visible min-h-0">
           <div className="absolute bg-gradient-to-tr from-[#ffe5d9] to-[#c3e6dc] w-64 h-64 sm:w-80 sm:h-80 rounded-full blur-[50px] opacity-60 -z-10 animate-pulse pointer-events-none" />
           
           {/* SVG Animated Monster */}
@@ -657,6 +654,5 @@ export default function FeedMonsterEngine({ childId, onBack }: FeedMonsterEngine
 
         {/* Bottom Navigation / Celebration */}
       </div>
-    </div>
   );
 }
