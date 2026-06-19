@@ -94,101 +94,7 @@ const playSynthesizedSound = (type: "correct" | "wrong" | "levelUp" | "click" | 
 };
 
 // Custom Fluent-style Shelter SVGs
-const OceanIcon = (props: React.SVGProps<SVGSVGElement>) => (
-  <svg viewBox="0 0 100 100" {...props}>
-    <path d="M10 60 Q25 45 40 60 T70 60 T100 60 L100 90 L10 90 Z" fill="#4ecdc4" />
-    <path d="M0 70 Q15 60 30 70 T60 70 T90 70 L90 90 L0 90 Z" fill="#3fa394" opacity="0.8" />
-    <circle cx="25" cy="40" r="3" fill="#e2f5ee" />
-    <circle cx="55" cy="45" r="2.5" fill="#e2f5ee" />
-    <circle cx="85" cy="40" r="3" fill="#e2f5ee" />
-  </svg>
-);
 
-const BeehiveIcon = (props: React.SVGProps<SVGSVGElement>) => (
-  <svg viewBox="0 0 100 100" {...props}>
-    <path d="M10 20 L90 20" stroke="#b08968" strokeWidth="6" strokeLinecap="round" />
-    <path d="M30 20 C30 65 70 65 70 20 Z" fill="#ffd166" stroke="#ebd787" strokeWidth="3" />
-    <circle cx="50" cy="30" r="8" fill="#ffd166" stroke="#ebd787" strokeWidth="2" />
-    <circle cx="50" cy="42" r="10" fill="#ffd166" stroke="#ebd787" strokeWidth="2" />
-    <circle cx="50" cy="42" r="4" fill="#3c0066" />
-    <circle cx="75" cy="50" r="5" fill="#ffd166" />
-    <path d="M72 48 L78 48" stroke="#000" strokeWidth="1.5" />
-  </svg>
-);
-
-const NestIcon = (props: React.SVGProps<SVGSVGElement>) => (
-  <svg viewBox="0 0 100 100" {...props}>
-    <ellipse cx="50" cy="65" rx="35" ry="18" fill="#b08968" stroke="#8b5a2b" strokeWidth="3" />
-    <ellipse cx="50" cy="58" rx="28" ry="12" fill="#4e3526" />
-    <path d="M20 60 Q35 70 50 62 T80 60" stroke="#8b5a2b" strokeWidth="2.5" fill="none" />
-    <path d="M15 65 L85 65" stroke="#4e3526" strokeWidth="2" fill="none" />
-    <ellipse cx="40" cy="52" rx="7" ry="10" fill="#c3e6dc" transform="rotate(-15 40 52)" />
-    <ellipse cx="50" cy="50" rx="7" ry="10" fill="#fff9e6" />
-    <ellipse cx="60" cy="52" rx="7" ry="10" fill="#fcd5ce" transform="rotate(15 60 52)" />
-  </svg>
-);
-
-const CaveIcon = (props: React.SVGProps<SVGSVGElement>) => (
-  <svg viewBox="0 0 100 100" {...props}>
-    <path d="M15 85 C10 40 30 15 50 15 C70 15 90 40 85 85 Z" fill="#b0b0b0" stroke="#8a8a8a" strokeWidth="3" />
-    <path d="M30 85 C25 55 40 35 50 35 C60 35 75 55 70 85 Z" fill="#4a4a4a" />
-    <circle cx="20" cy="30" r="10" fill="#d5d5d5" />
-    <circle cx="80" cy="35" r="12" fill="#d5d5d5" />
-  </svg>
-);
-
-const BarnIcon = (props: React.SVGProps<SVGSVGElement>) => (
-  <svg viewBox="0 0 100 100" {...props}>
-    <rect x="20" y="45" width="60" height="40" fill="#e07383" stroke="#b94b58" strokeWidth="3" rx="4" />
-    <path d="M15 45 L50 15 L85 45 Z" fill="#b94b58" stroke="#8e2e38" strokeWidth="3" strokeLinejoin="round" />
-    <rect x="40" y="60" width="20" height="25" fill="#fff" stroke="#b94b58" strokeWidth="2" />
-    <path d="M40 60 L60 85" stroke="#b94b58" strokeWidth="2" />
-    <path d="M60 60 L40 85" stroke="#b94b58" strokeWidth="2" />
-  </svg>
-);
-
-const PondIcon = (props: React.SVGProps<SVGSVGElement>) => (
-  <svg viewBox="0 0 100 100" {...props}>
-    <ellipse cx="50" cy="65" rx="40" ry="20" fill="#bee8d4" stroke="#3fa394" strokeWidth="3" />
-    <path d="M28 62 C23 60 20 65 25 70 C30 75 40 70 38 65 Z" fill="#38b000" />
-    <ellipse cx="55" cy="60" rx="10" ry="3" fill="#fff" opacity="0.5" />
-  </svg>
-);
-
-const WebIcon = (props: React.SVGProps<SVGSVGElement>) => (
-  <svg viewBox="0 0 100 100" {...props}>
-    <g stroke="#b0b0b0" strokeWidth="2.5" fill="none">
-      <line x1="10" y1="10" x2="90" y2="90" />
-      <line x1="90" y1="10" x2="10" y2="90" />
-      <line x1="50" y1="10" x2="50" y2="90" />
-      <line x1="10" y1="50" x2="90" y2="50" />
-      <circle cx="50" cy="50" r="15" />
-      <circle cx="50" cy="50" r="30" />
-      <circle cx="50" cy="50" r="42" />
-    </g>
-  </svg>
-);
-
-const SavannaIcon = (props: React.SVGProps<SVGSVGElement>) => (
-  <svg viewBox="0 0 100 100" {...props}>
-    <circle cx="50" cy="40" r="20" fill="#ffd166" opacity="0.8" />
-    <path d="M10 90 L20 70 L30 90 L40 65 L50 90 L60 70 L70 90 L80 65 L90 90 Z" fill="#e0c11b" stroke="#b08968" strokeWidth="2" />
-  </svg>
-);
-
-const DryLog = (props: React.SVGProps<SVGSVGElement>) => (
-  <svg viewBox="0 0 100 100" {...props}>
-    <rect x="20" y="35" width="60" height="30" rx="8" fill="#8b5a2b" stroke="#4e3526" strokeWidth="4" />
-    <ellipse cx="20" cy="50" rx="6" ry="15" fill="#cd853f" stroke="#4e3526" strokeWidth="3" />
-    <ellipse cx="20" cy="50" rx="2" ry="5" fill="#8b5a2b" />
-    <ellipse cx="80" cy="50" rx="6" ry="15" fill="#cd853f" stroke="#4e3526" strokeWidth="3" />
-    <ellipse cx="80" cy="50" rx="2" ry="5" fill="#8b5a2b" />
-    <path d="M35 45 L65 45" stroke="#4e3526" strokeWidth="3" strokeLinecap="round" />
-    <path d="M40 55 L60 55" stroke="#4e3526" strokeWidth="3" strokeLinecap="round" />
-    <path d="M50 35 Q40 20 48 10 Q54 20 50 35" fill="#38b000" />
-    <path d="M50 35 Q60 25 56 18 Q52 26 50 35" fill="#38b000" opacity="0.8" />
-  </svg>
-);
 
 const Bird = (props: React.SVGProps<SVGSVGElement>) => (
   <CartoonSVG animClass="anim-float" {...props}>
@@ -265,17 +171,8 @@ const renderShelterIcon = (choice: ShelterItem, className?: string) => {
     const HouseComp = getAnimalIcon("House");
     return HouseComp ? React.createElement(HouseComp, props) : null;
   }
-  if (name === "ocean") return <OceanIcon {...props} />;
-  if (name === "beehive") return <BeehiveIcon {...props} />;
-  if (name === "nest") return <NestIcon {...props} />;
-  if (name === "cave") return <CaveIcon {...props} />;
-  if (name === "barn") return <BarnIcon {...props} />;
-  if (name === "pond") return <PondIcon {...props} />;
-  if (name === "web") return <WebIcon {...props} />;
-  if (name === "savanna") return <SavannaIcon {...props} />;
-  if (name === "dry log" || name === "log") return <DryLog {...props} />;
 
-  return <span className="text-5xl sm:text-6xl">{choice.emoji}</span>;
+  return <span className="text-5xl sm:text-6xl select-none">{choice.emoji}</span>;
 };
 
 const shelterPool: ShelterQuestion[] = [
@@ -744,8 +641,8 @@ export default function WhereIsBunnyEngine({ childId, onBack }: { childId: strin
         </div>
       </div>
 
-      {/* Main Content Container pushed down for mobile reachability */}
-      <div className="flex-grow w-full flex flex-col items-center justify-end gap-3 sm:gap-6 pb-2 sm:pb-4 min-h-0 relative z-10">
+      {/* Main Content Container spaced evenly for perfect layout balance */}
+      <div className="flex-grow w-full flex flex-col items-center justify-around py-4 sm:py-8 min-h-0 relative z-10">
 
         {/* 3 Shelters Above (Drop targets - no solid cards, just dashed drop zones) */}
         <div className="w-full grid grid-cols-3 gap-3 sm:gap-6 mt-1 shrink-0 relative">
