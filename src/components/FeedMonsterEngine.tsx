@@ -357,8 +357,8 @@ export default function FeedMonsterEngine({ childId, onBack }: FeedMonsterEngine
       
       return {
         x: `${offsetPercentX}%`,
-        y: -270,
-        scale: 0.12,
+        y: -330,
+        scale: 0.1,
         opacity: 0,
         transition: { duration: 0.5, ease: "easeIn" as const }
       };
@@ -398,19 +398,28 @@ export default function FeedMonsterEngine({ childId, onBack }: FeedMonsterEngine
       </div>
 
       {/* Main Board */}
-      <div className="w-full relative flex flex-col items-center gap-4 sm:gap-5 mt-1">
+      <div className="w-full relative flex flex-col items-center gap-3 sm:gap-4 mt-1">
         
-        {/* Prominent down-positioned Feed Target Sticker */}
-        <div className="flex items-center gap-3 sm:gap-4 bg-white/95 border-white/60 border-[3px] rounded-3xl px-6 sm:px-8 py-3 shadow-[0_12px_25px_rgba(0,0,0,0.02),_inset_2px_2px_4px_rgba(255,255,255,0.8)] scale-105 sm:scale-110 rotate-[-0.5deg]">
-          <span className="text-xs sm:text-base font-black text-[#4A5358]/80 uppercase tracking-widest">Feed me:</span>
-          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-br from-[#ffd5e5] to-[#fcd5ce] border-white/90 border-2 flex items-center justify-center font-black text-xl sm:text-2xl text-[#CA0B4A] shadow-[inset_2px_2px_4px_rgba(255,255,255,0.7),_2px_4px_8px_rgba(202,11,74,0.15)]">
-            {targetLetter}
+        {/* Prominent Wide instruction card matching the user's diagram rectangle */}
+        <div className="w-full max-w-md sm:max-w-lg bg-white/95 border-white/60 border-[3px] rounded-[2.2rem] px-6 sm:px-8 py-3.5 sm:py-4.5 shadow-[0_15px_30px_rgba(0,0,0,0.02),_inset_2px_2px_4px_rgba(255,255,255,0.8)] flex items-center justify-between gap-4 mt-1 mb-2">
+          <div className="flex flex-col text-left">
+            <span className="text-[10px] sm:text-xs font-black text-[#d4a919] uppercase tracking-widest leading-none mb-1.5">Buddy's Request:</span>
+            <p className="text-[#3fa394] font-black text-sm sm:text-base leading-snug">
+              Find the letter to feed the monster!
+            </p>
+          </div>
+          
+          <div className="flex items-center gap-2 shrink-0">
+            <span className="text-[11px] sm:text-xs font-black text-[#4A5358]/60 uppercase tracking-widest">Feed me:</span>
+            <div className="w-11 h-11 sm:w-13 sm:h-13 rounded-2xl bg-gradient-to-br from-[#ffd5e5] to-[#fcd5ce] border-white/90 border-2 flex items-center justify-center font-black text-2xl sm:text-3xl text-[#CA0B4A] shadow-[inset_2px_2px_4px_rgba(255,255,255,0.7),_2px_4px_8px_rgba(202,11,74,0.15)]">
+              {targetLetter}
+            </div>
           </div>
         </div>
 
-        {/* Dynamic Monster Canvas Area */}
-        <div className="w-full h-[210px] sm:h-[260px] md:h-[280px] relative flex justify-center items-center overflow-visible">
-          <div className="absolute bg-gradient-to-tr from-[#ffe5d9] to-[#c3e6dc] w-56 h-56 sm:w-68 sm:h-68 rounded-full blur-[45px] opacity-50 -z-10 animate-pulse pointer-events-none" />
+        {/* Dynamic Monster Canvas Area matching the user's diagram oval */}
+        <div className="w-full h-[250px] sm:h-[330px] md:h-[370px] relative flex justify-center items-center overflow-visible">
+          <div className="absolute bg-gradient-to-tr from-[#ffe5d9] to-[#c3e6dc] w-64 h-64 sm:w-80 sm:h-80 rounded-full blur-[50px] opacity-60 -z-10 animate-pulse pointer-events-none" />
           
           {/* SVG Animated Monster */}
           <motion.div
@@ -428,7 +437,7 @@ export default function FeedMonsterEngine({ childId, onBack }: FeedMonsterEngine
                 ? { duration: 0.5 }
                 : { duration: 4, repeat: Infinity, ease: "easeInOut" }
             }
-            className="w-52 h-52 sm:w-64 sm:h-64 md:w-72 md:h-72 relative overflow-visible"
+            className="w-60 h-60 sm:w-76 sm:h-76 md:w-88 md:h-88 relative overflow-visible"
           >
             {/* Animated crumbs wrapper nested inside the monster container */}
             <div className="absolute top-[68%] left-[50%] w-12 h-12 pointer-events-none overflow-visible z-20">
