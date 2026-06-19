@@ -280,51 +280,57 @@ export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps
       animate="show"
       className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-5 w-full max-w-4xl mx-auto p-4 z-10 relative overflow-visible"
     >
-      {/* Playful unified branding & speech bubble header spanning all columns */}
+      {/* Playful unified branding & speech bubble Bento Card spanning all columns */}
       <motion.div 
         variants={itemVariants}
-        className="col-span-2 sm:col-span-3 md:col-span-4 flex flex-col sm:flex-row items-center justify-between gap-5 w-full mb-4 px-2 select-none"
+        className="col-span-2 sm:col-span-3 md:col-span-4 mb-4"
       >
-        {/* Brand Logo & Title */}
-        <div className="flex items-center gap-3.5 shrink-0 bg-white/45 backdrop-blur-md border-[3px] border-white/55 px-5 py-3 rounded-[2rem] shadow-[0_8px_24px_rgba(0,0,0,0.02)]">
-          <div className="w-10 h-10 rounded-2xl bg-white border-2 border-white p-0.5 shadow-[0_4px_12px_rgba(0,0,0,0.04)] flex items-center justify-center shrink-0">
-            <img
-              alt="Midday Logo"
-              className="w-full h-full object-contain"
-              src="/logo.png"
-            />
-          </div>
-          <div className="flex flex-col items-start leading-none text-left">
-            <h1 className="font-sans text-xl sm:text-2xl text-primary tracking-tight font-black uppercase">
-              Midday
-            </h1>
-            <span className="text-[8px] font-black uppercase tracking-widest text-[#0d4036]/50">
-              Playbook
-            </span>
-          </div>
-        </div>
-
-        {/* Buddy Greeting Bubble */}
-        <div className="relative flex items-center gap-3 max-w-md w-full sm:w-auto">
-          {/* Speech Bubble */}
-          <div className="relative bg-white/90 backdrop-blur-md px-5 py-3 rounded-[2rem] border-[3px] border-white/60 shadow-[0_8px_24px_rgba(0,0,0,0.03)] flex-grow">
-            {/* Rotated square tail pointing to the right towards Buddy */}
-            <div className="absolute right-[-7px] top-1/2 -translate-y-1/2 w-3.5 h-3.5 rotate-45 bg-white/90 border-t-[3px] border-r-[3px] border-white/60" />
-            
-            <div className="text-left relative z-10 pl-1">
-              <p className="text-[9px] font-black text-[#d4a919] uppercase tracking-wider leading-none mb-1">Buddy says:</p>
-              <p className="text-xs font-bold text-[#4A5358]/80 leading-normal">Pick a game to play together!</p>
+        <ClayCard
+          variant="glass"
+          hoverEffect={false}
+          className="p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6 w-full border-white/40 border-[3px] shadow-[0_20px_50px_rgba(0,0,0,0.02)] select-none overflow-visible relative"
+        >
+          {/* Brand Logo & Title */}
+          <div className="flex items-center gap-4 text-left shrink-0">
+            <div className="w-14 h-14 rounded-2xl bg-white border-2 border-white/10 p-1 shadow-[0_6px_16px_rgba(0,0,0,0.03)] flex items-center justify-center shrink-0">
+              <img
+                alt="Midday Logo"
+                className="w-full h-full object-contain"
+                src="/logo.png"
+              />
+            </div>
+            <div className="flex flex-col items-start leading-none text-left">
+              <h1 className="font-sans text-2xl sm:text-3xl text-primary tracking-tight font-black uppercase">
+                Midday
+              </h1>
+              <span className="text-[10px] sm:text-xs font-black uppercase tracking-widest text-[#0d4036]/50 mt-0.5">
+                Playbook
+              </span>
             </div>
           </div>
 
-          {/* Floating Boy Mascot */}
-          <div className="relative shrink-0 select-none">
-            {/* Sparkles */}
-            <div className="absolute top-0 -left-1 text-[#ffd166] text-xs animate-sparkle-1 pointer-events-none">✨</div>
-            <div className="absolute -bottom-1 -right-1 text-[#e07383] text-xs animate-sparkle-2 pointer-events-none">✨</div>
-            <MascotSVG className="w-14 h-14 filter drop-shadow-[2px_4px_6px_rgba(0,0,0,0.06)] animate-float" />
+          {/* Buddy Greeting Bubble */}
+          <div className="relative flex items-center gap-4 max-w-md w-full md:w-auto">
+            {/* Speech Bubble */}
+            <div className="relative bg-white/95 backdrop-blur-md px-5 py-3.5 rounded-[1.75rem] border-2 border-white/60 shadow-[0_6px_18px_rgba(0,0,0,0.02)] flex-grow text-left">
+              {/* Rotated square tail pointing to the right towards Buddy */}
+              <div className="absolute right-[-6px] top-1/2 -translate-y-1/2 w-3 h-3 rotate-45 bg-white/95 border-t-2 border-r-2 border-white/60" />
+              
+              <div className="text-left relative z-10 pl-1">
+                <p className="text-[9px] font-black text-[#d4a919] uppercase tracking-wider leading-none mb-1">Buddy says:</p>
+                <p className="text-xs sm:text-sm font-bold text-[#4A5358]/80 leading-normal">Pick a game to play together!</p>
+              </div>
+            </div>
+
+            {/* Floating Boy Mascot */}
+            <div className="relative shrink-0 select-none w-16 h-16 sm:w-18 sm:h-18">
+              {/* Sparkles */}
+              <div className="absolute top-0 -left-1.5 text-[#ffd166] text-xs animate-sparkle-1 pointer-events-none">✨</div>
+              <div className="absolute -bottom-1 -right-1 text-[#e07383] text-xs animate-sparkle-2 pointer-events-none">✨</div>
+              <MascotSVG className="w-full h-full filter drop-shadow-[2px_4px_6px_rgba(0,0,0,0.06)] animate-float" />
+            </div>
           </div>
-        </div>
+        </ClayCard>
       </motion.div>
 
       {activities.map((act) => {

@@ -153,7 +153,7 @@ export default function Home() {
   }, [isGameActive]);
 
   return (
-    <div className={`flex flex-col font-sans relative overflow-hidden bg-background text-foreground ${
+    <div className={`flex flex-col font-sans relative overflow-hidden bg-transparent text-foreground ${
       isGameActive ? "h-[100dvh] max-h-[100dvh]" : "min-h-[100dvh]"
     }`}>
       {/* Animated Ambient Background Blobs */}
@@ -185,7 +185,7 @@ export default function Home() {
       <main className={`flex-grow max-w-6xl mx-auto w-full flex flex-col justify-center relative z-0 ${
         isGameActive 
           ? "h-[calc(100dvh-1rem)] max-h-[calc(100dvh-1rem)] sm:h-[calc(100dvh-2rem)] sm:max-h-[calc(100dvh-2rem)] p-2 sm:p-4 pb-2 sm:pb-4 overflow-hidden mt-1 sm:mt-2" 
-          : `p-4 pb-28 sm:pb-32 md:pb-8 pt-24 sm:pt-28`
+          : `p-4 pb-28 sm:pb-32 md:pb-8 ${view === "lesson" ? "pt-6 sm:pt-8" : "pt-24 sm:pt-28"}`
       }`}>
         {!childId ? (
           <div className="flex justify-center items-center h-64">

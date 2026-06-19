@@ -105,12 +105,11 @@ body.game-active {
 
 body {
   background: 
-    radial-gradient(at 0% 0%, #e8f5ed 0px, transparent 50%),
-    radial-gradient(at 50% 0%, #fdf9e9 0px, transparent 40%),
-    radial-gradient(at 100% 0%, #eef7f2 0px, transparent 50%),
-    radial-gradient(at 0% 100%, #ecf6f0 0px, transparent 50%),
-    radial-gradient(at 100% 100%, #fbf0f2 0px, transparent 50%),
-    #e8efe9; /* Soft Caladon Canvas base */
+    radial-gradient(at 10% 20%, #d8ebd2 0px, transparent 45%),
+    radial-gradient(at 90% 10%, #fef5d1 0px, transparent 40%),
+    radial-gradient(at 50% 80%, #d1f0ea 0px, transparent 50%),
+    radial-gradient(at 80% 90%, #fce1d4 0px, transparent 45%),
+    #e5efe8; /* Soft pastel celadon base */
   color: var(--foreground);
   overflow-x: hidden;
   font-weight: 800; /* Friendly chunky text */
