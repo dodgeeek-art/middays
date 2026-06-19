@@ -596,26 +596,31 @@ export default function WhereIsBunnyEngine({ childId, onBack }: { childId: strin
       {/* Main Content Container spaced evenly for perfect layout balance */}
       <div className="flex-grow w-full flex flex-col items-center justify-around py-4 sm:py-8 min-h-0 relative z-10">
 
-        {/* 3 Shelters Above (Drop targets - no solid cards, just dashed drop zones) */}
+        {/* 3 Shelters Above (Drop targets as solid cards) */}
         <div className="w-full grid grid-cols-3 gap-3 sm:gap-6 mt-1 shrink-0 relative">
           {choices.map((choice, idx) => {
             const isWrong = wrongSelections.includes(choice.name);
             const isCorrectState = gameState === "correct" && choice.name === currentQuestion?.correctShelter.name;
             
             return (
-              <div
-                key={choice.name}
-                ref={idx === 0 ? zone0Ref : idx === 1 ? zone1Ref : zone2Ref}
-                className={`clay-card bg-white border-[3px] border-white/50 shadow-clay-card flex flex-col items-center justify-center p-3 sm:p-5 rounded-[2.2rem] transition-all min-h-[130px] sm:min-h-[170px] ${
-                  isWrong ? "opacity-25 border-red-200 bg-red-50/20 shadow-none scale-95" : isCorrectState ? "border-emerald-400 bg-emerald-500/10 scale-105 shadow-[0_0_15px_rgba(52,211,153,0.15)]" : "hover:scale-[1.01]"
-                }`}
-              >
-                {/* Shelter SVG Icon */}
-                <div className="w-16 h-16 sm:w-24 sm:h-24 filter drop-shadow-[2px_3px_5px_rgba(0,0,0,0.06)] select-none flex items-center justify-center relative">
-                  {renderShelterIcon(choice)}
+              <div key={choice.name} className="flex flex-col items-center gap-2">
+                {/* Card Container (Drop target) */}
+                <div
+                  ref={idx === 0 ? zone0Ref : idx === 1 ? zone1Ref : zone2Ref}
+                  className={`clay-card bg-white border-[3px] border-white/50 shadow-clay-card rounded-[2.2rem] overflow-hidden transition-all w-full aspect-square flex items-center justify-center p-0 ${
+                    isWrong
+                      ? "opacity-25 border-red-200 bg-red-50/20 shadow-none scale-95"
+                      : isCorrectState
+                      ? "border-emerald-400 bg-emerald-500/10 scale-105 shadow-[0_0_15px_rgba(52,211,153,0.15)]"
+                      : "hover:scale-[1.01]"
+                  }`}
+                >
+                  <div className="w-full h-full select-none relative flex items-center justify-center">
+                    {renderShelterIcon(choice)}
+                  </div>
                 </div>
-                {/* Shelter Label */}
-                <span className="text-[10px] sm:text-xs font-black uppercase tracking-wider text-slate-dark mt-2 select-none">
+                {/* Shelter Label (Under the Card) */}
+                <span className="text-[10px] sm:text-xs font-black uppercase tracking-wider text-slate-dark select-none">
                   {choice.label}
                 </span>
               </div>
