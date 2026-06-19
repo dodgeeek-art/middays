@@ -357,8 +357,8 @@ export default function FeedMonsterEngine({ childId, onBack }: FeedMonsterEngine
       
       return {
         x: `${offsetPercentX}%`,
-        y: -210,
-        scale: 0.15,
+        y: -270,
+        scale: 0.12,
         opacity: 0,
         transition: { duration: 0.5, ease: "easeIn" as const }
       };
@@ -379,21 +379,13 @@ export default function FeedMonsterEngine({ childId, onBack }: FeedMonsterEngine
   return (
     <div className="flex flex-col items-center w-full max-w-2xl mx-auto px-4 select-none justify-between h-full min-h-0 py-2">
       {/* Standardized Header */}
-      <div className="flex justify-between items-center w-full mb-3 sm:mb-4 z-10 px-1">
+      <div className="flex justify-between items-center w-full mb-2 z-10 px-1">
         <button 
           onClick={onBack} 
           className="bg-white clay-btn rounded-full w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center border border-white/20 shadow-[4px_4px_8px_rgba(0,0,0,0.05)]"
         >
           <ArrowLeft className="w-5.5 h-5.5 sm:w-7 sm:h-7 text-[#4A5358]" strokeWidth={3} />
         </button>
-        
-        {/* Centered Speech/Feed Target Sticker */}
-        <div className="flex items-center gap-1.5 sm:gap-2.5 bg-white border border-white/20 rounded-2xl px-4 sm:px-5 py-2 shadow-[4px_4px_10px_rgba(0,0,0,0.04),_inset_2px_2px_4px_rgba(255,255,255,0.8),_inset_-2px_-2px_4px_rgba(0,0,0,0.05)] rotate-[1deg]">
-          <span className="text-xs sm:text-base font-black text-[#4A5358] uppercase tracking-wide">Feed me:</span>
-          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-primary-container border border-white/20 flex items-center justify-center font-black text-base sm:text-xl text-[#590d22] shadow-[2px_2px_5px_rgba(0,0,0,0.04),_inset_2px_2px_4px_rgba(255,255,255,0.8)]">
-            {targetLetter}
-          </div>
-        </div>
 
         <button 
           onClick={playNoteSound}
@@ -406,10 +398,19 @@ export default function FeedMonsterEngine({ childId, onBack }: FeedMonsterEngine
       </div>
 
       {/* Main Board */}
-      <div className="w-full relative flex flex-col items-center gap-4 sm:gap-6 mt-2">
+      <div className="w-full relative flex flex-col items-center gap-4 sm:gap-5 mt-1">
+        
+        {/* Prominent down-positioned Feed Target Sticker */}
+        <div className="flex items-center gap-3 sm:gap-4 bg-white/95 border-white/60 border-[3px] rounded-3xl px-6 sm:px-8 py-3 shadow-[0_12px_25px_rgba(0,0,0,0.02),_inset_2px_2px_4px_rgba(255,255,255,0.8)] scale-105 sm:scale-110 rotate-[-0.5deg]">
+          <span className="text-xs sm:text-base font-black text-[#4A5358]/80 uppercase tracking-widest">Feed me:</span>
+          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-br from-[#ffd5e5] to-[#fcd5ce] border-white/90 border-2 flex items-center justify-center font-black text-xl sm:text-2xl text-[#CA0B4A] shadow-[inset_2px_2px_4px_rgba(255,255,255,0.7),_2px_4px_8px_rgba(202,11,74,0.15)]">
+            {targetLetter}
+          </div>
+        </div>
+
         {/* Dynamic Monster Canvas Area */}
-        <div className="w-full h-[160px] sm:h-[200px] md:h-[220px] relative flex justify-center items-center overflow-visible">
-          <div className="absolute bg-[var(--secondary-container)] w-44 h-44 rounded-full blur-[40px] opacity-40 -z-10 animate-pulse pointer-events-none" />
+        <div className="w-full h-[210px] sm:h-[260px] md:h-[280px] relative flex justify-center items-center overflow-visible">
+          <div className="absolute bg-gradient-to-tr from-[#ffe5d9] to-[#c3e6dc] w-56 h-56 sm:w-68 sm:h-68 rounded-full blur-[45px] opacity-50 -z-10 animate-pulse pointer-events-none" />
           
           {/* SVG Animated Monster */}
           <motion.div
@@ -427,7 +428,7 @@ export default function FeedMonsterEngine({ childId, onBack }: FeedMonsterEngine
                 ? { duration: 0.5 }
                 : { duration: 4, repeat: Infinity, ease: "easeInOut" }
             }
-            className="w-44 h-44 sm:w-54 sm:h-54 md:w-64 md:h-64 relative overflow-visible"
+            className="w-52 h-52 sm:w-64 sm:h-64 md:w-72 md:h-72 relative overflow-visible"
           >
             {/* Animated crumbs wrapper nested inside the monster container */}
             <div className="absolute top-[68%] left-[50%] w-12 h-12 pointer-events-none overflow-visible z-20">
@@ -489,61 +490,65 @@ export default function FeedMonsterEngine({ childId, onBack }: FeedMonsterEngine
 
               <g filter="url(#monster-clay)">
                 {/* Little stubby feet */}
-                <ellipse cx="35" cy="92" rx="10" ry="5" fill="#FAF5EB" stroke="#4A5358" strokeWidth="2.2" />
-                <ellipse cx="65" cy="92" rx="10" ry="5" fill="#FAF5EB" stroke="#4A5358" strokeWidth="2.2" />
+                <ellipse cx="35" cy="92" rx="10" ry="5" fill="#FDFBF7" stroke="#3A413A" strokeWidth="2.2" />
+                <ellipse cx="65" cy="92" rx="10" ry="5" fill="#FDFBF7" stroke="#3A413A" strokeWidth="2.2" />
 
                 {/* Stubby arms */}
                 <motion.path 
                   animate={gameState === "success" ? { rotate: [0, 45, 0] } : {}}
                   transition={{ duration: 0.5, repeat: 3 }}
                   d="M 12 60 Q 2 55 5 45 Q 12 50 16 58" 
-                  fill="#FAF5EB" 
-                  stroke="#4A5358" 
+                  fill="#FDFBF7" 
+                  stroke="#3A413A" 
                   strokeWidth="2.2" 
                 />
                 <motion.path 
                   animate={gameState === "success" ? { rotate: [0, -45, 0] } : {}}
                   transition={{ duration: 0.5, repeat: 3 }}
                   d="M 88 60 Q 98 55 95 45 Q 88 50 84 58" 
-                  fill="#FAF5EB" 
-                  stroke="#4A5358" 
+                  fill="#FDFBF7" 
+                  stroke="#3A413A" 
                   strokeWidth="2.2" 
                 />
 
                 {/* Sage-green leafy horns */}
-                <path d="M 28 22 Q 16 8 12 18 Q 22 28 32 24" fill="#BDCEB7" stroke="#4A5358" strokeWidth="2.2" />
-                <path d="M 72 22 Q 84 8 88 18 Q 78 28 68 24" fill="#BDCEB7" stroke="#4A5358" strokeWidth="2.2" />
+                <path d="M 28 22 Q 16 8 12 18 Q 22 28 32 24" fill="#95C2B3" stroke="#3A413A" strokeWidth="2.2" />
+                <path d="M 72 22 Q 84 8 88 18 Q 78 28 68 24" fill="#95C2B3" stroke="#3A413A" strokeWidth="2.2" />
 
                 {/* Body */}
                 <path 
                   d="M 50 18 C 22 18, 14 42, 14 68 C 14 88, 30 90, 50 90 C 70 90, 86 88, 86 68 C 86 42, 78 18, 50 18 Z" 
-                  fill="#FAF5EB" 
-                  stroke="#4A5358" 
+                  fill="#FDFBF7" 
+                  stroke="#3A413A" 
                   strokeWidth="2.2" 
                 />
 
                 {/* Spots */}
-                <circle cx="28" cy="74" r="4.5" fill="#BDCEB7" opacity="0.95" />
-                <circle cx="72" cy="74" r="4.5" fill="#BDCEB7" opacity="0.95" />
-                <circle cx="50" cy="28" r="3.5" fill="#BDCEB7" opacity="0.95" />
+                <circle cx="28" cy="74" r="4.5" fill="#95C2B3" opacity="0.95" />
+                <circle cx="72" cy="74" r="4.5" fill="#95C2B3" opacity="0.95" />
+                <circle cx="50" cy="28" r="3.5" fill="#95C2B3" opacity="0.95" />
+
+                {/* Blushing cheeks for a cute, seamless expression */}
+                <circle cx="28" cy="52" r="3.5" fill="#FCA5A5" opacity="0.45" />
+                <circle cx="72" cy="52" r="3.5" fill="#FCA5A5" opacity="0.45" />
 
                 {/* Dynamic Eyes */}
                 {gameState === "success" ? (
                   <>
-                    <path d="M 28 42 Q 38 32 44 42" fill="none" stroke="#4A5358" strokeWidth="2.2" strokeLinecap="round" />
-                    <path d="M 56 42 Q 62 32 72 42" fill="none" stroke="#4A5358" strokeWidth="2.2" strokeLinecap="round" />
+                    <path d="M 28 42 Q 38 32 44 42" fill="none" stroke="#3A413A" strokeWidth="2.2" strokeLinecap="round" />
+                    <path d="M 56 42 Q 62 32 72 42" fill="none" stroke="#3A413A" strokeWidth="2.2" strokeLinecap="round" />
                   </>
                 ) : gameState === "wrong" ? (
                   <>
-                    <path d="M 30 36 L 42 44 M 30 44 L 42 36" stroke="#4A5358" strokeWidth="2.2" strokeLinecap="round" />
-                    <path d="M 58 36 L 70 44 M 58 44 L 70 36" stroke="#4A5358" strokeWidth="2.2" strokeLinecap="round" />
+                    <path d="M 30 36 L 42 44 M 30 44 L 42 36" stroke="#3A413A" strokeWidth="2.2" strokeLinecap="round" />
+                    <path d="M 58 36 L 70 44 M 58 44 L 70 36" stroke="#3A413A" strokeWidth="2.2" strokeLinecap="round" />
                   </>
                 ) : (
                   <>
-                    <circle cx="37" cy="40" r="10" fill="#FFF" stroke="#4A5358" strokeWidth="2.2" />
-                    <circle cx="63" cy="40" r="10" fill="#FFF" stroke="#4A5358" strokeWidth="2.2" />
-                    <circle cx="37" cy="41" r="4" fill="#4A5358" />
-                    <circle cx="63" cy="41" r="4" fill="#4A5358" />
+                    <circle cx="37" cy="40" r="10" fill="#FFF" stroke="#3A413A" strokeWidth="2.2" />
+                    <circle cx="63" cy="40" r="10" fill="#FFF" stroke="#3A413A" strokeWidth="2.2" />
+                    <circle cx="37" cy="41" r="4" fill="#3A413A" />
+                    <circle cx="63" cy="41" r="4" fill="#3A413A" />
                     <circle cx="35.5" cy="39.5" r="1.2" fill="#FFF" />
                     <circle cx="61.5" cy="39.5" r="1.2" fill="#FFF" />
                   </>
@@ -557,28 +562,28 @@ export default function FeedMonsterEngine({ childId, onBack }: FeedMonsterEngine
                     rx="14" 
                     animate={{ ry: [3, 11, 3] }}
                     transition={{ duration: 0.3, repeat: Infinity, ease: "easeInOut" }}
-                    fill="#4A5358" 
-                    stroke="#4A5358" 
+                    fill="#3A413A" 
+                    stroke="#3A413A" 
                     strokeWidth="1" 
                   />
                 ) : gameState === "success" ? (
                   <>
-                    <path d="M 32 64 Q 50 88 68 64 Z" fill="#4A5358" stroke="#4A5358" strokeWidth="2.2" />
+                    <path d="M 32 64 Q 50 88 68 64 Z" fill="#3A413A" stroke="#3A413A" strokeWidth="2.2" />
                     <path d="M 40 76 Q 50 67 60 76 Z" fill="#FFC4C0" />
                     <path d="M 46 64 L 54 64 L 50 69 Z" fill="#FFF" />
                   </>
                 ) : gameState === "wrong" ? (
                   <>
-                    <path d="M 45 66 Q 50 82 55 66 Z" fill="#FFC4C0" stroke="#4A5358" strokeWidth="2.2" />
-                    <path d="M 34 66 L 66 66" stroke="#4A5358" strokeWidth="2.2" strokeLinecap="round" />
+                    <path d="M 45 66 Q 50 82 55 66 Z" fill="#FFC4C0" stroke="#3A413A" strokeWidth="2.2" />
+                    <path d="M 34 66 L 66 66" stroke="#3A413A" strokeWidth="2.2" strokeLinecap="round" />
                   </>
                 ) : feedingIndex !== null ? (
                   <>
-                    <ellipse cx="50" cy="68" rx="16" ry="12" fill="#4A5358" stroke="#4A5358" strokeWidth="2.2" />
+                    <ellipse cx="50" cy="68" rx="16" ry="12" fill="#3A413A" stroke="#3A413A" strokeWidth="2.2" />
                     <path d="M 42 75 Q 50 66 58 75 Z" fill="#FFC4C0" />
                   </>
                 ) : (
-                  <path d="M 36 64 Q 50 74 64 64" fill="none" stroke="#4A5358" strokeWidth="2.2" strokeLinecap="round" />
+                  <path d="M 36 64 Q 50 74 64 64" fill="none" stroke="#3A413A" strokeWidth="2.2" strokeLinecap="round" />
                 )}
               </g>
             </svg>
