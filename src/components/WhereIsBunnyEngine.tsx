@@ -22,26 +22,30 @@ interface ShelterQuestion {
   wrongShelters: ShelterItem[];
 }
 
-const playSynthesizedSound = (type: "correct" | "wrong" | "levelUp" | "click") => {
+const playSynthesizedSound = (type: "correct" | "wrong" | "levelUp" | "click" | "hey") => {
   if (typeof window === "undefined") return;
   try {
     const AudioContextClass = window.AudioContext || (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
     if (!AudioContextClass) return;
     const ctx = new AudioContextClass();
     
-    if (type === "correct") {
+    if (type === "correct" || type === "hey") {
       const now = ctx.currentTime;
-      [523.25, 659.25].forEach((freq, idx) => {
+      // High-pitched bright "Hey!" sound synthesized using oscillators
+      [587.33, 739.99, 880.00, 1174.66].forEach((freq, idx) => {
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
         osc.type = "sine";
-        osc.frequency.setValueAtTime(freq, now + idx * 0.08);
-        gain.gain.setValueAtTime(0.25, now + idx * 0.08);
-        gain.gain.exponentialRampToValueAtTime(0.01, now + idx * 0.08 + 0.15);
+        osc.frequency.setValueAtTime(freq, now + idx * 0.02);
+        osc.frequency.exponentialRampToValueAtTime(freq * 1.15, now + idx * 0.02 + 0.15);
+        
+        gain.gain.setValueAtTime(0.18, now + idx * 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.002, now + idx * 0.02 + 0.22);
+        
         osc.connect(gain);
         gain.connect(ctx.destination);
-        osc.start(now + idx * 0.08);
-        osc.stop(now + idx * 0.08 + 0.16);
+        osc.start(now + idx * 0.02);
+        osc.stop(now + idx * 0.02 + 0.24);
       });
     } else if (type === "wrong") {
       const now = ctx.currentTime;
@@ -280,8 +284,8 @@ export default function WhereIsBunnyEngine({ childId, onBack }: { childId: strin
 
   const handleSuccess = () => {
     setGameState("correct");
-    playSynthesizedSound("correct");
-    speakText("Yes! The " + currentQuestion.animal + " lives in the " + currentQuestion.correctShelter.name + "!");
+    playSynthesizedSound("hey");
+    speakText("Hey! The " + currentQuestion.animal + " lives in the " + currentQuestion.correctShelter.name + "!");
 
     confetti({
       particleCount: 60,
@@ -350,8 +354,6 @@ export default function WhereIsBunnyEngine({ childId, onBack }: { childId: strin
       {/* Ecosystem SVG Background - fully animated, sky to ocean */}
       <svg 
         className="absolute inset-0 w-full h-full -z-10 rounded-[2.5rem] overflow-hidden pointer-events-none" 
-        viewBox="0 0 800 600" 
-        preserveAspectRatio="none" 
         xmlns="http://www.w3.org/2000/svg"
       >
         <defs>
@@ -371,9 +373,9 @@ export default function WhereIsBunnyEngine({ childId, onBack }: { childId: strin
           </linearGradient>
           <style>{`
             @keyframes bubbleUp {
-              0% { transform: translateY(650px) scale(0.6); opacity: 0; }
+              0% { transform: translateY(160px) scale(0.6); opacity: 0; }
               50% { opacity: 0.5; }
-              100% { transform: translateY(450px) scale(1.1); opacity: 0; }
+              100% { transform: translateY(-50px) scale(1.1); opacity: 0; }
             }
             @keyframes leafSway {
               0%, 100% { transform: rotate(0deg); }
@@ -398,69 +400,80 @@ export default function WhereIsBunnyEngine({ childId, onBack }: { childId: strin
             .bubble-1 { animation: bubbleUp 6s infinite ease-in; }
             .bubble-2 { animation: bubbleUp 8s infinite ease-in 2s; }
             .bubble-3 { animation: bubbleUp 10s infinite ease-in 4s; }
-            .leaf-branch { animation: leafSway 6s infinite ease-in-out; transform-origin: 800px 0px; }
+            .leaf-branch { animation: leafSway 6s infinite ease-in-out; }
             .cloud-1 { animation: cloudDrift1 24s infinite linear alternate; }
             .cloud-2 { animation: cloudDrift2 30s infinite linear alternate; }
-            .sun-glow { animation: sunPulse 5s infinite ease-in-out; transform-origin: 70px 70px; }
+            .sun-glow { animation: sunPulse 5s infinite ease-in-out; transform-origin: 50px 50px; }
             .grass-blade { animation: grassSway 4s infinite ease-in-out; transform-origin: bottom center; }
           `}</style>
         </defs>
 
-        <rect width="800" height="600" fill="url(#bgGrad)" />
+        <rect width="100%" height="100%" fill="url(#bgGrad)" />
 
-        {/* Pulsing Sun (Top Left) */}
-        <circle cx="70" cy="70" r="40" fill="url(#sunGrad)" opacity="0.9" className="sun-glow" />
-        <circle cx="70" cy="70" r="60" fill="#ffd166" opacity="0.15" className="sun-glow" />
+        {/* Pulsing Sun (Top right to avoid clashing with mascot) */}
+        <svg x="72%" y="4%" width="120" height="120" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
+          <circle cx="50" cy="50" r="30" fill="url(#sunGrad)" opacity="0.9" className="sun-glow" />
+          <circle cx="50" cy="50" r="45" fill="#ffd166" opacity="0.15" className="sun-glow" />
+        </svg>
 
         {/* Soft clouds (Sky Zone) */}
-        <g fill="white" opacity="0.35" className="cloud-1">
-          <circle cx="160" cy="80" r="30" />
-          <circle cx="195" cy="80" r="38" />
-          <circle cx="230" cy="80" r="30" />
-        </g>
-        <g fill="white" opacity="0.25" className="cloud-2">
-          <circle cx="560" cy="110" r="24" />
-          <circle cx="590" cy="110" r="32" />
-          <circle cx="620" cy="110" r="24" />
-        </g>
+        <svg x="0" y="5%" width="100%" height="80" viewBox="0 0 800 80" preserveAspectRatio="none">
+          <g fill="white" opacity="0.35" className="cloud-1">
+            <circle cx="160" cy="40" r="24" />
+            <circle cx="195" cy="40" r="32" />
+            <circle cx="230" cy="40" r="24" />
+          </g>
+          <g fill="white" opacity="0.25" className="cloud-2">
+            <circle cx="560" cy="50" r="18" />
+            <circle cx="590" cy="50" r="26" />
+            <circle cx="620" cy="50" r="18" />
+          </g>
+        </svg>
 
         {/* Rocky Cave silhouette (Middle Left Zone) */}
-        <path d="M 0 250 Q 50 280 60 340 T 0 450 Z" fill="url(#caveGrad)" opacity="0.45" />
-        <path d="M 0 280 Q 30 310 38 355 T 0 420 Z" fill="#958c7f" opacity="0.3" />
-
-        {/* Savanna Grasslands/Meadow soft hills (Middle Zone) */}
-        <path d="M 0 440 Q 200 410 400 455 T 800 425 L 800 520 L 0 520 Z" fill="#d8ecc5" opacity="0.4" />
-        <path d="M 0 470 Q 300 495 500 455 T 800 480 L 800 540 L 0 540 Z" fill="#c3e4ad" opacity="0.5" />
-
-        {/* Animated Grass Blades on Meadow */}
-        <g fill="#aedb94" opacity="0.7">
-          <path d="M 120 450 L 125 420 Q 128 417 131 420 L 129 450 Z" className="grass-blade" />
-          <path d="M 340 465 L 346 430 Q 349 427 352 430 L 349 465 Z" className="grass-blade" style={{ animationDelay: '0.5s' }} />
-          <path d="M 620 480 L 625 442 Q 628 439 631 442 L 629 480 Z" className="grass-blade" style={{ animationDelay: '1.2s' }} />
-        </g>
+        <svg x="0" y="28%" width="90" height="200" viewBox="0 0 90 200" preserveAspectRatio="xMinYMid meet">
+          <path d="M 0 0 Q 60 30 70 100 T 0 200 Z" fill="url(#caveGrad)" opacity="0.45" />
+          <path d="M 0 30 Q 40 60 48 115 T 0 170 Z" fill="#958c7f" opacity="0.3" />
+        </svg>
 
         {/* Swaying Tree Branch (Top Right Forest Zone) */}
-        <g fill="#93c3b0" opacity="0.45" className="leaf-branch">
-          <path d="M 800 0 C 740 30, 680 90, 650 165 C 680 165, 740 135, 800 90 Z" />
-          <path d="M 755 35 C 695 75, 650 125, 620 195 C 650 195, 695 165, 755 125 Z" fill="#b0dfca" opacity="0.5" />
-        </g>
+        <svg x="65%" y="0" width="35%" height="180" viewBox="0 0 280 180" preserveAspectRatio="xMaxYMin meet">
+          <g fill="#93c3b0" opacity="0.45" className="leaf-branch" transform="translate(280, 0)">
+            <path d="M 0 0 C -60 20, -120 60, -150 135 C -120 135, -60 110, 0 80 Z" />
+            <path d="M -45 25 C -105 50, -150 85, -180 160 C -150 160, -105 135, -45 100 Z" fill="#b0dfca" opacity="0.5" />
+          </g>
+        </svg>
 
-        {/* Rising bubbles (Bottom Pond/Ocean Zone) */}
-        <g fill="none" stroke="white" strokeWidth="1.5" opacity="0.45">
-          <circle cx="120" cy="0" r="7" className="bubble-1" />
-          <circle cx="260" cy="0" r="11" className="bubble-2" />
-          <circle cx="200" cy="0" r="9" className="bubble-3" />
-          <circle cx="620" cy="0" r="7" className="bubble-1" style={{ animationDelay: '1.5s' }} />
-          <circle cx="680" cy="0" r="10" className="bubble-2" style={{ animationDelay: '0.8s' }} />
-        </g>
+        {/* Meadow/Hills, Reeds and Bubbles (Bottom Water/Savanna Zone) */}
+        <svg x="0" y="72%" width="100%" height="28%" viewBox="0 0 800 160" preserveAspectRatio="none">
+          {/* Savanna Grasslands/Meadow soft hills */}
+          <path d="M 0 40 Q 200 10 400 55 T 800 25 L 800 160 L 0 160 Z" fill="#d8ecc5" opacity="0.45" />
+          <path d="M 0 70 Q 300 95 500 55 T 800 80 L 800 160 L 0 160 Z" fill="#c3e4ad" opacity="0.55" />
 
-        {/* Swaying Pond Reeds (Bottom Water Zone) */}
-        <g fill="#379d8e" opacity="0.3">
-          <path d="M 64 600 Q 88 520 64 430 Q 40 520 64 600" className="leaf-branch" style={{ animationDelay: '0.8s', transformOrigin: '64px 600px' }} />
-          <path d="M 128 600 Q 152 490 128 410 Q 104 490 128 600" className="leaf-branch" style={{ animationDelay: '1.8s', transformOrigin: '128px 600px' }} />
-          <path d="M 656 600 Q 632 510 656 420 Q 680 510 656 600" className="leaf-branch" style={{ animationDelay: '0.4s', transformOrigin: '656px 600px' }} />
-          <path d="M 720 600 Q 744 480 720 380 Q 696 480 720 600" className="leaf-branch" style={{ animationDelay: '1.4s', transformOrigin: '720px 600px' }} />
-        </g>
+          {/* Animated Grass Blades on Meadow */}
+          <g fill="#aedb94" opacity="0.7">
+            <path d="M 120 50 L 125 20 Q 128 17 131 20 L 129 50 Z" className="grass-blade" />
+            <path d="M 340 65 L 346 30 Q 349 27 352 30 L 349 65 Z" className="grass-blade" style={{ animationDelay: '0.5s' }} />
+            <path d="M 620 80 L 625 42 Q 628 39 631 42 L 629 80 Z" className="grass-blade" style={{ animationDelay: '1.2s' }} />
+          </g>
+
+          {/* Rising bubbles (Bottom Pond/Ocean Zone) */}
+          <g fill="none" stroke="white" strokeWidth="1.5" opacity="0.45">
+            <circle cx="120" cy="0" r="7" className="bubble-1" />
+            <circle cx="260" cy="0" r="11" className="bubble-2" />
+            <circle cx="200" cy="0" r="9" className="bubble-3" />
+            <circle cx="620" cy="0" r="7" className="bubble-1" style={{ animationDelay: '1.5s' }} />
+            <circle cx="680" cy="0" r="10" className="bubble-2" style={{ animationDelay: '0.8s' }} />
+          </g>
+
+          {/* Swaying Pond Reeds (Bottom Water Zone) */}
+          <g fill="#379d8e" opacity="0.3">
+            <path d="M 64 160 Q 88 80 64 -10 Q 40 80 64 160" className="leaf-branch" style={{ animationDelay: '0.8s', transformOrigin: '64px 160px' }} />
+            <path d="M 128 160 Q 152 50 128 -30 Q 104 50 128 160" className="leaf-branch" style={{ animationDelay: '1.8s', transformOrigin: '128px 160px' }} />
+            <path d="M 656 160 Q 632 70 656 -20 Q 680 70 656 160" className="leaf-branch" style={{ animationDelay: '0.4s', transformOrigin: '656px 160px' }} />
+            <path d="M 720 160 Q 744 40 720 -60 Q 696 40 720 160" className="leaf-branch" style={{ animationDelay: '1.4s', transformOrigin: '720px 160px' }} />
+          </g>
+        </svg>
       </svg>
 
       {/* Header Row */}
@@ -469,7 +482,6 @@ export default function WhereIsBunnyEngine({ childId, onBack }: { childId: strin
           variant="surface"
           size="sm"
           onClick={() => {
-            playSynthesizedSound("click");
             onBack();
           }}
         >
@@ -493,8 +505,8 @@ export default function WhereIsBunnyEngine({ childId, onBack }: { childId: strin
         
         {/* Speech Bubble */}
         <div className="flex-1 relative bg-white border border-[#4a5358]/10 p-3.5 sm:p-4 rounded-[2rem] shadow-[4px_4px_12px_rgba(0,0,0,0.03),_inset_2px_2px_4px_rgba(255,255,255,0.9)] text-left">
-          {/* Rotated square tail pointing to the left towards Buddy */}
-          <div className="absolute left-[-6px] top-1/2 -translate-y-1/2 w-3.5 h-3.5 rotate-45 bg-white border-b border-l border-[#4a5358]/10 z-20" />
+          {/* Bubble Tail (pointing left to mascot) */}
+          <div className="absolute top-1/2 -left-3 -translate-y-1/2 w-0 h-0 border-t-[8px] border-t-transparent border-r-[12px] border-r-white border-b-[8px] border-b-transparent filter drop-shadow-[-1px_0_0_rgba(74,83,88,0.06)]"></div>
           
           <p className="text-[10px] font-black text-primary uppercase tracking-widest mb-0.5">
             Buddy says:
@@ -529,7 +541,7 @@ export default function WhereIsBunnyEngine({ childId, onBack }: { childId: strin
                 🏆
               </div>
               <h2 className="text-3xl font-black text-[#0d4036] tracking-wide uppercase">Shelter Master!</h2>
-              <p className="text-sm font-bold text-[#0d4036]/80 leading-relaxed">
+              <p className="text-sm font-bold text-[#0d4036]/85 leading-relaxed">
                 Super science skills! You know exactly where all the animals live. You earned the Shelter Master badge!
               </p>
 
@@ -608,9 +620,11 @@ export default function WhereIsBunnyEngine({ childId, onBack }: { childId: strin
               initial={{ scale: 0.6, opacity: 0 }}
               animate={{ scale: 1.1, opacity: 1 }}
               exit={{ scale: 0.6 }}
-              className="flex flex-col items-center justify-center"
+              className="flex flex-col items-center justify-center animate-bounce"
             >
-              <span className="text-7xl sm:text-8xl filter drop-shadow-md select-none">🎉</span>
+              <span className="text-7xl sm:text-8xl filter drop-shadow-md select-none">
+                {currentQuestion?.animalEmoji}
+              </span>
               <span className="text-xs font-black uppercase text-[#3fa394] mt-1.5 select-none">Great Job!</span>
             </motion.div>
           )}
