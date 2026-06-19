@@ -3,7 +3,7 @@ import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import ClayCard from '@/components/ui/ClayCard';
 import MascotSVG from '@/components/MascotSVG';
-import { objectDictionary } from '@/lib/svgDictionary';
+import { CartoonSVG } from '@/lib/svgDictionary';
 
 interface ActivitiesMenuProps {
   onSelectActivity: (
@@ -24,26 +24,153 @@ interface ActivityItem {
   benefit: string;
   glowColor: string;
   gradient: string;
-  animalKey: string;
 }
+
+// Bespoke 3D Claymorphic Custom Icons for each game
+
+const PencilIcon = (props: any) => (
+  <CartoonSVG animClass="anim-sway" {...props}>
+    <g fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5">
+      <path d="M6 26 L10 22" stroke="#ff85a1" strokeWidth="5" />
+      <path d="M9 23 L12 20" stroke="#9eb1bd" strokeWidth="4" />
+      <path d="M11 21 L23 9" stroke="#ffd166" strokeWidth="6" />
+      <path d="M22 10 L25 7" stroke="#e8cfa6" strokeWidth="5" />
+      <path d="M24 8 L27 5" stroke="#4a5358" strokeWidth="4" />
+    </g>
+  </CartoonSVG>
+);
+
+const EraserIcon = (props: any) => (
+  <CartoonSVG animClass="anim-float" {...props}>
+    <g fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5">
+      <path d="M6 26 L22 10" stroke="#4a5358" strokeWidth="3" />
+      <path d="M21 11 L25 7" stroke="#ff85a1" strokeWidth="4" />
+      <path d="M22 6 L23 2 L24 6 L28 7 L24 8 L23 12 L22 8 L18 7 Z" fill="#ffd166" />
+      <path d="M12 10 L13 8 L14 10 L16 11 L14 12 L13 14 L12 12 L10 11 Z" fill="#4ecdc4" />
+    </g>
+  </CartoonSVG>
+);
+
+const BubbleIcon = (props: any) => (
+  <CartoonSVG animClass="anim-breathe" {...props}>
+    <g fill="none">
+      <circle cx="16" cy="16" r="10" stroke="#4ecdc4" strokeWidth="2.5" fill="#c3f2ec" fillOpacity="0.4" />
+      <path d="M11 11 A 7 7 0 0 1 21 11" stroke="white" strokeWidth="2" strokeLinecap="round" />
+      <circle cx="7" cy="7" r="4" stroke="#ff85a1" strokeWidth="1.5" fill="#fcd5ce" fillOpacity="0.3" />
+      <circle cx="26" cy="24" r="3.5" stroke="#b5cce6" strokeWidth="1.5" fill="#dbe8f2" fillOpacity="0.3" />
+    </g>
+  </CartoonSVG>
+);
+
+const MonsterIcon = (props: any) => (
+  <CartoonSVG animClass="anim-breathe" {...props}>
+    <g fill="none">
+      <rect x="5" y="5" width="22" height="22" rx="7" fill="#ddcbf5" stroke="#8a6cd6" strokeWidth="2.5" />
+      <path d="M9 18 C 9 24, 23 24, 23 18 Z" fill="#4a5358" />
+      <path d="M11 18 L13 20 L15 18 M17 18 L19 20 L21 18" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
+      <circle cx="11" cy="12" r="2.5" fill="#4a5358" />
+      <circle cx="11.5" cy="11.5" r="0.75" fill="white" />
+      <circle cx="21" cy="12" r="2.5" fill="#4a5358" />
+      <circle cx="21.5" cy="11.5" r="0.75" fill="white" />
+    </g>
+  </CartoonSVG>
+);
+
+const SearchIcon = (props: any) => (
+  <CartoonSVG animClass="anim-sway" {...props}>
+    <g fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5">
+      <circle cx="13" cy="13" r="8" stroke="#3fa394" fill="#c3f2ec" fillOpacity="0.3" />
+      <path d="M19 19 L27 27" stroke="#a56953" strokeWidth="3.5" />
+      <path d="M8 8 L10 8 M9 7 L9 9" stroke="white" strokeWidth="1.5" />
+    </g>
+  </CartoonSVG>
+);
+
+const AdvancedSearchIcon = (props: any) => (
+  <CartoonSVG animClass="anim-float" {...props}>
+    <g fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5">
+      <circle cx="12" cy="12" r="8" stroke="#ffb5a7" fill="#ffd166" fillOpacity="0.3" />
+      <path d="M18 18 L26 26" stroke="#4a5358" strokeWidth="3.5" />
+      <path d="M22 8 L23 6 L24 8 L26 9 L24 10 L23 12 L22 10 L20 9 Z" fill="#ffd166" />
+      <circle cx="7" cy="18" r="1.5" fill="#ff85a1" />
+    </g>
+  </CartoonSVG>
+);
+
+const MusicIcon = (props: any) => (
+  <CartoonSVG animClass="anim-sway" {...props}>
+    <g fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5">
+      <circle cx="10" cy="22" r="4.5" fill="#ff85a1" stroke="#ff85a1" />
+      <path d="M14 22 L14 8 L24 6 L24 14" stroke="#ff85a1" />
+      <circle cx="20" cy="20" r="4" fill="#ff85a1" stroke="#ff85a1" />
+    </g>
+  </CartoonSVG>
+);
+
+const PuzzleIcon = (props: any) => (
+  <CartoonSVG animClass="anim-breathe" {...props}>
+    <g fill="none" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M6 10 H14 A 2.5 2.5 0 0 1 16.5 12.5 A 2.5 2.5 0 0 1 14 15 H10 V20 H6 Z" fill="#b5cce6" stroke="#1f3d68" />
+      <path d="M14 15 H20 V25 H14 A 2.5 2.5 0 0 1 11.5 22.5 A 2.5 2.5 0 0 1 14 20 Z" fill="#bee8d4" stroke="#16533f" />
+    </g>
+  </CartoonSVG>
+);
+
+const DrumIcon = (props: any) => (
+  <CartoonSVG animClass="anim-float" {...props}>
+    <g fill="none" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M6 12 C 6 8, 26 8, 26 12 L26 20 C 26 24, 6 24, 6 20 Z" fill="#ff85a1" stroke="#5e1c22" />
+      <ellipse cx="16" cy="12" rx="10" ry="3" fill="#fef9e9" stroke="#5e1c22" />
+      <path d="M22 6 L28 12" stroke="#4a5358" strokeWidth="3" />
+      <circle cx="28" cy="12" r="2" fill="#ffd166" />
+    </g>
+  </CartoonSVG>
+);
+
+const BasketIcon = (props: any) => (
+  <CartoonSVG animClass="anim-float" {...props}>
+    <g fill="none" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M6 14 L8 24 C 8 26, 24 26, 24 24 L26 14 Z" fill="#ffd166" stroke="#544001" />
+      <rect x="4" y="11" width="24" height="3" rx="1.5" fill="#f5e4a3" stroke="#544001" />
+      <path d="M9 11 A 8 8 0 0 1 23 11" stroke="#544001" />
+      <circle cx="16" cy="7" r="3.5" fill="#ff85a1" stroke="#5e1c22" />
+    </g>
+  </CartoonSVG>
+);
+
+const BunnyIcon = (props: any) => (
+  <CartoonSVG animClass="anim-breathe" {...props}>
+    <g fill="none" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M11 16 V6 C 11 4, 14 4, 14 6 V16 M18 16 V7 C 18 5, 21 5, 21 7 V16" fill="white" stroke="#ff85a1" />
+      <path d="M6 24 C 4 20, 10 16, 12 18 C 14 16, 18 16, 20 18 C 22 16, 28 20, 26 24 Z" fill="#4ecdc4" stroke="#0d4036" />
+    </g>
+  </CartoonSVG>
+);
+
+const BookIcon = (props: any) => (
+  <CartoonSVG animClass="anim-sway" {...props}>
+    <g fill="none" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M16 24 C 12 21, 6 22, 6 22 V8 C 6 8, 12 7, 16 10 C 20 7, 26 8, 26 8 V22 C 26 22, 20 21, 16 24 Z" fill="#fef9e9" stroke="#8a6cd6" />
+      <path d="M16 10 V25" stroke="#ff85a1" />
+    </g>
+  </CartoonSVG>
+);
+
+const PaletteIcon = (props: any) => (
+  <CartoonSVG animClass="anim-float" {...props}>
+    <g fill="none" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M6 14 C 6 6, 26 6, 26 14 C 26 22, 18 26, 13 24 C 9 22, 6 22, 6 14 Z" fill="#fef9e9" stroke="#ffd166" />
+      <circle cx="10" cy="18" r="2.5" fill="#edf3f0" stroke="#ffd166" />
+      <circle cx="13" cy="10" r="2" fill="#ff85a1" />
+      <circle cx="20" cy="11" r="2" fill="#4ecdc4" />
+      <circle cx="21" cy="17" r="2" fill="#b5cce6" />
+    </g>
+  </CartoonSVG>
+);
+
 
 export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps) {
   const router = useRouter();
-
-  // Resolve animal icon components dynamically from svgDictionary objectDictionary
-  const Elephant = objectDictionary["E"].icon;
-  const Cat = objectDictionary["C"].icon;
-  const Whale = objectDictionary["W"].icon;
-  const Lion = objectDictionary["L"].icon;
-  const Fox = objectDictionary["F"].icon;
-  const Unicorn = objectDictionary["U"].icon;
-  const Hippo = objectDictionary["H"].icon;
-  const Zebra = objectDictionary["Z"].icon;
-  const Monkey = objectDictionary["M"].icon;
-  const Pig = objectDictionary["P"].icon;
-  const Rabbit = objectDictionary["R"].icon;
-  const Owl = objectDictionary["O"].icon;
-  const Giraffe = objectDictionary["G"].icon;
 
   const activities: ActivityItem[] = [
     { 
@@ -58,8 +185,7 @@ export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps
       rowSpan: "row-span-2",
       benefit: "Fine Motor",
       glowColor: "shadow-[0_20px_50px_rgba(224,115,131,0.18)] hover:shadow-[0_25px_60px_rgba(224,115,131,0.3)]",
-      gradient: "from-[#fcd5ce]/40 to-[#ffb5a7]/30",
-      animalKey: "E"
+      gradient: "from-[#fcd5ce]/40 to-[#ffb5a7]/30"
     },
     { 
       id: "reveal", 
@@ -72,8 +198,7 @@ export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps
       colSpan: "col-span-1",
       benefit: "Visual ID",
       glowColor: "shadow-[0_20px_50px_rgba(63,163,148,0.14)] hover:shadow-[0_25px_60px_rgba(63,163,148,0.25)]",
-      gradient: "from-[#c3e6dc]/40 to-[#a3d9cf]/30",
-      animalKey: "C"
+      gradient: "from-[#c3e6dc]/40 to-[#a3d9cf]/30"
     },
     { 
       id: "bubbles", 
@@ -86,8 +211,7 @@ export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps
       colSpan: "col-span-1",
       benefit: "Motor Skills",
       glowColor: "shadow-[0_20px_50px_rgba(247,194,179,0.18)] hover:shadow-[0_25px_60px_rgba(247,194,179,0.3)]",
-      gradient: "from-[#f7c2b3]/40 to-[#f9b5a2]/30",
-      animalKey: "W"
+      gradient: "from-[#f7c2b3]/40 to-[#f9b5a2]/30"
     },
     { 
       id: "monster", 
@@ -100,8 +224,7 @@ export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps
       colSpan: "col-span-1",
       benefit: "Phonics",
       glowColor: "shadow-[0_20px_50px_rgba(63,163,148,0.14)] hover:shadow-[0_25px_60px_rgba(63,163,148,0.25)]",
-      gradient: "from-[#c3e6dc]/40 to-[#a3d9cf]/30",
-      animalKey: "L"
+      gradient: "from-[#c3e6dc]/40 to-[#a3d9cf]/30"
     },
     { 
       id: "scavenger", 
@@ -114,8 +237,7 @@ export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps
       colSpan: "col-span-1",
       benefit: "Sound ID",
       glowColor: "shadow-[0_20px_50px_rgba(190,232,212,0.14)] hover:shadow-[0_25px_60px_rgba(190,232,212,0.25)]",
-      gradient: "from-[#bee8d4]/40 to-[#a3d8c1]/30",
-      animalKey: "F"
+      gradient: "from-[#bee8d4]/40 to-[#a3d8c1]/30"
     },
     { 
       id: "scavenger-advanced", 
@@ -128,8 +250,7 @@ export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps
       colSpan: "col-span-2",
       benefit: "Vocabulary",
       glowColor: "shadow-[0_20px_50px_rgba(221,203,245,0.18)] hover:shadow-[0_25px_60px_rgba(221,203,245,0.3)]",
-      gradient: "from-[#ddcbf5]/40 to-[#ceb5f2]/30",
-      animalKey: "U"
+      gradient: "from-[#ddcbf5]/40 to-[#ceb5f2]/30"
     },
     { 
       id: "rhyme", 
@@ -142,8 +263,7 @@ export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps
       colSpan: "col-span-1",
       benefit: "Language",
       glowColor: "shadow-[0_20px_50px_rgba(181,204,230,0.14)] hover:shadow-[0_25px_60px_rgba(181,204,230,0.25)]",
-      gradient: "from-[#b5cce6]/40 to-[#9cbcdb]/30",
-      animalKey: "H"
+      gradient: "from-[#b5cce6]/40 to-[#9cbcdb]/30"
     },
     { 
       id: "match", 
@@ -156,8 +276,7 @@ export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps
       colSpan: "col-span-1",
       benefit: "Memory",
       glowColor: "shadow-[0_20px_50px_rgba(221,203,245,0.14)] hover:shadow-[0_25px_60px_rgba(221,203,245,0.25)]",
-      gradient: "from-[#ddcbf5]/40 to-[#ceb5f2]/30",
-      animalKey: "Z"
+      gradient: "from-[#ddcbf5]/40 to-[#ceb5f2]/30"
     },
     { 
       id: "drummer", 
@@ -170,8 +289,7 @@ export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps
       colSpan: "col-span-1",
       benefit: "Rhythm",
       glowColor: "shadow-[0_20px_50px_rgba(245,228,163,0.14)] hover:shadow-[0_25px_60px_rgba(245,228,163,0.25)]",
-      gradient: "from-[#f5e4a3]/40 to-[#ebd787]/30",
-      animalKey: "M"
+      gradient: "from-[#f5e4a3]/40 to-[#ebd787]/30"
     },
     { 
       id: "sorting", 
@@ -184,8 +302,7 @@ export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps
       colSpan: "col-span-1",
       benefit: "Logic & Math",
       glowColor: "shadow-[0_20px_50px_rgba(247,194,179,0.14)] hover:shadow-[0_25px_60px_rgba(247,194,179,0.25)]",
-      gradient: "from-[#f7c2b3]/40 to-[#f9b5a2]/30",
-      animalKey: "P"
+      gradient: "from-[#f7c2b3]/40 to-[#f9b5a2]/30"
     },
     { 
       id: "bunny", 
@@ -198,8 +315,7 @@ export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps
       colSpan: "col-span-2 sm:col-span-1 md:col-span-2",
       benefit: "Spatial",
       glowColor: "shadow-[0_20px_50px_rgba(196,240,225,0.18)] hover:shadow-[0_25px_60px_rgba(196,240,225,0.3)]",
-      gradient: "from-[#c3e6dc]/40 to-[#a3d9cf]/30",
-      animalKey: "R"
+      gradient: "from-[#c3e6dc]/40 to-[#a3d9cf]/30"
     },
     { 
       id: "story", 
@@ -212,8 +328,7 @@ export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps
       colSpan: "col-span-2",
       benefit: "Narrative",
       glowColor: "shadow-[0_20px_50px_rgba(221,203,245,0.18)] hover:shadow-[0_25px_60px_rgba(221,203,245,0.3)]",
-      gradient: "from-[#ddcbf5]/40 to-[#ceb5f2]/30",
-      animalKey: "O"
+      gradient: "from-[#ddcbf5]/40 to-[#ceb5f2]/30"
     },
     { 
       id: "mark", 
@@ -226,31 +341,30 @@ export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps
       colSpan: "col-span-2 sm:col-span-1 md:col-span-2",
       benefit: "Writing",
       glowColor: "shadow-[0_20px_50px_rgba(245,228,163,0.18)] hover:shadow-[0_25px_60px_rgba(245,228,163,0.3)]",
-      gradient: "from-[#f5e4a3]/40 to-[#ebd787]/30",
-      animalKey: "G"
+      gradient: "from-[#f5e4a3]/40 to-[#ebd787]/30"
     }
   ];
 
-  const getAnimalIcon = (key: string, floatDuration: number) => {
+  const getGameIcon = (id: string, floatDuration: number) => {
     const props = {
       size: "100%",
       className: "w-full h-full drop-shadow-[4px_6px_10px_rgba(0,0,0,0.1)] hover:rotate-2 select-none pointer-events-none"
     };
 
-    switch (key) {
-      case "E": return <Elephant {...props} animClass="anim-breathe" style={{ animationDuration: `${floatDuration}s` }} />;
-      case "C": return <Cat {...props} animClass="anim-sway" style={{ animationDuration: `${floatDuration}s` }} />;
-      case "W": return <Whale {...props} animClass="anim-float" style={{ animationDuration: `${floatDuration}s` }} />;
-      case "L": return <Lion {...props} animClass="anim-breathe" style={{ animationDuration: `${floatDuration}s` }} />;
-      case "F": return <Fox {...props} animClass="anim-float" style={{ animationDuration: `${floatDuration}s` }} />;
-      case "U": return <Unicorn {...props} animClass="anim-sway" style={{ animationDuration: `${floatDuration}s` }} />;
-      case "H": return <Hippo {...props} animClass="anim-float" style={{ animationDuration: `${floatDuration}s` }} />;
-      case "Z": return <Zebra {...props} animClass="anim-sway" style={{ animationDuration: `${floatDuration}s` }} />;
-      case "M": return <Monkey {...props} animClass="anim-breathe" style={{ animationDuration: `${floatDuration}s` }} />;
-      case "P": return <Pig {...props} animClass="anim-float" style={{ animationDuration: `${floatDuration}s` }} />;
-      case "R": return <Rabbit {...props} animClass="anim-breathe" style={{ animationDuration: `${floatDuration}s` }} />;
-      case "O": return <Owl {...props} animClass="anim-sway" style={{ animationDuration: `${floatDuration}s` }} />;
-      case "G": return <Giraffe {...props} animClass="anim-float" style={{ animationDuration: `${floatDuration}s` }} />;
+    switch (id) {
+      case "tracing": return <PencilIcon {...props} style={{ animationDuration: `${floatDuration}s` }} />;
+      case "reveal": return <EraserIcon {...props} style={{ animationDuration: `${floatDuration}s` }} />;
+      case "bubbles": return <BubbleIcon {...props} style={{ animationDuration: `${floatDuration}s` }} />;
+      case "monster": return <MonsterIcon {...props} style={{ animationDuration: `${floatDuration}s` }} />;
+      case "scavenger": return <SearchIcon {...props} style={{ animationDuration: `${floatDuration}s` }} />;
+      case "scavenger-advanced": return <AdvancedSearchIcon {...props} style={{ animationDuration: `${floatDuration}s` }} />;
+      case "rhyme": return <MusicIcon {...props} style={{ animationDuration: `${floatDuration}s` }} />;
+      case "match": return <PuzzleIcon {...props} style={{ animationDuration: `${floatDuration}s` }} />;
+      case "drummer": return <DrumIcon {...props} style={{ animationDuration: `${floatDuration}s` }} />;
+      case "sorting": return <BasketIcon {...props} style={{ animationDuration: `${floatDuration}s` }} />;
+      case "bunny": return <BunnyIcon {...props} style={{ animationDuration: `${floatDuration}s` }} />;
+      case "story": return <BookIcon {...props} style={{ animationDuration: `${floatDuration}s` }} />;
+      case "mark": return <PaletteIcon {...props} style={{ animationDuration: `${floatDuration}s` }} />;
       default: return null;
     }
   };
@@ -280,10 +394,24 @@ export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps
       animate="show"
       className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-5 w-full max-w-4xl mx-auto p-4 z-10 relative overflow-visible"
     >
+      {/* Playful Hero Banner Card spanning all columns */}
+      <motion.div 
+        variants={itemVariants}
+        className="col-span-2 sm:col-span-3 md:col-span-4 rounded-[2.5rem] overflow-hidden border-white/40 border-[3px] shadow-[0_20px_50px_rgba(0,0,0,0.02)] aspect-[21/9] sm:aspect-[21/7] relative bg-white/20 backdrop-blur-md"
+      >
+        <img 
+          alt="Playbook Banner"
+          className="w-full h-full object-cover select-none pointer-events-none"
+          src="/playbook_hero_banner.png"
+        />
+        {/* Soft layout shadow overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent" />
+      </motion.div>
+
       {/* Playful unified branding & speech bubble Bento Card spanning all columns */}
       <motion.div 
         variants={itemVariants}
-        className="col-span-2 sm:col-span-3 md:col-span-4 mb-4"
+        className="col-span-2 sm:col-span-3 md:col-span-4 mb-2"
       >
         <ClayCard
           variant="glass"
@@ -383,7 +511,7 @@ export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps
 
                   {/* Character Illustration breaking borders (bottom right placement) */}
                   <div className="absolute bottom-6 -right-6 w-36 h-36 md:w-44 md:h-44 overflow-visible z-10">
-                    {getAnimalIcon(act.animalKey, act.floatDuration)}
+                    {getGameIcon(act.id, act.floatDuration)}
                   </div>
 
                   {/* Bottom developmental benefit pill */}
@@ -414,7 +542,7 @@ export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps
 
                   {/* Right-aligned animal illustration popping out */}
                   <div className={`relative flex items-center justify-center shrink-0 w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 overflow-visible ${act.id === 'bunny' || act.id === 'mark' ? 'sm:w-20 sm:h-20 sm:mx-auto' : ''}`}>
-                    {getAnimalIcon(act.animalKey, act.floatDuration)}
+                    {getGameIcon(act.id, act.floatDuration)}
                   </div>
                 </div>
               ) : (
@@ -422,7 +550,7 @@ export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps
                 <div className="flex flex-col items-center justify-between text-center h-full w-full gap-3 relative overflow-visible min-h-[140px] pt-1">
                   {/* Top-aligned animal illustration floating freely */}
                   <div className="w-18 h-18 sm:w-20 sm:h-20 overflow-visible relative flex items-center justify-center z-10">
-                    {getAnimalIcon(act.animalKey, act.floatDuration)}
+                    {getGameIcon(act.id, act.floatDuration)}
                   </div>
 
                   {/* Bottom-aligned text info */}
