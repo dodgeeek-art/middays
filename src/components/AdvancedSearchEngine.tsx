@@ -60,17 +60,41 @@ export default function AdvancedSearchEngine({ childId, onBack }: AdvancedSearch
   const [wrongSelections, setWrongSelections] = useState<number[]>([]);
   
   const audioCtxRef = useRef<AudioContext | null>(null);
+  const activeUtteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
 
-  const speakCommand = useCallback(() => {
+  const speakText = useCallback((text: string, pitch: number = 1.0) => {
     if (typeof window !== "undefined" && window.speechSynthesis) {
       window.speechSynthesis.cancel();
-      const targetName = roundData.targetName;
-      const utterance = new SpeechSynthesisUtterance(`Find ${targetName}`);
+      if (activeUtteranceRef.current) {
+        activeUtteranceRef.current.onend = null;
+        activeUtteranceRef.current.onerror = null;
+        activeUtteranceRef.current = null;
+      }
+
+      const utterance = new SpeechSynthesisUtterance(text);
       utterance.rate = 0.85;
-      utterance.pitch = 1.05;
+      utterance.pitch = pitch;
+
+      activeUtteranceRef.current = utterance;
+
+      utterance.onend = () => {
+        if (activeUtteranceRef.current === utterance) {
+          activeUtteranceRef.current = null;
+        }
+      };
+      utterance.onerror = () => {
+        if (activeUtteranceRef.current === utterance) {
+          activeUtteranceRef.current = null;
+        }
+      };
+
       window.speechSynthesis.speak(utterance);
     }
-  }, [roundData.targetName]);
+  }, []);
+
+  const speakCommand = useCallback(() => {
+    speakText(`Find ${roundData.targetName}`, 1.05);
+  }, [roundData.targetName, speakText]);
 
   useEffect(() => {
     const t = setTimeout(() => {
@@ -177,13 +201,7 @@ export default function AdvancedSearchEngine({ childId, onBack }: AdvancedSearch
       setSelectedIdx(idx);
       playSuccessChime();
       
-      if (typeof window !== "undefined" && window.speechSynthesis) {
-        window.speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(`Superb! ${choice.name}`);
-        utterance.rate = 0.85;
-        utterance.pitch = 1.1;
-        window.speechSynthesis.speak(utterance);
-      }
+      speakText(`Superb! ${choice.name}`, 1.1);
 
       const timeSpent = getCurrentTime() - roundStartTime;
       
