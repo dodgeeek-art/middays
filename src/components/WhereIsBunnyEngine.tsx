@@ -183,7 +183,7 @@ const shelterPool: ShelterQuestion[] = [
     correctShelter: { emoji: "🌊", name: "Ocean", label: "Ocean" },
     wrongShelters: [
       { emoji: "🌳", name: "Tree", label: "Tree" },
-      { emoji: "🏡", name: "Barn", label: "Barn" }
+      { emoji: "🚜", name: "Farm", label: "Farm" }
     ]
   },
   {
@@ -200,7 +200,7 @@ const shelterPool: ShelterQuestion[] = [
     animal: "bee",
     animalEmoji: "🐝",
     questionText: "Where does the bee live?",
-    correctShelter: { emoji: "🍯", name: "Beehive", label: "Beehive" },
+    correctShelter: { emoji: "🛖", name: "Beehive", label: "Beehive" },
     wrongShelters: [
       { emoji: "🌊", name: "Ocean", label: "Ocean" },
       { emoji: "🏠", name: "Doghouse", label: "Doghouse" }
@@ -212,7 +212,7 @@ const shelterPool: ShelterQuestion[] = [
     questionText: "Where does the bird live?",
     correctShelter: { emoji: "🪺", name: "Nest", label: "Nest" },
     wrongShelters: [
-      { emoji: "🏡", name: "Barn", label: "Barn" },
+      { emoji: "🚜", name: "Farm", label: "Farm" },
       { emoji: "🌊", name: "Ocean", label: "Ocean" }
     ]
   },
@@ -222,7 +222,7 @@ const shelterPool: ShelterQuestion[] = [
     questionText: "Where does the bear live?",
     correctShelter: { emoji: "🪨", name: "Cave", label: "Cave" },
     wrongShelters: [
-      { emoji: "🍯", name: "Beehive", label: "Beehive" },
+      { emoji: "🛖", name: "Beehive", label: "Beehive" },
       { emoji: "🪺", name: "Nest", label: "Nest" }
     ]
   },
@@ -240,7 +240,7 @@ const shelterPool: ShelterQuestion[] = [
     animal: "pig",
     animalEmoji: "🐷",
     questionText: "Where does the pig live?",
-    correctShelter: { emoji: "🏡", name: "Barn", label: "Barn" },
+    correctShelter: { emoji: "🚜", name: "Farm", label: "Farm" },
     wrongShelters: [
       { emoji: "🌳", name: "Tree", label: "Tree" },
       { emoji: "🪺", name: "Nest", label: "Nest" }
@@ -262,7 +262,7 @@ const shelterPool: ShelterQuestion[] = [
     questionText: "Where does the spider live?",
     correctShelter: { emoji: "🕸️", name: "Web", label: "Web" },
     wrongShelters: [
-      { emoji: "🏡", name: "Barn", label: "Barn" },
+      { emoji: "🚜", name: "Farm", label: "Farm" },
       { emoji: "🌊", name: "Ocean", label: "Ocean" }
     ]
   },
@@ -270,10 +270,10 @@ const shelterPool: ShelterQuestion[] = [
     animal: "lion",
     animalEmoji: "🦁",
     questionText: "Where does the lion live?",
-    correctShelter: { emoji: "🌾", name: "Savanna", label: "Savanna" },
+    correctShelter: { emoji: "🌿", name: "Savanna", label: "Savanna" },
     wrongShelters: [
       { emoji: "🏠", name: "Doghouse", label: "Doghouse" },
-      { emoji: "🍯", name: "Beehive", label: "Beehive" }
+      { emoji: "🛖", name: "Beehive", label: "Beehive" }
     ]
   }
 ];
@@ -493,10 +493,10 @@ export default function WhereIsBunnyEngine({ childId, onBack }: { childId: strin
 
         <rect width="100%" height="100%" fill="url(#bgGrad)" />
 
-        {/* Pulsing Sun (Top right to avoid clashing with mascot) */}
+        {/* Subtle Sun (Top right to avoid clashing with mascot) */}
         <svg x="72%" y="4%" width="120" height="120" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
-          <circle cx="50" cy="50" r="30" fill="url(#sunGrad)" opacity="0.9" className="sun-glow" />
-          <circle cx="50" cy="50" r="45" fill="#ffd166" opacity="0.15" className="sun-glow" />
+          <circle cx="50" cy="50" r="28" fill="url(#sunGrad)" opacity="0.32" />
+          <circle cx="50" cy="50" r="38" fill="#ffd166" opacity="0.06" />
         </svg>
 
         {/* Soft clouds (Sky Zone) */}
@@ -513,11 +513,7 @@ export default function WhereIsBunnyEngine({ childId, onBack }: { childId: strin
           </g>
         </svg>
 
-        {/* Rocky Cave silhouette (Middle Left Zone) */}
-        <svg x="0" y="28%" width="90" height="200" viewBox="0 0 90 200" preserveAspectRatio="xMinYMid meet">
-          <path d="M 0 0 Q 60 30 70 100 T 0 200 Z" fill="url(#caveGrad)" opacity="0.45" />
-          <path d="M 0 30 Q 40 60 48 115 T 0 170 Z" fill="#958c7f" opacity="0.3" />
-        </svg>
+
 
         {/* Swaying Tree Branch (Top Right Forest Zone) */}
         <svg x="65%" y="0" width="35%" height="180" viewBox="0 0 280 180" preserveAspectRatio="xMaxYMin meet">
@@ -672,7 +668,7 @@ export default function WhereIsBunnyEngine({ childId, onBack }: { childId: strin
         </div>
 
         {/* Draggable Animal Drawer at the bottom */}
-        <div className="w-full h-32 sm:h-40 flex items-center justify-center relative pb-2 shrink-0">
+        <div className="w-full h-40 sm:h-48 flex items-center justify-center relative pb-2 shrink-0">
           <AnimatePresence mode="wait">
             {gameState === "playing" && (
               <motion.div
@@ -688,11 +684,8 @@ export default function WhereIsBunnyEngine({ childId, onBack }: { childId: strin
                 dragMomentum={false}
                 onDragEnd={handleDragEnd}
               >
-                {/* Drag instruction ring/highlight */}
-                <div className="absolute w-24 h-24 rounded-full bg-white/40 border border-white/60 filter blur-sm scale-110 -z-10 shadow-sm" />
-                
                 {/* Fluent Animal Icon */}
-                <div className="w-20 h-20 sm:w-24 sm:h-24 filter drop-shadow-[4px_8px_12px_rgba(0,0,0,0.1)] select-none flex items-center justify-center">
+                <div className="w-28 h-28 sm:w-36 sm:h-36 filter drop-shadow-[4px_8px_12px_rgba(0,0,0,0.1)] select-none flex items-center justify-center">
                   {(() => {
                     const AnimalIcon = getAnimalIcon(currentQuestion?.animal || "");
                     return AnimalIcon ? <AnimalIcon size="100%" /> : <span className="text-7xl sm:text-8xl">{currentQuestion?.animalEmoji}</span>;
@@ -714,7 +707,7 @@ export default function WhereIsBunnyEngine({ childId, onBack }: { childId: strin
                 className="flex flex-col items-center justify-center animate-bounce"
               >
                 {/* Fluent Animal Icon Celebrating */}
-                <div className="w-20 h-20 sm:w-24 sm:h-24 filter drop-shadow-md select-none flex items-center justify-center">
+                <div className="w-28 h-28 sm:w-36 sm:h-36 filter drop-shadow-md select-none flex items-center justify-center">
                   {(() => {
                     const AnimalIcon = getAnimalIcon(currentQuestion?.animal || "");
                     return AnimalIcon ? <AnimalIcon size="100%" /> : <span className="text-7xl sm:text-8xl">{currentQuestion?.animalEmoji}</span>;
