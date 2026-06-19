@@ -123,7 +123,7 @@ const renderShelterIcon = (choice: ShelterItem, className?: string) => {
       <img
         src={src}
         alt={choice.label}
-        className={className || "w-full h-full object-cover rounded-2xl pointer-events-none"}
+        className={className || "w-full h-full object-cover object-center rounded-2xl pointer-events-none"}
       />
     );
   }
