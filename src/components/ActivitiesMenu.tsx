@@ -280,27 +280,49 @@ export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps
       animate="show"
       className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-5 w-full max-w-4xl mx-auto p-4 z-10 relative overflow-visible"
     >
-      {/* Playful speech bubble header spanning all columns */}
+      {/* Playful unified branding & speech bubble header spanning all columns */}
       <motion.div 
         variants={itemVariants}
-        className="relative flex items-center justify-center gap-4 col-span-2 sm:col-span-3 md:col-span-4 mb-4 max-w-md mx-auto w-full px-2"
+        className="col-span-2 sm:col-span-3 md:col-span-4 flex flex-col sm:flex-row items-center justify-between gap-5 w-full mb-4 px-2 select-none"
       >
-        {/* Floating Sparkles around Mascot */}
-        <div className="absolute top-0 left-4 text-[#ffd166] text-base animate-sparkle-1 pointer-events-none select-none">✨</div>
-        <div className="absolute -bottom-1 left-2 text-[#e07383] text-sm animate-sparkle-2 pointer-events-none select-none">✨</div>
-        <div className="absolute top-3 left-18 text-[#3fa394] text-[10px] animate-sparkle-3 pointer-events-none select-none">✨</div>
+        {/* Brand Logo & Title */}
+        <div className="flex items-center gap-3.5 shrink-0 bg-white/45 backdrop-blur-md border-[3px] border-white/55 px-5 py-3 rounded-[2rem] shadow-[0_8px_24px_rgba(0,0,0,0.02)]">
+          <div className="w-10 h-10 rounded-2xl bg-white border-2 border-white p-0.5 shadow-[0_4px_12px_rgba(0,0,0,0.04)] flex items-center justify-center shrink-0">
+            <img
+              alt="Midday Logo"
+              className="w-full h-full object-contain"
+              src="/logo.png"
+            />
+          </div>
+          <div className="flex flex-col items-start leading-none text-left">
+            <h1 className="font-sans text-xl sm:text-2xl text-primary tracking-tight font-black uppercase">
+              Midday
+            </h1>
+            <span className="text-[8px] font-black uppercase tracking-widest text-[#0d4036]/50">
+              Playbook
+            </span>
+          </div>
+        </div>
 
-        {/* Floating Boy Mascot */}
-        <MascotSVG className="w-16 h-16 select-none shrink-0 filter drop-shadow-[2px_4px_6px_rgba(0,0,0,0.06)] z-10" />
-        
-        {/* Speech Bubble */}
-        <div className="relative bg-white/90 backdrop-blur-md p-4 rounded-[2rem] border-[3px] border-white/60 shadow-[0_8px_32px_rgba(0,0,0,0.03)] flex-grow">
-          {/* Rotated square tail */}
-          <div className="absolute left-[-9px] top-1/2 -translate-y-1/2 w-4 h-4 rotate-45 bg-white/90 border-l-[3px] border-b-[3px] border-white/60" />
-          
-          <div className="text-left relative z-10 pl-1">
-            <p className="text-[10px] font-black text-[#d4a919] uppercase tracking-wider leading-none mb-1">Buddy says:</p>
-            <p className="text-xs font-bold text-[#4A5358]/80 leading-normal">Pick a game to play together!</p>
+        {/* Buddy Greeting Bubble */}
+        <div className="relative flex items-center gap-3 max-w-md w-full sm:w-auto">
+          {/* Speech Bubble */}
+          <div className="relative bg-white/90 backdrop-blur-md px-5 py-3 rounded-[2rem] border-[3px] border-white/60 shadow-[0_8px_24px_rgba(0,0,0,0.03)] flex-grow">
+            {/* Rotated square tail pointing to the right towards Buddy */}
+            <div className="absolute right-[-7px] top-1/2 -translate-y-1/2 w-3.5 h-3.5 rotate-45 bg-white/90 border-t-[3px] border-r-[3px] border-white/60" />
+            
+            <div className="text-left relative z-10 pl-1">
+              <p className="text-[9px] font-black text-[#d4a919] uppercase tracking-wider leading-none mb-1">Buddy says:</p>
+              <p className="text-xs font-bold text-[#4A5358]/80 leading-normal">Pick a game to play together!</p>
+            </div>
+          </div>
+
+          {/* Floating Boy Mascot */}
+          <div className="relative shrink-0 select-none">
+            {/* Sparkles */}
+            <div className="absolute top-0 -left-1 text-[#ffd166] text-xs animate-sparkle-1 pointer-events-none">✨</div>
+            <div className="absolute -bottom-1 -right-1 text-[#e07383] text-xs animate-sparkle-2 pointer-events-none">✨</div>
+            <MascotSVG className="w-14 h-14 filter drop-shadow-[2px_4px_6px_rgba(0,0,0,0.06)] animate-float" />
           </div>
         </div>
       </motion.div>

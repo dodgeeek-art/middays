@@ -156,22 +156,22 @@ export default function Home() {
     <div className={`flex flex-col font-sans relative overflow-hidden bg-background text-foreground ${
       isGameActive ? "h-[100dvh] max-h-[100dvh]" : "min-h-[100dvh]"
     }`}>
-      {/* Animated Ambient Background Blobs from Stitch */}
+      {/* Animated Ambient Background Blobs */}
       <div 
-        className="fixed -z-10 bg-[#a2ea63] w-96 h-96 rounded-full blur-[100px] opacity-25 -top-20 -left-20"
+        className="fixed -z-10 bg-[#bde8ca] w-96 h-96 rounded-full blur-[100px] opacity-35 -top-20 -left-20"
         style={{ animation: "float 20s infinite alternate ease-in-out" }}
       ></div>
       <div 
-        className="fixed -z-10 bg-[#ffc4c0] w-[500px] h-[500px] rounded-full blur-[120px] opacity-25 -bottom-32 -right-32"
+        className="fixed -z-10 bg-[#fef3c7] w-[500px] h-[500px] rounded-full blur-[120px] opacity-30 -bottom-32 -right-32"
         style={{ animation: "float 20s infinite alternate ease-in-out", animationDelay: "-5s" }}
       ></div>
       <div 
-        className="fixed -z-10 bg-[#eaddfc] w-80 h-80 rounded-full blur-[95px] opacity-20 top-1/2 left-1/4"
+        className="fixed -z-10 bg-[#fed7aa] w-80 h-80 rounded-full blur-[95px] opacity-25 top-1/2 left-1/4"
         style={{ animation: "float 20s infinite alternate ease-in-out", animationDelay: "-10s" }}
       ></div>
 
       {/* Dynamic TopAppBar Shell matching Stitch designs */}
-      {!(view === "lesson" && activeGame !== "menu") && (
+      {view !== "lesson" && (
         <FloatingHeader 
           view={view} 
           onBackToPlay={() => setView("lesson")} 

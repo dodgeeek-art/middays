@@ -104,26 +104,32 @@ body.game-active {
 }
 
 body {
-  background: var(--background);
+  background: 
+    radial-gradient(at 0% 0%, #e8f5ed 0px, transparent 50%),
+    radial-gradient(at 50% 0%, #fdf9e9 0px, transparent 40%),
+    radial-gradient(at 100% 0%, #eef7f2 0px, transparent 50%),
+    radial-gradient(at 0% 100%, #ecf6f0 0px, transparent 50%),
+    radial-gradient(at 100% 100%, #fbf0f2 0px, transparent 50%),
+    #e8efe9; /* Soft Caladon Canvas base */
   color: var(--foreground);
   overflow-x: hidden;
   font-weight: 800; /* Friendly chunky text */
   position: relative;
-  box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.03);
+  box-shadow: inset 0 0 120px rgba(0, 0, 0, 0.02);
 }
 
-/* Playful background texture: Soft playmat grid + minty polka dots */
+/* Playful background texture: Extremely soft playmat grid + subtle minty polka dots */
 body::before {
   content: "";
   position: fixed;
   inset: 0;
   z-index: -5;
   background-image: 
-    radial-gradient(rgba(78, 205, 196, 0.08) 3px, transparent 3px),
-    linear-gradient(rgba(255, 255, 255, 0.55) 1.5px, transparent 1.5px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.55) 1.5px, transparent 1.5px);
-  background-size: 48px 48px, 48px 48px, 48px 48px;
-  background-position: 24px 24px, 0 0, 0 0;
+    radial-gradient(rgba(63, 163, 148, 0.035) 2px, transparent 2px),
+    linear-gradient(rgba(255, 255, 255, 0.35) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.35) 1px, transparent 1px);
+  background-size: 56px 56px, 56px 56px, 56px 56px;
+  background-position: 28px 28px, 0 0, 0 0;
   pointer-events: none;
 }
 
