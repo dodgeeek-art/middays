@@ -1,19 +1,25 @@
 "use client";
 
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { ArrowLeft, Volume2, HelpCircle } from "@/components/Icons";
-import { motion, AnimatePresence, PanInfo } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 import ClayButton from "@/components/ui/ClayButton";
 import ClayCard from "@/components/ui/ClayCard";
+import MascotSVG from "@/components/MascotSVG";
 
+interface ShelterItem {
+  emoji: string;
+  name: string;
+  label: string;
+}
 
-
-interface RoundConfig {
-  mode: "hide" | "seek";
-  preposition: "behind" | "in front of" | "inside";
-  targetLandmark: "tree" | "log" | "barn";
-  promptText: string;
+interface ShelterQuestion {
+  animal: string;
+  animalEmoji: string;
+  questionText: string;
+  correctShelter: ShelterItem;
+  wrongShelters: ShelterItem[];
 }
 
 const playSynthesizedSound = (type: "correct" | "wrong" | "levelUp" | "click") => {
@@ -82,143 +88,185 @@ const playSynthesizedSound = (type: "correct" | "wrong" | "levelUp" | "click") =
   }
 };
 
-const rounds: RoundConfig[] = [
+const shelterPool: ShelterQuestion[] = [
   {
-    mode: "hide",
-    preposition: "behind",
-    targetLandmark: "tree",
-    promptText: "Can you hide the bunny behind the tree?"
+    animal: "fish",
+    animalEmoji: "🐟",
+    questionText: "Where does the fish live?",
+    correctShelter: { emoji: "🌊", name: "Ocean", label: "Ocean" },
+    wrongShelters: [
+      { emoji: "🌳", name: "Tree", label: "Tree" },
+      { emoji: "🏡", name: "Barn", label: "Barn" }
+    ]
   },
   {
-    mode: "hide",
-    preposition: "inside",
-    targetLandmark: "log",
-    promptText: "Can you hide the bunny inside the wooden log?"
+    animal: "squirrel",
+    animalEmoji: "🐿️",
+    questionText: "Where does the squirrel live?",
+    correctShelter: { emoji: "🌳", name: "Tree", label: "Tree" },
+    wrongShelters: [
+      { emoji: "🌊", name: "Ocean", label: "Ocean" },
+      { emoji: "🕸️", name: "Web", label: "Web" }
+    ]
   },
   {
-    mode: "hide",
-    preposition: "in front of",
-    targetLandmark: "barn",
-    promptText: "Can you put the bunny in front of the red barn?"
+    animal: "bee",
+    animalEmoji: "🐝",
+    questionText: "Where does the bee live?",
+    correctShelter: { emoji: "🍯", name: "Beehive", label: "Beehive" },
+    wrongShelters: [
+      { emoji: "🌊", name: "Ocean", label: "Ocean" },
+      { emoji: "🏠", name: "Doghouse", label: "Doghouse" }
+    ]
   },
   {
-    mode: "seek",
-    preposition: "behind",
-    targetLandmark: "tree",
-    promptText: "Where is the bunny hiding? Tap the tree!"
+    animal: "bird",
+    animalEmoji: "🐦",
+    questionText: "Where does the bird live?",
+    correctShelter: { emoji: "🪺", name: "Nest", label: "Nest" },
+    wrongShelters: [
+      { emoji: "🏡", name: "Barn", label: "Barn" },
+      { emoji: "🌊", name: "Ocean", label: "Ocean" }
+    ]
   },
   {
-    mode: "seek",
-    preposition: "inside",
-    targetLandmark: "log",
-    promptText: "Where is the bunny hiding? Tap the log!"
+    animal: "bear",
+    animalEmoji: "🐻",
+    questionText: "Where does the bear live?",
+    correctShelter: { emoji: "🪨", name: "Cave", label: "Cave" },
+    wrongShelters: [
+      { emoji: "🍯", name: "Beehive", label: "Beehive" },
+      { emoji: "🪺", name: "Nest", label: "Nest" }
+    ]
+  },
+  {
+    animal: "dog",
+    animalEmoji: "🐶",
+    questionText: "Where does the dog live?",
+    correctShelter: { emoji: "🏠", name: "Doghouse", label: "Doghouse" },
+    wrongShelters: [
+      { emoji: "🌊", name: "Ocean", label: "Ocean" },
+      { emoji: "🕸️", name: "Web", label: "Web" }
+    ]
+  },
+  {
+    animal: "pig",
+    animalEmoji: "🐷",
+    questionText: "Where does the pig live?",
+    correctShelter: { emoji: "🏡", name: "Barn", label: "Barn" },
+    wrongShelters: [
+      { emoji: "🌳", name: "Tree", label: "Tree" },
+      { emoji: "🪺", name: "Nest", label: "Nest" }
+    ]
+  },
+  {
+    animal: "frog",
+    animalEmoji: "🐸",
+    questionText: "Where does the frog live?",
+    correctShelter: { emoji: "🪷", name: "Pond", label: "Pond" },
+    wrongShelters: [
+      { emoji: "🪵", name: "Dry Log", label: "Dry Log" },
+      { emoji: "🏠", name: "Doghouse", label: "Doghouse" }
+    ]
+  },
+  {
+    animal: "spider",
+    animalEmoji: "🕷️",
+    questionText: "Where does the spider live?",
+    correctShelter: { emoji: "🕸️", name: "Web", label: "Web" },
+    wrongShelters: [
+      { emoji: "🏡", name: "Barn", label: "Barn" },
+      { emoji: "🌊", name: "Ocean", label: "Ocean" }
+    ]
+  },
+  {
+    animal: "lion",
+    animalEmoji: "🦁",
+    questionText: "Where does the lion live?",
+    correctShelter: { emoji: "🌾", name: "Savanna", label: "Savanna" },
+    wrongShelters: [
+      { emoji: "🏠", name: "Doghouse", label: "Doghouse" },
+      { emoji: "🍯", name: "Beehive", label: "Beehive" }
+    ]
   }
 ];
 
+const shuffleArray = <T,>(array: T[]): T[] => {
+  return [...array].sort(() => Math.random() - 0.5);
+};
+
 export default function WhereIsBunnyEngine({ childId, onBack }: { childId: string; onBack: () => void }) {
+  const [roundsList, setRoundsList] = useState<ShelterQuestion[]>([]);
   const [currentRoundIdx, setCurrentRoundIdx] = useState(0);
+  const [choices, setChoices] = useState<ShelterItem[]>([]);
   const [gameState, setGameState] = useState<"playing" | "correct" | "incorrect" | "success">("playing");
-  const [dragOffsetKey, setDragOffsetKey] = useState(0);
+  const [wrongSelections, setWrongSelections] = useState<string[]>([]);
   const [startTime] = useState<number>(() => Date.now());
   const [errorsThisGame, setErrorsThisGame] = useState(0);
-
-  // Refs for drop collision
-  const treeRef = useRef<HTMLDivElement>(null);
-  const logRef = useRef<HTMLDivElement>(null);
-  const barnRef = useRef<HTMLDivElement>(null);
-
-  const round = rounds[currentRoundIdx];
 
   const speakText = useCallback((text: string) => {
     if (typeof window !== "undefined" && window.speechSynthesis) {
       window.speechSynthesis.cancel();
       const utterance = new SpeechSynthesisUtterance(text);
-      utterance.rate = 0.85;
-      utterance.pitch = 1.25;
+      utterance.rate = 0.82;
+      utterance.pitch = 1.2;
       window.speechSynthesis.speak(utterance);
     }
   }, []);
 
+  // Initialize rounds
   useEffect(() => {
-    if (round) {
-      speakText(round.promptText);
-    }
-  }, [round, speakText]);
+    const selected = shuffleArray(shelterPool).slice(0, 5);
+    setRoundsList(selected);
+    setCurrentRoundIdx(0);
+  }, []);
 
-  const handleDragEnd = (_event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
-    if (round.mode !== "hide" || gameState !== "playing") return;
+  const currentQuestion = roundsList[currentRoundIdx];
 
-    const dragX = info.point.x;
-    const dragY = info.point.y;
-
-    const rectTree = treeRef.current?.getBoundingClientRect();
-    const rectLog = logRef.current?.getBoundingClientRect();
-    const rectBarn = barnRef.current?.getBoundingClientRect();
-
-    let droppedLandmark: "tree" | "log" | "barn" | null = null;
-
-    if (rectTree && dragX >= rectTree.left && dragX <= rectTree.right && dragY >= rectTree.top && dragY <= rectTree.bottom) {
-      droppedLandmark = "tree";
-    } else if (rectLog && dragX >= rectLog.left && dragX <= rectLog.right && dragY >= rectLog.top && dragY <= rectLog.bottom) {
-      droppedLandmark = "log";
-    } else if (rectBarn && dragX >= rectBarn.left && dragX <= rectBarn.right && dragY >= rectBarn.top && dragY <= rectBarn.bottom) {
-      droppedLandmark = "barn";
-    }
-
-    if (!droppedLandmark) {
-      setDragOffsetKey(prev => prev + 1);
-      return;
-    }
-
-    if (droppedLandmark === round.targetLandmark) {
-      handleSuccess();
-    } else {
-      handleFailure();
-    }
-  };
-
-  const handleLandmarkTap = (landmarkId: "tree" | "log" | "barn") => {
-    if (round.mode !== "seek" || gameState !== "playing") return;
-
-    if (landmarkId === round.targetLandmark) {
-      handleSuccess();
-    } else {
-      handleFailure();
-    }
-  };
-
-  const handleSuccess = () => {
-    setGameState("correct");
-    playSynthesizedSound("correct");
-    speakText("You found it! Good job!");
-
-    confetti({
-      particleCount: 60,
-      spread: 50,
-      origin: { y: 0.7 },
-      colors: ["#bee8d4", "#ffc4c0", "#ddcbf5", "#ffffff"]
-    });
-
-    setTimeout(() => {
-      if (currentRoundIdx < rounds.length - 1) {
-        setGameState("playing");
-        setCurrentRoundIdx(prev => prev + 1);
-      } else {
-        handleGameComplete();
-      }
-    }, 2000);
-  };
-
-  const handleFailure = () => {
-    setGameState("incorrect");
-    playSynthesizedSound("wrong");
-    setErrorsThisGame(prev => prev + 1);
-    speakText("Try again!");
-
-    setTimeout(() => {
+  // Set up choices for the current round
+  useEffect(() => {
+    if (currentQuestion) {
+      const allChoices = shuffleArray([
+        currentQuestion.correctShelter,
+        ...currentQuestion.wrongShelters
+      ]);
+      setChoices(allChoices);
+      setWrongSelections([]);
       setGameState("playing");
-      setDragOffsetKey(prev => prev + 1);
-    }, 1200);
+      speakText(currentQuestion.questionText);
+    }
+  }, [currentQuestion, speakText]);
+
+  const handleChoiceTap = (choice: ShelterItem) => {
+    if (gameState !== "playing") return;
+
+    if (choice.name === currentQuestion.correctShelter.name) {
+      setGameState("correct");
+      playSynthesizedSound("correct");
+      speakText("Yes! The " + currentQuestion.animal + " lives in the " + choice.name + "!");
+      
+      confetti({
+        particleCount: 60,
+        spread: 50,
+        origin: { y: 0.8 },
+        colors: ["#bee8d4", "#ffc4c0", "#ddcbf5", "#ffffff"]
+      });
+
+      setTimeout(() => {
+        if (currentRoundIdx < roundsList.length - 1) {
+          setCurrentRoundIdx(prev => prev + 1);
+        } else {
+          handleGameComplete();
+        }
+      }, 2000);
+    } else {
+      playSynthesizedSound("wrong");
+      setErrorsThisGame(prev => prev + 1);
+      if (!wrongSelections.includes(choice.name)) {
+        setWrongSelections(prev => [...prev, choice.name]);
+      }
+      speakText("Not there! Try again!");
+    }
   };
 
   const handleGameComplete = async () => {
@@ -232,7 +280,7 @@ export default function WhereIsBunnyEngine({ childId, onBack }: { childId: strin
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            targetLetter: "BUNNY",
+            targetLetter: "SHELTER",
             tracingScore: Math.max(0, 100 - errorsThisGame * 15),
             phonemicScore: 100,
             timeSpentMs: elapsed
@@ -243,7 +291,7 @@ export default function WhereIsBunnyEngine({ childId, onBack }: { childId: strin
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            badgeName: "Spatial Master"
+            badgeName: "Shelter Master"
           })
         });
       } catch (err) {
@@ -252,49 +300,21 @@ export default function WhereIsBunnyEngine({ childId, onBack }: { childId: strin
     }
   };
 
-  // Render composite styling for prepositions
-  const getBunnyOverlayStyle = (landmark: "tree" | "log" | "barn") => {
-    if (round.mode === "seek" && gameState !== "correct") {
-      // Hide bunny completely for seek mode until correct
-      return "hidden";
+  const getCardShakeAnimation = (name: string) => {
+    if (wrongSelections.includes(name)) {
+      return {
+        x: [0, -10, 10, -8, 8, 0],
+        transition: { duration: 0.5 }
+      };
     }
-
-    const prep = round.preposition;
-
-    if (landmark !== round.targetLandmark) return "hidden";
-
-    if (prep === "behind") {
-      // Ears peeking over the top, lower z-index
-      return "absolute bottom-12 left-1/2 -translate-x-1/2 z-0 scale-75 opacity-80 translateY-[-20px]";
-    } else if (prep === "inside") {
-      // Body cut off, ears peek out
-      return "absolute bottom-4 left-1/2 -translate-x-1/2 z-10 scale-90 clip-bunny";
-    } else {
-      // In front, high z-index
-      return "absolute -bottom-6 left-1/2 -translate-x-1/2 z-30 scale-100";
-    }
-  };
-
-  // Co-play prompt text for parent banner
-  const getParentPrompt = () => {
-    if (currentRoundIdx === 0) {
-      return 'Help your child locate the tree. Ask: "Is the bunny behind or in front of the leaves?"';
-    } else if (currentRoundIdx === 1) {
-      return 'Talk about "inside": "The bunny crawled inside the log. What else can go inside a log?"';
-    } else if (currentRoundIdx === 2) {
-      return 'Talk about "in front of": "Can you stand in front of me?"';
-    }
-    return 'Play along! Ask: "Can you hide a toy under a cup or behind your back?"';
+    return {};
   };
 
   return (
-    <div className="flex flex-col w-full max-w-4xl mx-auto h-full min-h-0 bg-[#eef1f6] p-4 rounded-[2.5rem] border-[3px] border-white/50 shadow-clay-card relative overflow-hidden select-none">
+    <div className="flex flex-col w-full max-w-4xl mx-auto h-full min-h-0 bg-transparent p-4 rounded-[2.5rem] relative overflow-visible select-none justify-start gap-4">
       
-      {/* Background blobs */}
-      <div className="absolute -z-10 bg-[#c3e6dc] w-72 h-72 rounded-full blur-[90px] opacity-40 -bottom-10 -left-10"></div>
-      
-      {/* Header */}
-      <div className="flex items-center justify-between mb-4 shrink-0">
+      {/* Header Row */}
+      <div className="flex items-center justify-between shrink-0">
         <ClayButton
           variant="surface"
           size="sm"
@@ -308,18 +328,46 @@ export default function WhereIsBunnyEngine({ childId, onBack }: { childId: strin
 
         <h1 className="text-xl sm:text-2xl font-black uppercase text-[#4A5358] tracking-wider flex items-center gap-2">
           <HelpCircle size={24} className="text-[#3fa394]" strokeWidth={3.5} />
-          Where is Bunny?
+          Shelter Game
         </h1>
 
         <div className="bg-white/80 border-2 border-white/40 shadow-inner px-4 py-2 rounded-full font-black text-[#3fa394] text-sm tracking-wide">
-          ROUND {currentRoundIdx + 1}/{rounds.length}
+          ROUND {currentRoundIdx + 1}/{roundsList.length || 5}
         </div>
       </div>
 
-      {/* Parental Co-Play Banner */}
-      <div className="bg-[#bee8d4]/80 border-2 border-white/50 text-[#16533f] p-3 rounded-2xl mb-4 text-center font-bold text-xs sm:text-sm shadow-[inset_-2px_-2px_4px_rgba(0,0,0,0.02),_inset_2px_2px_4px_rgba(255,255,255,0.8)] leading-snug shrink-0">
-        <span className="text-[10px] font-black uppercase tracking-wider text-[#3fa394] block mb-0.5">🧑‍🍼 Parent & Child Co-Play Option</span>
-        {getParentPrompt()}
+      {/* Mascot Speech Bubble Header */}
+      <div className="w-full flex items-center gap-4 sm:gap-6 bg-white/45 backdrop-blur-md rounded-[2.2rem] border-white/60 border-[3px] p-4 sm:p-5 shadow-[0_12px_25px_rgba(0,0,0,0.02)] shrink-0">
+        {/* Floating Boy Mascot on the left */}
+        <div className="relative shrink-0 select-none w-16 h-16 sm:w-20 sm:h-20">
+          <div className="absolute top-0 -left-1.5 text-[#ffd166] text-xs animate-sparkle-1 pointer-events-none">✨</div>
+          <div className="absolute -bottom-1 -right-1 text-[#e07383] text-xs animate-sparkle-2 pointer-events-none">✨</div>
+          <MascotSVG className="w-full h-full filter drop-shadow-[2px_4px_8px_rgba(0,0,0,0.06)] animate-float" />
+        </div>
+
+        {/* Speech Bubble on the right */}
+        <div className="flex-1 relative bg-white/95 px-5 py-3 rounded-2xl border-white/60 border-2 shadow-inner text-left">
+          {/* Rotated square tail pointing to the left towards Buddy */}
+          <div className="absolute left-[-6px] top-1/2 -translate-y-1/2 w-3 h-3 rotate-45 bg-white/95 border-b border-l border-white/60" />
+          
+          <div className="text-left relative z-10 pl-1 flex items-center justify-between gap-3">
+            <div>
+              <p className="text-[9px] font-black text-[#d4a919] uppercase tracking-wider leading-none mb-1">Buddy says:</p>
+              <p className="text-xs sm:text-sm font-bold text-[#4A5358]/85 leading-normal">
+                {currentQuestion?.questionText}
+              </p>
+            </div>
+            
+            <ClayButton
+              variant="surface"
+              size="sm"
+              onClick={() => currentQuestion && speakText(currentQuestion.questionText)}
+              className="p-2 bg-[#eef1f6] rounded-full shrink-0 toddler-target"
+            >
+              <Volume2 size={16} className="text-[#3fa394]" strokeWidth={3.5} />
+            </ClayButton>
+          </div>
+        </div>
       </div>
 
       {/* Success Modal */}
@@ -329,7 +377,7 @@ export default function WhereIsBunnyEngine({ childId, onBack }: { childId: strin
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="absolute inset-0 z-40 bg-black/40 backdrop-blur-md flex items-center justify-center p-6"
+            className="absolute inset-0 z-40 bg-black/40 backdrop-blur-md flex items-center justify-center p-6 rounded-[2.5rem]"
           >
             <ClayCard
               variant="secondary"
@@ -338,11 +386,11 @@ export default function WhereIsBunnyEngine({ childId, onBack }: { childId: strin
               animate={{ scale: 1, y: 0 }}
             >
               <div className="w-20 h-20 rounded-full bg-[#3fa394] text-white text-4xl flex items-center justify-center shadow-clay-mint mb-2">
-                🐰
+                🏆
               </div>
-              <h2 className="text-3xl font-black text-[#0d4036] tracking-wide uppercase">All Found!</h2>
+              <h2 className="text-3xl font-black text-[#0d4036] tracking-wide uppercase">Shelter Master!</h2>
               <p className="text-sm font-bold text-[#0d4036]/80 leading-relaxed">
-                Super spatial skills! You understand prepositions perfectly now. You earned the Spatial Master badge!
+                Super science skills! You know exactly where all the animals live. You earned the Shelter Master badge!
               </p>
 
               <ClayButton
@@ -357,122 +405,68 @@ export default function WhereIsBunnyEngine({ childId, onBack }: { childId: strin
         )}
       </AnimatePresence>
 
-      {/* Game Board Landscape */}
-      <div className="flex-grow flex flex-col justify-between min-h-0 relative z-10">
+      {/* Center Showcase Card: Animal Display */}
+      <div className="w-full flex-grow relative flex justify-center items-center overflow-visible min-h-0">
+        <div className="absolute bg-gradient-to-tr from-[#ffe5d9] to-[#c3e6dc] w-56 h-56 sm:w-68 sm:h-68 rounded-full blur-[45px] opacity-40 -z-10 animate-pulse pointer-events-none" />
         
-        {/* Playable landmarks landscape */}
-        <div className="flex-grow grid grid-cols-3 gap-4 items-end justify-items-center pb-20 relative">
-          
-          {/* Landmark 1: Oak Tree */}
-          <div
-            ref={treeRef}
-            onClick={() => handleLandmarkTap("tree")}
-            className={`w-28 sm:w-36 aspect-[0.7] rounded-[2rem] border-2 border-white/30 bg-white/40 shadow-inner flex flex-col items-center justify-end p-2 relative cursor-pointer ${
-              gameState === "incorrect" && round.targetLandmark !== "tree" ? "opacity-40" : ""
-            } ${round.mode === "seek" ? "hover:scale-105 active:scale-95 transition-transform" : ""}`}
-          >
-            {/* Bunny peeking overlay */}
-            <div className={getBunnyOverlayStyle("tree")}>
-              <span className="text-4xl filter drop-shadow-md select-none">🐰</span>
-            </div>
-
-            {/* Tree SVG/Emoji representation */}
-            <span className="text-7xl sm:text-8xl select-none filter drop-shadow-md z-10">🌳</span>
-            <span className="text-[10px] font-black uppercase text-slate-dark tracking-wider mt-1 z-10 select-none">Tree</span>
-          </div>
-
-          {/* Landmark 2: Log */}
-          <div
-            ref={logRef}
-            onClick={() => handleLandmarkTap("log")}
-            className={`w-28 sm:w-36 aspect-[0.7] rounded-[2rem] border-2 border-white/30 bg-white/40 shadow-inner flex flex-col items-center justify-end p-2 relative cursor-pointer ${
-              gameState === "incorrect" && round.targetLandmark !== "log" ? "opacity-40" : ""
-            } ${round.mode === "seek" ? "hover:scale-105 active:scale-95 transition-transform" : ""}`}
-          >
-            {/* Bunny inside/under log overlay */}
-            <div className={getBunnyOverlayStyle("log")}>
-              <span className="text-4xl filter drop-shadow-md select-none">🐰</span>
-            </div>
-
-            <span className="text-7xl sm:text-8xl select-none filter drop-shadow-md z-10">🪵</span>
-            <span className="text-[10px] font-black uppercase text-slate-dark tracking-wider mt-1 z-10 select-none">Log</span>
-          </div>
-
-          {/* Landmark 3: Barn */}
-          <div
-            ref={barnRef}
-            onClick={() => handleLandmarkTap("barn")}
-            className={`w-28 sm:w-36 aspect-[0.7] rounded-[2rem] border-2 border-white/30 bg-white/40 shadow-inner flex flex-col items-center justify-end p-2 relative cursor-pointer ${
-              gameState === "incorrect" && round.targetLandmark !== "barn" ? "opacity-40" : ""
-            } ${round.mode === "seek" ? "hover:scale-105 active:scale-95 transition-transform" : ""}`}
-          >
-            {/* Bunny overlay */}
-            <div className={getBunnyOverlayStyle("barn")}>
-              <span className="text-4xl filter drop-shadow-md select-none">🐰</span>
-            </div>
-
-            <span className="text-7xl sm:text-8xl select-none filter drop-shadow-md z-10">🏡</span>
-            <span className="text-[10px] font-black uppercase text-slate-dark tracking-wider mt-1 z-10 select-none">Barn</span>
-          </div>
-
-        </div>
-
-        {/* Audio prompt banner */}
-        <div className="absolute top-2 left-1/2 -translate-x-1/2 w-[90%] max-w-md bg-white p-3 rounded-2xl border-2 border-white/60 shadow-clay-card flex items-center justify-center gap-3 z-30">
-          <ClayButton
-            variant="surface"
-            size="sm"
-            onClick={() => speakText(round.promptText)}
-            className="p-2 bg-[#eef1f6] rounded-full"
-          >
-            <Volume2 size={20} className="text-[#3fa394]" strokeWidth={3.5} />
-          </ClayButton>
-          <span className="text-sm font-black text-[#4A5358] tracking-wide text-center">
-            {round.promptText}
+        <ClayCard
+          variant="glass"
+          className="p-5 sm:p-7 flex flex-col items-center justify-center gap-3 max-w-[260px] sm:max-w-xs w-full border-white/50 border-2 shadow-[0_12px_24px_rgba(0,0,0,0.02)] rounded-[2.2rem]"
+        >
+          <span className="text-[10px] sm:text-xs font-black text-[#8eb0a4] uppercase tracking-widest leading-none">
+            Animal Partner
           </span>
-        </div>
-
-        {/* Draggable Bunny Drawer (Only shown in HIDE mode) */}
-        {round.mode === "hide" && (gameState === "playing" || gameState === "incorrect") && (
-          <div className="h-28 flex items-center justify-center shrink-0 pb-4 relative z-30">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={`bunny-${dragOffsetKey}`}
-                initial={{ scale: 0.5, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.5, opacity: 0 }}
-                className="relative cursor-grab active:cursor-grabbing toddler-target"
-                style={{ touchAction: "none" }}
-              >
-                {/* Visual drag glow ring */}
-                <div className="absolute inset-0 rounded-full bg-[#ddcbf5] filter blur-lg opacity-40 scale-125 -z-10" />
-
-                <motion.div
-                  drag
-                  dragSnapToOrigin={true}
-                  dragElastic={0.65}
-                  onDragEnd={handleDragEnd}
-                  whileDrag={{ scale: 1.2, rotate: -3 }}
-                  className={`w-20 h-20 bg-white rounded-full border-[3px] border-white/60 shadow-clay-card flex items-center justify-center text-4xl select-none ${
-                    gameState === "incorrect" ? "animate-shake border-red-400 bg-red-50" : ""
-                  }`}
-                >
-                  🐰
-                </motion.div>
-              </motion.div>
-            </AnimatePresence>
-          </div>
-        )}
-
+          
+          <motion.div
+            key={currentQuestion?.animal}
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1.1, opacity: 1 }}
+            transition={{ type: "spring", stiffness: 200, damping: 12 }}
+            className="text-7xl sm:text-8xl filter drop-shadow-[4px_8px_12px_rgba(0,0,0,0.08)] select-none cursor-pointer"
+            onClick={() => currentQuestion && speakText(currentQuestion.animal)}
+          >
+            {currentQuestion?.animalEmoji}
+          </motion.div>
+          
+          <h2 className="text-lg sm:text-xl font-black text-slate-dark tracking-wide uppercase mt-1">
+            {currentQuestion?.animal}
+          </h2>
+        </ClayCard>
       </div>
 
-      <style jsx global>{`
-        /* Bunny clipping trick for log: cuts off bottom 40% of bunny's body to look hollow */
-        .clip-bunny {
-          clip-path: inset(0 0 35% 0);
-          bottom: 32px !important;
-        }
-      `}</style>
+      {/* Choices Tray */}
+      <div className="w-full grid grid-cols-3 gap-3 sm:gap-6 pb-2 shrink-0">
+        {choices.map((choice) => {
+          const isWrong = wrongSelections.includes(choice.name);
+          return (
+            <motion.button
+              key={choice.name}
+              animate={getCardShakeAnimation(choice.name)}
+              whileHover={gameState === "playing" && !isWrong ? { scale: 1.05 } : {}}
+              whileTap={gameState === "playing" && !isWrong ? { scale: 0.95, y: 4 } : {}}
+              onClick={() => handleChoiceTap(choice)}
+              className={`clay-card aspect-[4/5] p-3 flex flex-col items-center justify-between border-2 border-white/30 transition-all text-center relative overflow-hidden ${
+                gameState !== "playing" && choice.name !== currentQuestion?.correctShelter.name
+                  ? "opacity-45 pointer-events-none"
+                  : isWrong
+                  ? "opacity-40 cursor-not-allowed pointer-events-none"
+                  : "cursor-pointer"
+              }`}
+            >
+              {/* Shelter Icon Display */}
+              <div className="flex-grow flex items-center justify-center w-full h-full max-h-[70%] text-6xl sm:text-7xl filter drop-shadow-[2px_4px_8px_rgba(0,0,0,0.05)] mt-2">
+                {choice.emoji}
+              </div>
+
+              {/* Shelter Label */}
+              <span className="text-[10px] sm:text-xs font-black uppercase tracking-wider text-slate-dark text-center border-t border-white/10 w-full pt-1.5 mt-1">
+                {choice.label}
+              </span>
+            </motion.button>
+          );
+        })}
+      </div>
+
     </div>
   );
 }

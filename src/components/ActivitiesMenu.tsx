@@ -258,14 +258,14 @@ export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps
     },
     { 
       id: "bunny", 
-      name: "Bunny", 
-      subtitle: "Where is Bunny?",
+      name: "Shelter", 
+      subtitle: "Animal Homes",
       clayVariant: "glass",
       textColor: "text-[#0d4036]",
       disabled: false,
       floatDuration: 4.9,
       colSpan: "col-span-2 sm:col-span-1 md:col-span-2",
-      benefit: "Spatial",
+      benefit: "Biology",
       glowColor: "shadow-[0_20px_50px_rgba(196,240,225,0.18)] hover:shadow-[0_25px_60px_rgba(196,240,225,0.3)]",
       gradient: "from-[#c3e6dc]/40 to-[#a3d9cf]/30"
     },
