@@ -442,7 +442,7 @@ export default function BubblePopEngine({ childId, onBack }: BubblePopEngineProp
       <div className="flex justify-between items-center w-full mb-3 sm:mb-4 z-10 px-1">
         <button 
           onClick={onBack} 
-          className="bg-white clay-btn rounded-full w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center toddler-target border border-white/20 shadow-[4px_4px_8px_rgba(0,0,0,0.05)]"
+          className="bg-white clay-btn rounded-full w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center border border-white/20 shadow-[4px_4px_8px_rgba(0,0,0,0.05)]"
         >
           <ArrowLeft className="w-6 h-6 sm:w-7 sm:h-7 text-[#4A5358]" strokeWidth={3} />
         </button>

@@ -7,6 +7,15 @@ html, body {
   -webkit-touch-callout: none;
 }
 
+body.game-active {
+  overflow: hidden !important;
+  height: 100dvh !important;
+  width: 100vw !important;
+  position: fixed !important;
+  touch-action: none !important;
+  overscroll-behavior: none !important;
+}
+
 :root {
   /* Candy pastel kid-friendly theme */
   --background: #e2efe9; /* Calm pastel celadon-green canvas */
@@ -520,4 +529,6 @@ body::before {
 .animate-sparkle-3 {
   animation: sparkle-float 3.8s infinite ease-in-out 2.1s;
 }
+
+
 

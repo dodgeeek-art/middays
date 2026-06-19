@@ -4,7 +4,6 @@ import React, { useEffect, useState } from "react";
 import { Trophy, Heart, Star, Lock, Sparkles } from "@/components/Icons";
 import { motion, AnimatePresence } from "framer-motion";
 import ClayCard from "@/components/ui/ClayCard";
-import ClayButton from "@/components/ui/ClayButton";
 
 interface Badge {
   id: string;

@@ -14,6 +14,13 @@ import SoundScavengerEngine from "@/components/SoundScavengerEngine";
 import RhymeRiverEngine from "@/components/RhymeRiverEngine";
 import PhonicsMatchEngine from "@/components/PhonicsMatchEngine";
 import SyllableDrummerEngine from "@/components/SyllableDrummerEngine";
+
+// Import new developmental games
+import SortingBasketEngine from "@/components/SortingBasketEngine";
+import WhereIsBunnyEngine from "@/components/WhereIsBunnyEngine";
+import StorySequenceEngine from "@/components/StorySequenceEngine";
+import MarkMakerEngine from "@/components/MarkMakerEngine";
+
 import { motion, AnimatePresence } from "framer-motion";
 import { Lock, Play, Trophy, Settings } from "@/components/Icons";
 import FloatingHeader from "@/components/ui/FloatingHeader";
@@ -36,7 +43,7 @@ interface Child {
 
 export default function Home() {
   const [view, setView] = useState<"lesson" | "dashboard" | "trophies">("lesson");
-  const [activeGame, setActiveGame] = useState<"menu" | "tracing" | "reveal" | "bubbles" | "monster" | "scavenger" | "rhyme" | "match" | "drummer">("menu");
+  const [activeGame, setActiveGame] = useState<"menu" | "tracing" | "reveal" | "bubbles" | "monster" | "scavenger" | "rhyme" | "match" | "drummer" | "sorting" | "bunny" | "story" | "mark">("menu");
   const [childId, setChildId] = useState<string | null>(null);
   const [childProgress, setChildProgress] = useState<Child | null>(null);
 
@@ -107,6 +114,7 @@ export default function Home() {
       });
   }, []);
 
+
   // Fetch progress records whenever childId is set or view changes
   useEffect(() => {
     if (!childId) return;
@@ -132,6 +140,17 @@ export default function Home() {
     : 12000;
 
   const isGameActive = view === "lesson" && activeGame !== "menu";
+
+  useEffect(() => {
+    if (isGameActive) {
+      document.body.classList.add("game-active");
+    } else {
+      document.body.classList.remove("game-active");
+    }
+    return () => {
+      document.body.classList.remove("game-active");
+    };
+  }, [isGameActive]);
 
   return (
     <div className={`flex flex-col font-sans relative overflow-hidden bg-background text-foreground ${
@@ -159,6 +178,8 @@ export default function Home() {
           starsCount={starsCount} 
         />
       )}
+
+
 
       {/* Main View Shell */}
       <main className={`flex-grow max-w-6xl mx-auto w-full flex flex-col justify-center relative z-0 ${
@@ -239,6 +260,26 @@ export default function Home() {
                   {activeGame === "drummer" && (
                     <motion.div key="drummer" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="h-full min-h-0 flex flex-col justify-center">
                       <SyllableDrummerEngine childId={childId} onBack={() => setActiveGame("menu")} />
+                    </motion.div>
+                  )}
+                  {activeGame === "sorting" && (
+                    <motion.div key="sorting" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="h-full min-h-0 flex flex-col justify-center">
+                      <SortingBasketEngine childId={childId} onBack={() => setActiveGame("menu")} />
+                    </motion.div>
+                  )}
+                  {activeGame === "bunny" && (
+                    <motion.div key="bunny" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="h-full min-h-0 flex flex-col justify-center">
+                      <WhereIsBunnyEngine childId={childId} onBack={() => setActiveGame("menu")} />
+                    </motion.div>
+                  )}
+                  {activeGame === "story" && (
+                    <motion.div key="story" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="h-full min-h-0 flex flex-col justify-center">
+                      <StorySequenceEngine childId={childId} onBack={() => setActiveGame("menu")} />
+                    </motion.div>
+                  )}
+                  {activeGame === "mark" && (
+                    <motion.div key="mark" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="h-full min-h-0 flex flex-col justify-center">
+                      <MarkMakerEngine childId={childId} onBack={() => setActiveGame("menu")} />
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -397,6 +438,8 @@ export default function Home() {
           </motion.div>
         )}
       </AnimatePresence>
+
+
     </div>
   );
 }

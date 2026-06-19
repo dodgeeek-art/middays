@@ -1,18 +1,18 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { Sparkles, PenTool, Eraser, Smile, Search, Music, Layers, Volume2 } from '@/components/Icons';
+import { Sparkles, PenTool, Eraser, Smile, Search, Music, Layers, Volume2, Grid, HelpCircle, BookOpen, Lightbulb } from '@/components/Icons';
 import ClayCard from '@/components/ui/ClayCard';
 import MascotSVG from '@/components/MascotSVG';
 
 interface ActivitiesMenuProps {
   onSelectActivity: (
-    activity: "tracing" | "reveal" | "bubbles" | "monster" | "scavenger" | "rhyme" | "match" | "drummer"
+    activity: "tracing" | "reveal" | "bubbles" | "monster" | "scavenger" | "rhyme" | "match" | "drummer" | "sorting" | "bunny" | "story" | "mark"
   ) => void;
 }
 
 interface ActivityItem {
-  id: "tracing" | "reveal" | "bubbles" | "monster" | "scavenger" | "scavenger-advanced" | "rhyme" | "match" | "drummer";
+  id: "tracing" | "reveal" | "bubbles" | "monster" | "scavenger" | "scavenger-advanced" | "rhyme" | "match" | "drummer" | "sorting" | "bunny" | "story" | "mark";
   name: string;
   subtitle: string;
   icon: React.ReactNode;
@@ -124,8 +124,53 @@ export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps
       pillBg: "bg-white/90",
       disabled: false,
       floatDuration: 4.6
+    },
+    {
+      id: "sorting",
+      name: "Sort",
+      subtitle: "Sorting Basket",
+      icon: <Grid className="w-6 h-6 sm:w-7 sm:h-7 text-[#e07383]" strokeWidth={3.5} />,
+      clayVariant: "primary",
+      textColor: "text-[#590d22]",
+      pillBg: "bg-white/90",
+      disabled: false,
+      floatDuration: 4.2
+    },
+    {
+      id: "bunny",
+      name: "Bunny",
+      subtitle: "Where is Bunny?",
+      icon: <HelpCircle className="w-6 h-6 sm:w-7 sm:h-7 text-[#3fa394]" strokeWidth={3.5} />,
+      clayVariant: "secondary",
+      textColor: "text-[#0d4036]",
+      pillBg: "bg-white/90",
+      disabled: false,
+      floatDuration: 4.9
+    },
+    {
+      id: "story",
+      name: "Story",
+      subtitle: "3-Piece Sequence",
+      icon: <BookOpen className="w-6 h-6 sm:w-7 sm:h-7 text-[#8a6cd6]" strokeWidth={3.5} />,
+      clayVariant: "purple",
+      textColor: "text-[#3c1e70]",
+      pillBg: "bg-white/90",
+      disabled: false,
+      floatDuration: 5.1
+    },
+    {
+      id: "mark",
+      name: "Draw",
+      subtitle: "Flamingo Trace",
+      icon: <Lightbulb className="w-6 h-6 sm:w-7 sm:h-7 text-[#d4a919]" strokeWidth={3.5} />,
+      clayVariant: "tertiary",
+      textColor: "text-[#544001]",
+      pillBg: "bg-white/90",
+      disabled: false,
+      floatDuration: 4.4
     }
   ];
+
 
   const containerVariants = {
     hidden: { opacity: 0 },
