@@ -12,7 +12,8 @@ export interface ClayCardProps extends Omit<HTMLMotionProps<"div">, "ref"> {
     | "purple"
     | "blue"
     | "lime"
-    | "peach";
+    | "peach"
+    | "glass";
   hoverEffect?: boolean;
   organicShape?: "none" | "wavy-1" | "wavy-2";
   children: React.ReactNode;
@@ -53,6 +54,8 @@ export default function ClayCard({
       "bg-[#bee8d4] border-white/40 text-[#16533f] shadow-clay-mint hover:shadow-clay-mint-hover",
     peach:
       "bg-[#f7c2b3] border-white/40 text-[#732010] shadow-clay-pink hover:shadow-clay-pink-hover",
+    glass:
+      "bg-white/45 backdrop-blur-md border-white/50 text-[#4A5358] shadow-[0_8px_32px_rgba(31,38,135,0.04),inset_-4px_-4px_8px_rgba(0,0,0,0.02),inset_4px_4px_8px_rgba(255,255,255,0.8)] hover:bg-white/55 transition-all duration-300",
   };
 
   const cardStyle = `${baseStyle} ${shapeStyles[organicShape]} ${variantStyles[variant]} ${className}`;

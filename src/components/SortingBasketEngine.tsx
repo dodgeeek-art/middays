@@ -11,9 +11,19 @@ import ClayCard from "@/components/ui/ClayCard";
 interface SortingItem {
   id: string;
   name: string;
-  category: "food" | "animal" | "vehicle" | "red" | "blue" | "farm" | "ocean";
-  naturalColor?: "red" | "blue";
+  category: "red" | "blue" | "green" | "yellow" | "orange" | "purple" | "white" | "pink" | "brown" | "food" | "animal" | "farm" | "ocean";
+  naturalColor?: string;
   icon: React.ComponentType<{ size?: string | number; className?: string }>;
+}
+
+interface BasketConfig {
+  id: "red" | "blue" | "green" | "yellow" | "orange" | "purple" | "white" | "pink" | "brown" | "food" | "animal" | "farm" | "ocean";
+  label: string;
+  color: string;
+  bg: string;
+  border: string;
+  text: string;
+  glow: string;
 }
 
 interface SortingBasketEngineProps {
@@ -30,7 +40,6 @@ const playSynthesizedSound = (type: "correct" | "wrong" | "levelUp" | "click") =
     const ctx = new AudioContextClass();
     
     if (type === "correct") {
-      // Gentle double chime (marimba style)
       const now = ctx.currentTime;
       [523.25, 659.25].forEach((freq, idx) => {
         const osc = ctx.createOscillator();
@@ -45,7 +54,6 @@ const playSynthesizedSound = (type: "correct" | "wrong" | "levelUp" | "click") =
         osc.stop(now + idx * 0.08 + 0.16);
       });
     } else if (type === "wrong") {
-      // Soft boing sound
       const now = ctx.currentTime;
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
@@ -59,7 +67,6 @@ const playSynthesizedSound = (type: "correct" | "wrong" | "levelUp" | "click") =
       osc.start();
       osc.stop(now + 0.3);
     } else if (type === "levelUp") {
-      // Happy ascending arpeggio
       const now = ctx.currentTime;
       [261.63, 329.63, 392.00, 523.25].forEach((freq, idx) => {
         const osc = ctx.createOscillator();
@@ -91,33 +98,176 @@ const playSynthesizedSound = (type: "correct" | "wrong" | "levelUp" | "click") =
   }
 };
 
-// Vocabulary mappings for levels
-const getItemsForLevel = (level: number): { items: SortingItem[]; containerA: string; containerB: string } => {
+// Define color metadata to avoid duplicate styling configurations
+const COLOR_METADATA: Record<
+  "red" | "blue" | "green" | "yellow" | "orange" | "purple" | "white" | "pink" | "brown",
+  { label: string; color: string; bg: string; border: string; text: string; glow: string }
+> = {
+  red: { label: "Red", color: "🔴", bg: "bg-[#ffd6d6]/60", border: "border-[#e07383]", text: "text-[#590d22]", glow: "bg-[#e07383]" },
+  blue: { label: "Blue", color: "🔵", bg: "bg-[#d6e4ff]/60", border: "border-[#4a90e2]", text: "text-[#1d3d68]", glow: "bg-[#4a90e2]" },
+  green: { label: "Green", color: "🟢", bg: "bg-[#d6ffd6]/60", border: "border-[#38b000]", text: "text-[#0d4001]", glow: "bg-[#38b000]" },
+  yellow: { label: "Yellow", color: "🟡", bg: "bg-[#fffad6]/60", border: "border-[#ffd166]", text: "text-[#5c4d00]", glow: "bg-[#ffd166]" },
+  orange: { label: "Orange", color: "🟠", bg: "bg-[#ffe6d6]/60", border: "border-[#ff9f1c]", text: "text-[#663c00]", glow: "bg-[#ff9f1c]" },
+  purple: { label: "Purple", color: "🟣", bg: "bg-[#ebd6ff]/60", border: "border-[#9d4edd]", text: "text-[#3c0066]", glow: "bg-[#9d4edd]" },
+  white: { label: "White", color: "⚪", bg: "bg-[#f5f5f5]/60", border: "border-[#b0b0b0]", text: "text-[#4a4a4a]", glow: "bg-[#b0b0b0]" },
+  pink: { label: "Pink", color: "🌸", bg: "bg-[#ffd6eb]/60", border: "border-[#e073c1]", text: "text-[#590d43]", glow: "bg-[#e073c1]" },
+  brown: { label: "Brown", color: "🐻", bg: "bg-[#ede0d4]/60", border: "border-[#b08968]", text: "text-[#4e3526]", glow: "bg-[#b08968]" }
+};
+
+// Map vocabulary names to exact visual color categories
+const colorMap: Record<string, "red" | "blue" | "green" | "yellow" | "orange" | "purple" | "white" | "pink" | "brown"> = {
+  // Red
+  Apple: "red",
+  Strawberry: "red",
+  Cherry: "red",
+  Tomato: "red",
+  Heart: "red",
+  Crab: "red",
+  Rose: "red",
+  Tulip: "red",
+  Cup: "red",
+  Volcano: "red",
+  Car: "red",
+  Rocket: "red",
+  Mushroom: "red",
+  Balloon: "red",
+  Drum: "red",
+
+  // Blue
+  Whale: "blue",
+  Dolphin: "blue",
+  Rain: "blue",
+  Plane: "blue",
+  Boat: "blue",
+  Truck: "blue",
+  Helicopter: "blue",
+  Ninja: "blue",
+  "X-ray Fish": "blue",
+  Ball: "blue",
+  Hat: "blue",
+
+  // Green
+  Frog: "green",
+  Leaf: "green",
+  Tree: "green",
+  Pear: "green",
+  Alligator: "green",
+  Iguana: "green",
+  Snake: "green",
+  Turtle: "green",
+  Watermelon: "green",
+  Gift: "green",
+
+  // Yellow
+  Sun: "yellow",
+  Star: "yellow",
+  Banana: "yellow",
+  Sunflower: "yellow",
+  Key: "yellow",
+  Bell: "yellow",
+  Bee: "yellow",
+  Duck: "yellow",
+  Crown: "yellow",
+  Lemon: "yellow",
+  Cheese: "yellow",
+  Giraffe: "yellow",
+  Lion: "yellow",
+  Moon: "yellow",
+  Bus: "yellow",
+  Pizza: "yellow",
+
+  // Orange
+  Carrot: "orange",
+  Fish: "orange",
+  Cat: "orange",
+  Fox: "orange",
+
+  // Purple
+  Grapes: "purple",
+  Octopus: "purple",
+  Butterfly: "purple",
+  Hippo: "purple",
+  Queen: "purple",
+  Unicorn: "purple",
+  Kite: "purple",
+
+  // White (includes Grey/Black & White)
+  Snowman: "white",
+  Shell: "white",
+  Egg: "white",
+  Panda: "white",
+  Cloud: "white",
+  Chicken: "white",
+  Elephant: "white",
+  Koala: "white",
+  Zebra: "white",
+  Penguin: "white",
+  Rabbit: "white",
+
+  // Pink
+  Pig: "pink",
+  Jellyfish: "pink",
+  Cake: "pink",
+  Donut: "pink",
+  "Ice Cream": "pink",
+
+  // Brown
+  Bear: "brown",
+  Dog: "brown",
+  Monkey: "brown",
+  Owl: "brown",
+  Yak: "brown",
+  Cookie: "brown",
+  House: "brown",
+  Guitar: "brown",
+  Hamburger: "brown"
+};
+
+// General Level configuration generator
+const getItemsForLevel = (level: number): { items: SortingItem[]; baskets: BasketConfig[] } => {
   if (level === 1) {
-    // Red vs Blue
-    const redVocabs = ["Apple", "Strawberry", "Cherry", "Tomato", "Heart", "Crab"];
-    const blueVocabs = ["Whale", "Dolphin", "Rain", "Cloud", "Shell", "Snowman"];
-    
+    const baskets: BasketConfig[] = [
+      { id: "red", ...COLOR_METADATA.red },
+      { id: "blue", ...COLOR_METADATA.blue },
+      { id: "green", ...COLOR_METADATA.green },
+      { id: "yellow", ...COLOR_METADATA.yellow },
+      { id: "orange", ...COLOR_METADATA.orange },
+      { id: "purple", ...COLOR_METADATA.purple },
+      { id: "white", ...COLOR_METADATA.white },
+      { id: "pink", ...COLOR_METADATA.pink },
+      { id: "brown", ...COLOR_METADATA.brown }
+    ];
+
     const items: SortingItem[] = [];
     vocabularyList.forEach(v => {
-      if (redVocabs.includes(v.name)) {
-        items.push({ id: `red-${v.name}-${Math.random()}`, name: v.name, category: "red", naturalColor: "red", icon: v.icon });
-      } else if (blueVocabs.includes(v.name)) {
-        items.push({ id: `blue-${v.name}-${Math.random()}`, name: v.name, category: "blue", naturalColor: "blue", icon: v.icon });
+      const colorCategory = colorMap[v.name];
+      if (colorCategory) {
+        items.push({
+          id: `color-${v.name}-${Math.random()}`,
+          name: v.name,
+          category: colorCategory,
+          naturalColor: colorCategory,
+          icon: v.icon
+        });
       }
     });
 
+    // Take 10 random items for this round
+    const shuffled = items.sort(() => Math.random() - 0.5).slice(0, 10);
+
     return {
-      items: items.sort(() => Math.random() - 0.5),
-      containerA: "Red Basket",
-      containerB: "Blue Basket"
+      items: shuffled,
+      baskets
     };
   } else if (level === 2) {
-    // Food vs Animals
+    const baskets: BasketConfig[] = [
+      { id: "food", label: "Yummy Food", color: "🍎", bg: "bg-[#f5e4a3]/45", border: "border-[#d4a919]/45", text: "text-[#544001]", glow: "bg-[#d4a919]" },
+      { id: "animal", label: "Cute Animals", color: "🦁", bg: "bg-[#bee8d4]/45", border: "border-[#3fa394]/45", text: "text-[#0d4036]", glow: "bg-[#3fa394]" }
+    ];
+
     const foodItems: SortingItem[] = [];
     const animalItems: SortingItem[] = [];
     
-    // Categorize existing vocabularyList
     const foodNames = ["Apple", "Banana", "Grapes", "Watermelon", "Strawberry", "Cherry", "Carrot", "Cake", "Cookie", "Donut", "Pizza", "Ice Cream", "Cheese", "Hamburger", "Tomato", "Lemon", "Pear"];
     const animalNames = ["Alligator", "Bear", "Cat", "Dog", "Elephant", "Fox", "Giraffe", "Hippo", "Iguana", "Jellyfish", "Koala", "Lion", "Monkey", "Pig", "Rabbit", "Snake", "Turtle", "Unicorn", "Whale", "Zebra", "Panda", "Penguin", "Dolphin", "Octopus", "Crab", "Fish", "Duck", "Chicken", "Frog", "Bee", "Butterfly"];
     
@@ -136,11 +286,14 @@ const getItemsForLevel = (level: number): { items: SortingItem[]; containerA: st
 
     return {
       items: combined.sort(() => Math.random() - 0.5),
-      containerA: "Yummy Food",
-      containerB: "Cute Animals"
+      baskets
     };
   } else {
-    // Farm vs Ocean animals
+    const baskets: BasketConfig[] = [
+      { id: "farm", label: "Farm Animals", color: "🚜", bg: "bg-[#bee8d4]/45", border: "border-[#3fa394]/45", text: "text-[#0d4036]", glow: "bg-[#3fa394]" },
+      { id: "ocean", label: "Ocean Animals", color: "🐳", bg: "bg-[#b5cce6]/45", border: "border-[#6372af]/45", text: "text-[#1f3d68]", glow: "bg-[#6372af]" }
+    ];
+
     const farmNames = ["Cat", "Dog", "Pig", "Rabbit", "Duck", "Chicken", "Cow", "Sheep", "Horse"];
     const oceanNames = ["Whale", "Dolphin", "Octopus", "Crab", "Fish", "Turtle", "Shell", "Shark", "Seahorse"];
     
@@ -162,8 +315,7 @@ const getItemsForLevel = (level: number): { items: SortingItem[]; containerA: st
 
     return {
       items: combined.sort(() => Math.random() - 0.5),
-      containerA: "Farm Animals",
-      containerB: "Ocean Animals"
+      baskets
     };
   }
 };
@@ -182,8 +334,7 @@ export default function SortingBasketEngine({ childId, onBack }: SortingBasketEn
   const [level, setLevel] = useState(1);
   const [items, setItems] = useState<SortingItem[]>(() => getItemsForLevel(1).items);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [containerA, setContainerA] = useState(() => getItemsForLevel(1).containerA);
-  const [containerB, setContainerB] = useState(() => getItemsForLevel(1).containerB);
+  const [baskets, setBaskets] = useState<BasketConfig[]>(() => getItemsForLevel(1).baskets);
   
   // Scoring & Stats
   const [errorsThisRound, setErrorsThisRound] = useState(0);
@@ -194,9 +345,8 @@ export default function SortingBasketEngine({ childId, onBack }: SortingBasketEn
   // Drag reset helper
   const [dragOffsetKey, setDragOffsetKey] = useState(0);
 
-  // Dropzone refs for bounding rect validation
-  const containerARef = useRef<HTMLDivElement>(null);
-  const containerBRef = useRef<HTMLDivElement>(null);
+  // Dynamic references array for baskets
+  const basketRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   const currentItem = items[currentIndex];
 
@@ -216,37 +366,24 @@ export default function SortingBasketEngine({ childId, onBack }: SortingBasketEn
     const dragX = info.point.x;
     const dragY = info.point.y;
 
-    const rectA = containerARef.current?.getBoundingClientRect();
-    const rectB = containerBRef.current?.getBoundingClientRect();
+    let matchedBasketIdx: number | null = null;
 
-    let matchedContainer: "A" | "B" | null = null;
-
-    if (rectA && dragX >= rectA.left && dragX <= rectA.right && dragY >= rectA.top && dragY <= rectA.bottom) {
-      matchedContainer = "A";
-    } else if (rectB && dragX >= rectB.left && dragX <= rectB.right && dragY >= rectB.top && dragY <= rectB.bottom) {
-      matchedContainer = "B";
+    // Scan all active baskets to check if dropped inside
+    for (let i = 0; i < baskets.length; i++) {
+      const rect = basketRefs.current[i]?.getBoundingClientRect();
+      if (rect && dragX >= rect.left && dragX <= rect.right && dragY >= rect.top && dragY <= rect.bottom) {
+        matchedBasketIdx = i;
+        break;
+      }
     }
 
-    if (!matchedContainer) {
-      // Snaps back automatically since coordinates aren't updated
+    if (matchedBasketIdx === null) {
       setDragOffsetKey(prev => prev + 1);
       return;
     }
 
-    // Determine correct container matching
-    let isCorrect = false;
-    const cat = currentItem.category;
-
-    if (level === 1) {
-      // A = red, B = blue
-      isCorrect = (matchedContainer === "A" && cat === "red") || (matchedContainer === "B" && cat === "blue");
-    } else if (level === 2) {
-      // A = food, B = animal
-      isCorrect = (matchedContainer === "A" && cat === "food") || (matchedContainer === "B" && cat === "animal");
-    } else {
-      // A = farm, B = ocean
-      isCorrect = (matchedContainer === "A" && cat === "farm") || (matchedContainer === "B" && cat === "ocean");
-    }
+    const selectedBasket = baskets[matchedBasketIdx];
+    const isCorrect = currentItem.category === selectedBasket.id;
 
     if (isCorrect) {
       handleCorrectMatch();
@@ -272,7 +409,6 @@ export default function SortingBasketEngine({ childId, onBack }: SortingBasketEn
         setCurrentIndex(prev => prev + 1);
         setFeedbackState("idle");
       } else {
-        // level completed!
         handleLevelComplete();
       }
     }, 1500);
@@ -286,7 +422,7 @@ export default function SortingBasketEngine({ childId, onBack }: SortingBasketEn
     // Errorless learning: glide back after brief wiggle
     setTimeout(() => {
       setFeedbackState("idle");
-      setDragOffsetKey(prev => prev + 1); // trigger component key re-mount to smoothly reset offset
+      setDragOffsetKey(prev => prev + 1);
     }, 1000);
   };
 
@@ -330,18 +466,17 @@ export default function SortingBasketEngine({ childId, onBack }: SortingBasketEn
       setLevel(nextLevel);
       const config = getItemsForLevel(nextLevel);
       setItems(config.items);
-      setContainerA(config.containerA);
-      setContainerB(config.containerB);
+      setBaskets(config.baskets);
       setCurrentIndex(0);
       setFeedbackState("idle");
       setSuccessScreen(false);
     } else {
-      // Game completely finished, return to menu
       onBack();
     }
   };
 
   const activeParentPrompt = currentItem ? getParentPromptForLevel(level, currentItem.name) : "";
+  const activeGlow = baskets.find(b => b.id === currentItem?.category)?.glow || "bg-[#ffd166]";
 
   return (
     <div className="flex flex-col w-full max-w-4xl mx-auto h-full min-h-0 bg-[#e2efe9] p-4 rounded-[2.5rem] border-[3px] border-white/50 shadow-clay-card relative overflow-hidden select-none">
@@ -372,7 +507,7 @@ export default function SortingBasketEngine({ childId, onBack }: SortingBasketEn
         </div>
       </div>
 
-      {/* Parental Co-Play Banner (Technoference mitigation) */}
+      {/* Parental Co-Play Banner */}
       <div className="bg-[#ddcbf5]/80 border-2 border-white/50 text-[#42236b] p-3 rounded-2xl mb-4 text-center font-bold text-xs sm:text-sm shadow-[inset_-2px_-2px_4px_rgba(0,0,0,0.02),_inset_2px_2px_4px_rgba(255,255,255,0.8)] leading-snug shrink-0">
         <span className="text-[10px] font-black uppercase tracking-wider text-[#7c52c7] block mb-0.5">🧑‍🍼 Parent & Child Co-Play Option</span>
         {activeParentPrompt}
@@ -445,14 +580,8 @@ export default function SortingBasketEngine({ childId, onBack }: SortingBasketEn
                 className="relative z-20 cursor-grab active:cursor-grabbing toddler-target select-none"
                 style={{ touchAction: "none" }}
               >
-                {/* Visual Glow rings under draggable card */}
-                <div className={`absolute inset-0 rounded-[2rem] filter blur-xl opacity-35 scale-110 -z-10 ${
-                  currentItem.naturalColor === "red" || level === 1 && currentItem.category === "red"
-                    ? "bg-[#e07383]"
-                    : currentItem.naturalColor === "blue" || level === 1 && currentItem.category === "blue"
-                    ? "bg-[#b5cce6]"
-                    : "bg-[#ffd166]"
-                }`} />
+                {/* Visual Glow rings matching target color */}
+                <div className={`absolute inset-0 rounded-[2rem] filter blur-xl opacity-35 scale-110 -z-10 ${activeGlow}`} />
 
                 <motion.div
                   drag
@@ -476,51 +605,29 @@ export default function SortingBasketEngine({ childId, onBack }: SortingBasketEn
         </div>
 
         {/* Drop Baskets (Drop zones) */}
-        <div className="grid grid-cols-2 gap-4 sm:gap-6 mt-4 shrink-0 pb-2">
-          
-          {/* Basket A */}
-          <div
-            ref={containerARef}
-            className={`p-5 rounded-[2.5rem] border-[3px] border-dashed transition-all duration-300 flex flex-col items-center justify-center gap-2 min-h-[120px] relative select-none ${
-              level === 1
-                ? "bg-[#ffc4c0]/40 border-[#e07383]/40 text-[#590d22]"
-                : level === 2
-                ? "bg-[#f5e4a3]/40 border-[#d4a919]/40 text-[#544001]"
-                : "bg-[#bee8d4]/40 border-[#3fa394]/40 text-[#0d4036]"
-            } shadow-[inset_4px_4px_10px_rgba(0,0,0,0.02)]`}
-          >
-            {/* Visual drop indicator overlay */}
-            <div className="absolute inset-2 rounded-[2rem] border-2 border-white/30 pointer-events-none" />
-            
-            <span className="text-3xl filter drop-shadow-[1px_2px_2px_rgba(0,0,0,0.05)] select-none pointer-events-none">
-              {level === 1 ? "🔴" : level === 2 ? "🍎" : "🚜"}
-            </span>
-            <h3 className="font-black text-sm uppercase tracking-wide text-center leading-none mt-1 select-none pointer-events-none">
-              {containerA}
-            </h3>
-          </div>
-
-          {/* Basket B */}
-          <div
-            ref={containerBRef}
-            className={`p-5 rounded-[2.5rem] border-[3px] border-dashed transition-all duration-300 flex flex-col items-center justify-center gap-2 min-h-[120px] relative select-none ${
-              level === 1
-                ? "bg-[#b5cce6]/40 border-[#6372af]/40 text-[#1f3d68]"
-                : level === 2
-                ? "bg-[#bee8d4]/40 border-[#3fa394]/40 text-[#0d4036]"
-                : "bg-[#b5cce6]/40 border-[#6372af]/40 text-[#1f3d68]"
-            } shadow-[inset_4px_4px_10px_rgba(0,0,0,0.02)]`}
-          >
-            <div className="absolute inset-2 rounded-[2rem] border-2 border-white/30 pointer-events-none" />
-
-            <span className="text-3xl filter drop-shadow-[1px_2px_2px_rgba(0,0,0,0.05)] select-none pointer-events-none">
-              {level === 1 ? "🔵" : level === 2 ? "🦁" : "🐳"}
-            </span>
-            <h3 className="font-black text-sm uppercase tracking-wide text-center leading-none mt-1 select-none pointer-events-none">
-              {containerB}
-            </h3>
-          </div>
-
+        <div className={`grid gap-2 sm:gap-3 mt-4 shrink-0 pb-2 ${
+          level === 1 
+            ? "grid-cols-3 sm:grid-cols-9" 
+            : "grid-cols-2"
+        }`}>
+          {baskets.map((basket, idx) => (
+            <div
+              key={basket.id}
+              ref={el => { basketRefs.current[idx] = el; }}
+              className={`p-3 rounded-[1.75rem] border-[2.5px] border-dashed transition-all duration-300 flex flex-col items-center justify-center gap-1.5 min-h-[90px] relative select-none ${
+                basket.bg
+              } ${basket.border} ${basket.text} shadow-[inset_4px_4px_10px_rgba(0,0,0,0.02)]`}
+            >
+              <div className="absolute inset-1.5 rounded-[1.5rem] border-2 border-white/30 pointer-events-none" />
+              
+              <span className="text-2xl filter drop-shadow-[1px_2px_2px_rgba(0,0,0,0.05)] select-none pointer-events-none">
+                {basket.color}
+              </span>
+              <h3 className="font-black text-[10px] sm:text-xs uppercase tracking-wide text-center leading-none select-none pointer-events-none">
+                {basket.label}
+              </h3>
+            </div>
+          ))}
         </div>
 
       </div>

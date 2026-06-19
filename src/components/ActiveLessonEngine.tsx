@@ -475,7 +475,7 @@ export default function ActiveLessonEngine({
             >
               {objectDictionary[letter] && (
                 <>
-                  <div className="w-32 h-32 sm:w-40 sm:h-40 bg-white border border-white/25 rounded-[2rem] flex items-center justify-center shadow-[6px_6px_12px_rgba(0,0,0,0.04),_inset_2px_2px_4px_rgba(255,255,255,0.85)] p-4">
+                  <div className="w-32 h-32 sm:w-40 sm:h-40 bg-[var(--surface-container-lowest)] border border-white/25 rounded-[2rem] flex items-center justify-center shadow-[6px_6px_12px_rgba(0,0,0,0.04),_inset_2px_2px_4px_rgba(255,255,255,0.85)] p-4">
                     {React.createElement(objectDictionary[letter].icon, { size: "100%" })}
                   </div>
                   <div className="flex flex-col gap-2">
@@ -519,7 +519,7 @@ export default function ActiveLessonEngine({
                       className={`w-11 h-11 rounded-2xl flex items-center justify-center text-lg font-black transition-all border border-white/20 ${
                         isSelected 
                           ? "bg-primary-container text-[#590d22] shadow-[4px_4px_8px_rgba(0,0,0,0.04),_inset_2px_2px_4px_rgba(255,255,255,0.8),_inset_-2px_-2px_4px_rgba(0,0,0,0.05)] scale-105" 
-                          : "bg-white text-[#4A5358] shadow-[2px_2px_5px_rgba(0,0,0,0.03),_inset_2px_2px_4px_rgba(255,255,255,0.95)] hover:scale-105"
+                          : "bg-[var(--surface-container-lowest)] text-[#4A5358] shadow-[2px_2px_5px_rgba(0,0,0,0.03),_inset_2px_2px_4px_rgba(255,255,255,0.95)] hover:scale-105"
                       }`}
                     >
                       {data.letter}

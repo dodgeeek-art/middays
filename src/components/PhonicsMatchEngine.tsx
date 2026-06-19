@@ -259,7 +259,7 @@ export default function PhonicsMatchEngine({ childId, onBack }: PhonicsMatchEngi
       <div className="w-full flex justify-between items-center mb-3 sm:mb-4 z-10">
         <button
           onClick={onBack}
-          className="flex items-center gap-2 font-black text-xs uppercase px-4 py-2 bg-white border border-white/20 rounded-full clay-btn hover:scale-102 active:scale-96 transition-all cursor-pointer shadow-[3px_3px_6px_rgba(0,0,0,0.04)]"
+          className="flex items-center gap-2 font-black text-xs uppercase px-4 py-2 bg-[var(--surface-container-lowest)] border border-white/20 rounded-full clay-btn hover:scale-102 active:scale-96 transition-all cursor-pointer shadow-[3px_3px_6px_rgba(0,0,0,0.04)]"
         >
           <ArrowLeft className="w-4 h-4 text-[#4A5358]" />
           <span>Back</span>
@@ -270,7 +270,7 @@ export default function PhonicsMatchEngine({ childId, onBack }: PhonicsMatchEngi
       </div>
 
       {/* Prompter Banner */}
-      <div className="w-full max-w-lg bg-white border border-white/20 rounded-3xl p-3 sm:p-4 mb-4 sm:mb-6 text-center shadow-[4px_4px_12px_rgba(0,0,0,0.04),_inset_2px_2px_4px_rgba(255,255,255,0.85)] relative z-10">
+      <div className="w-full max-w-lg bg-[var(--surface-container-lowest)] border border-white/20 rounded-3xl p-3 sm:p-4 mb-4 sm:mb-6 text-center shadow-[4px_4px_12px_rgba(0,0,0,0.04),_inset_2px_2px_4px_rgba(255,255,255,0.85)] relative z-10">
         <p className="text-[10px] font-black text-[#4ecdc4] uppercase tracking-widest mb-1">
           Working Memory
         </p>
@@ -300,7 +300,7 @@ export default function PhonicsMatchEngine({ childId, onBack }: PhonicsMatchEngi
                 transition={{ type: "spring", stiffness: 150, damping: 15 }}
               >
                 {/* CARD BACK */}
-                <div className="absolute inset-0 backface-hidden bg-white border border-white/20 rounded-[2rem] flex flex-col items-center justify-center shadow-[6px_6px_12px_rgba(0,0,0,0.05),_inset_-4px_-4px_8px_rgba(0,0,0,0.05),_inset_4px_4px_8px_rgba(255,255,255,0.95)]">
+                <div className="absolute inset-0 backface-hidden bg-[var(--surface-container-lowest)] border border-white/20 rounded-[2rem] flex flex-col items-center justify-center shadow-[6px_6px_12px_rgba(0,0,0,0.05),_inset_-4px_-4px_8px_rgba(0,0,0,0.05),_inset_4px_4px_8px_rgba(255,255,255,0.95)]">
                   <div className="w-12 h-12 rounded-2xl bg-primary/20 border border-white/20 flex items-center justify-center text-primary/70 shadow-[inset_1px_1px_3px_rgba(255,255,255,0.9),_inset_-1px_-1px_3px_rgba(0,0,0,0.03)]">
                     <HelpCircle className="w-7 h-7" />
                   </div>
@@ -309,7 +309,7 @@ export default function PhonicsMatchEngine({ childId, onBack }: PhonicsMatchEngi
                 {/* CARD FRONT */}
                 <div 
                   className={`absolute inset-0 backface-hidden rotateY-180 border border-white/20 rounded-[2rem] flex flex-col items-center justify-center shadow-[6px_6px_12px_rgba(0,0,0,0.05),_inset_-4px_-4px_8px_rgba(0,0,0,0.05),_inset_4px_4px_8px_rgba(255,255,255,0.95)] transition-colors duration-300 ${
-                    isMatched ? "bg-[#d2f4e6]" : "bg-white"
+                    isMatched ? "bg-[#d2f4e6]" : "bg-[var(--surface-container-lowest)]"
                   }`}
                 >
                   {card.type === "letter" ? (

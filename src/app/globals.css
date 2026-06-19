@@ -37,7 +37,7 @@ body.game-active {
   --on-tertiary-container: #544001;
   
   /* Containers & Surfaces */
-  --surface-container-lowest: #faf9f5; /* Soft warm ivory cream background (replaces blinding white) */
+  --surface-container-lowest: #edf3f0; /* Soft warm pastel sage-cream background (replaces blinding white) */
   --surface-container-low: #f9fbfd;
   --surface-container: #f1f6fa;
   --surface-container-high: #e7eff5;

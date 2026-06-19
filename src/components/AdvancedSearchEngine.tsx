@@ -232,7 +232,7 @@ export default function AdvancedSearchEngine({ childId, onBack }: AdvancedSearch
       <div className="w-full flex justify-between items-center mb-3 sm:mb-4 z-10">
         <button
           onClick={onBack}
-          className="flex items-center gap-2 font-black text-xs uppercase px-4 py-2 bg-white border border-white/20 rounded-full clay-btn hover:scale-102 active:scale-96 transition-all cursor-pointer shadow-[3px_3px_6px_rgba(0,0,0,0.04)]"
+          className="flex items-center gap-2 font-black text-xs uppercase px-4 py-2 bg-[var(--surface-container-lowest)] border border-white/20 rounded-full clay-btn hover:scale-102 active:scale-96 transition-all cursor-pointer shadow-[3px_3px_6px_rgba(0,0,0,0.04)]"
         >
           <ArrowLeft className="w-4 h-4 text-[#4A5358]" />
           <span>Back</span>
@@ -251,8 +251,8 @@ export default function AdvancedSearchEngine({ childId, onBack }: AdvancedSearch
           <MascotSVG className="w-full h-full" />
         </div>
         
-        <div className="flex-1 relative bg-white border border-[#4a5358]/10 p-3.5 sm:p-4 rounded-[2rem] shadow-[4px_4px_12px_rgba(0,0,0,0.03),_inset_2px_2px_4px_rgba(255,255,255,0.9)] text-left">
-          <div className="absolute top-1/2 -left-3 -translate-y-1/2 w-0 h-0 border-t-[8px] border-t-transparent border-r-[12px] border-r-white border-b-[8px] border-b-transparent filter drop-shadow-[-1px_0_0_rgba(74,83,88,0.06)]"></div>
+        <div className="flex-1 relative bg-[var(--surface-container-lowest)] border border-[#4a5358]/10 p-3.5 sm:p-4 rounded-[2rem] shadow-[4px_4px_12px_rgba(0,0,0,0.03),_inset_2px_2px_4px_rgba(255,255,255,0.9)] text-left">
+          <div className="absolute top-1/2 -left-3 -translate-y-1/2 w-0 h-0 border-t-[8px] border-t-transparent border-r-[12px] border-r-[var(--surface-container-lowest)] border-b-[8px] border-b-transparent filter drop-shadow-[-1px_0_0_rgba(74,83,88,0.06)]"></div>
           
           <p className="text-[10px] font-black text-purple-500 uppercase tracking-widest mb-0.5">
             Super Guide:
@@ -286,7 +286,7 @@ export default function AdvancedSearchEngine({ childId, onBack }: AdvancedSearch
                     ? "bg-[#E8E4D9]/20 border-white/20 opacity-30 cursor-default" 
                     : isSelected 
                       ? "bg-[#e9d5ff]/80 shadow-[4px_4px_12px_rgba(138,108,214,0.25),_inset_3px_3px_6px_rgba(255,255,255,0.9),_inset_-3px_-3px_6px_rgba(0,0,0,0.03)]" 
-                      : "bg-white shadow-[4px_4px_10px_rgba(0,0,0,0.04),_inset_3px_3px_6px_rgba(255,255,255,0.9),_inset_-3px_-3px_6px_rgba(0,0,0,0.04)]"
+                      : "bg-[var(--surface-container-lowest)] shadow-[4px_4px_10px_rgba(0,0,0,0.04),_inset_3px_3px_6px_rgba(255,255,255,0.9),_inset_-3px_-3px_6px_rgba(0,0,0,0.04)]"
                 }`}
                 animate={isWrong ? { rotate: [0, -6, 6, -6, 6, 0] } : {}}
                 transition={{ duration: 0.4 }}

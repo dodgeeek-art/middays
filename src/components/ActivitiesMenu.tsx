@@ -1,9 +1,9 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { Sparkles, PenTool, Eraser, Smile, Search, Music, Layers, Volume2, Grid, HelpCircle, BookOpen, Lightbulb } from '@/components/Icons';
 import ClayCard from '@/components/ui/ClayCard';
 import MascotSVG from '@/components/MascotSVG';
+import { objectDictionary } from '@/lib/svgDictionary';
 
 interface ActivitiesMenuProps {
   onSelectActivity: (
@@ -15,178 +15,261 @@ interface ActivityItem {
   id: "tracing" | "reveal" | "bubbles" | "monster" | "scavenger" | "scavenger-advanced" | "rhyme" | "match" | "drummer" | "sorting" | "bunny" | "story" | "mark";
   name: string;
   subtitle: string;
-  icon: React.ReactNode;
-  clayVariant: "primary" | "secondary" | "tertiary" | "purple" | "blue" | "lime" | "peach";
+  clayVariant: "primary" | "secondary" | "tertiary" | "purple" | "blue" | "lime" | "peach" | "glass";
   textColor: string;
-  pillBg: string;
   disabled: boolean;
   floatDuration: number;
+  colSpan: string;
+  rowSpan?: string;
+  benefit: string;
+  glowColor: string;
+  gradient: string;
+  animalKey: string;
 }
 
 export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps) {
   const router = useRouter();
+
+  // Resolve animal icon components dynamically from svgDictionary objectDictionary
+  const Elephant = objectDictionary["E"].icon;
+  const Cat = objectDictionary["C"].icon;
+  const Whale = objectDictionary["W"].icon;
+  const Lion = objectDictionary["L"].icon;
+  const Fox = objectDictionary["F"].icon;
+  const Unicorn = objectDictionary["U"].icon;
+  const Hippo = objectDictionary["H"].icon;
+  const Zebra = objectDictionary["Z"].icon;
+  const Monkey = objectDictionary["M"].icon;
+  const Pig = objectDictionary["P"].icon;
+  const Rabbit = objectDictionary["R"].icon;
+  const Owl = objectDictionary["O"].icon;
+  const Giraffe = objectDictionary["G"].icon;
+
   const activities: ActivityItem[] = [
     { 
       id: "tracing", 
       name: "Trace", 
       subtitle: "Draw & Write",
-      icon: <PenTool className="w-6 h-6 sm:w-7 sm:h-7 text-[#ff85a1]" strokeWidth={3.5} />, 
-      clayVariant: "primary",
-      textColor: "text-[#590d22]",
-      pillBg: "bg-white/90",
+      clayVariant: "glass",
+      textColor: "text-[#5e1c22]",
       disabled: false,
-      floatDuration: 4.5
+      floatDuration: 4.5,
+      colSpan: "col-span-2",
+      rowSpan: "row-span-2",
+      benefit: "Fine Motor",
+      glowColor: "shadow-[0_20px_50px_rgba(224,115,131,0.18)] hover:shadow-[0_25px_60px_rgba(224,115,131,0.3)]",
+      gradient: "from-[#fcd5ce]/40 to-[#ffb5a7]/30",
+      animalKey: "E"
     },
     { 
       id: "reveal", 
       name: "Reveal", 
       subtitle: "Magic Eraser",
-      icon: <Eraser className="w-6 h-6 sm:w-7 sm:h-7 text-[#49a39a]" strokeWidth={3.5} />, 
-      clayVariant: "secondary",
-      textColor: "text-[#0b4a45]",
-      pillBg: "bg-white/90",
+      clayVariant: "glass",
+      textColor: "text-[#0d4036]",
       disabled: false,
-      floatDuration: 5.2
+      floatDuration: 5.2,
+      colSpan: "col-span-1",
+      benefit: "Visual ID",
+      glowColor: "shadow-[0_20px_50px_rgba(63,163,148,0.14)] hover:shadow-[0_25px_60px_rgba(63,163,148,0.25)]",
+      gradient: "from-[#c3e6dc]/40 to-[#a3d9cf]/30",
+      animalKey: "C"
     },
     { 
       id: "bubbles", 
       name: "Pop", 
       subtitle: "Bubble Fun",
-      icon: <Sparkles className="w-6 h-6 sm:w-7 sm:h-7 text-[#e0756b]" strokeWidth={3.5} />, 
-      clayVariant: "peach",
-      textColor: "text-[#590d22]",
-      pillBg: "bg-white/90",
+      clayVariant: "glass",
+      textColor: "text-[#732010]",
       disabled: false,
-      floatDuration: 4.1
+      floatDuration: 4.1,
+      colSpan: "col-span-1",
+      benefit: "Motor Skills",
+      glowColor: "shadow-[0_20px_50px_rgba(247,194,179,0.18)] hover:shadow-[0_25px_60px_rgba(247,194,179,0.3)]",
+      gradient: "from-[#f7c2b3]/40 to-[#f9b5a2]/30",
+      animalKey: "W"
     },
     { 
       id: "monster", 
       name: "Feed", 
       subtitle: "Hungry Monster",
-      icon: <Smile className="w-6 h-6 sm:w-7 sm:h-7 text-[#4ecdc4]" strokeWidth={3.5} />, 
-      clayVariant: "secondary",
-      textColor: "text-[#0b4a45]",
-      pillBg: "bg-white/90",
+      clayVariant: "glass",
+      textColor: "text-[#0d4036]",
       disabled: false,
-      floatDuration: 4.8
+      floatDuration: 4.8,
+      colSpan: "col-span-1",
+      benefit: "Phonics",
+      glowColor: "shadow-[0_20px_50px_rgba(63,163,148,0.14)] hover:shadow-[0_25px_60px_rgba(63,163,148,0.25)]",
+      gradient: "from-[#c3e6dc]/40 to-[#a3d9cf]/30",
+      animalKey: "L"
     },
     { 
       id: "scavenger", 
       name: "Search", 
       subtitle: "Sound Hunt",
-      icon: <Search className="w-6 h-6 sm:w-7 sm:h-7 text-[#49a39a]" strokeWidth={3.5} />, 
-      clayVariant: "lime",
-      textColor: "text-[#0b4a45]",
-      pillBg: "bg-white/90",
+      clayVariant: "glass",
+      textColor: "text-[#16533f]",
       disabled: false,
-      floatDuration: 5.5
+      floatDuration: 5.5,
+      colSpan: "col-span-1",
+      benefit: "Sound ID",
+      glowColor: "shadow-[0_20px_50px_rgba(190,232,212,0.14)] hover:shadow-[0_25px_60px_rgba(190,232,212,0.25)]",
+      gradient: "from-[#bee8d4]/40 to-[#a3d8c1]/30",
+      animalKey: "F"
     },
     { 
       id: "scavenger-advanced", 
       name: "Search+", 
       subtitle: "Advanced Words",
-      icon: <Search className="w-6 h-6 sm:w-7 sm:h-7 text-[#8a6cd6]" strokeWidth={3.5} />, 
-      clayVariant: "purple",
-      textColor: "text-[#3c1e70]",
-      pillBg: "bg-white/90",
+      clayVariant: "glass",
+      textColor: "text-[#42236b]",
       disabled: false,
-      floatDuration: 5.0
+      floatDuration: 5.0,
+      colSpan: "col-span-2",
+      benefit: "Vocabulary",
+      glowColor: "shadow-[0_20px_50px_rgba(221,203,245,0.18)] hover:shadow-[0_25px_60px_rgba(221,203,245,0.3)]",
+      gradient: "from-[#ddcbf5]/40 to-[#ceb5f2]/30",
+      animalKey: "U"
     },
     { 
       id: "rhyme", 
       name: "Rhyme", 
       subtitle: "Rhyme River",
-      icon: <Music className="w-6 h-6 sm:w-7 sm:h-7 text-[#ff85a1]" strokeWidth={3.5} />, 
-      clayVariant: "blue",
-      textColor: "text-[#1e3a8a]",
-      pillBg: "bg-white/90",
+      clayVariant: "glass",
+      textColor: "text-[#1f3d68]",
       disabled: false,
-      floatDuration: 4.3
+      floatDuration: 4.3,
+      colSpan: "col-span-1",
+      benefit: "Language",
+      glowColor: "shadow-[0_20px_50px_rgba(181,204,230,0.14)] hover:shadow-[0_25px_60px_rgba(181,204,230,0.25)]",
+      gradient: "from-[#b5cce6]/40 to-[#9cbcdb]/30",
+      animalKey: "H"
     },
     { 
       id: "match", 
       name: "Match", 
       subtitle: "Phonics Match",
-      icon: <Layers className="w-6 h-6 sm:w-7 sm:h-7 text-[#8a6cd6]" strokeWidth={3.5} />, 
-      clayVariant: "purple",
-      textColor: "text-[#3c1e70]",
-      pillBg: "bg-white/90",
+      clayVariant: "glass",
+      textColor: "text-[#42236b]",
       disabled: false,
-      floatDuration: 5.0
+      floatDuration: 5.0,
+      colSpan: "col-span-1",
+      benefit: "Memory",
+      glowColor: "shadow-[0_20px_50px_rgba(221,203,245,0.14)] hover:shadow-[0_25px_60px_rgba(221,203,245,0.25)]",
+      gradient: "from-[#ddcbf5]/40 to-[#ceb5f2]/30",
+      animalKey: "Z"
     },
     { 
       id: "drummer", 
       name: "Beats", 
       subtitle: "Syllable Drum",
-      icon: <Volume2 className="w-6 h-6 sm:w-7 sm:h-7 text-[#ffd166]" strokeWidth={3.5} />, 
-      clayVariant: "tertiary",
-      textColor: "text-[#5c4d00]",
-      pillBg: "bg-white/90",
-      disabled: false,
-      floatDuration: 4.6
-    },
-    {
-      id: "sorting",
-      name: "Sort",
-      subtitle: "Sorting Basket",
-      icon: <Grid className="w-6 h-6 sm:w-7 sm:h-7 text-[#e07383]" strokeWidth={3.5} />,
-      clayVariant: "primary",
-      textColor: "text-[#590d22]",
-      pillBg: "bg-white/90",
-      disabled: false,
-      floatDuration: 4.2
-    },
-    {
-      id: "bunny",
-      name: "Bunny",
-      subtitle: "Where is Bunny?",
-      icon: <HelpCircle className="w-6 h-6 sm:w-7 sm:h-7 text-[#3fa394]" strokeWidth={3.5} />,
-      clayVariant: "secondary",
-      textColor: "text-[#0d4036]",
-      pillBg: "bg-white/90",
-      disabled: false,
-      floatDuration: 4.9
-    },
-    {
-      id: "story",
-      name: "Story",
-      subtitle: "3-Piece Sequence",
-      icon: <BookOpen className="w-6 h-6 sm:w-7 sm:h-7 text-[#8a6cd6]" strokeWidth={3.5} />,
-      clayVariant: "purple",
-      textColor: "text-[#3c1e70]",
-      pillBg: "bg-white/90",
-      disabled: false,
-      floatDuration: 5.1
-    },
-    {
-      id: "mark",
-      name: "Draw",
-      subtitle: "Flamingo Trace",
-      icon: <Lightbulb className="w-6 h-6 sm:w-7 sm:h-7 text-[#d4a919]" strokeWidth={3.5} />,
-      clayVariant: "tertiary",
+      clayVariant: "glass",
       textColor: "text-[#544001]",
-      pillBg: "bg-white/90",
       disabled: false,
-      floatDuration: 4.4
+      floatDuration: 4.6,
+      colSpan: "col-span-1",
+      benefit: "Rhythm",
+      glowColor: "shadow-[0_20px_50px_rgba(245,228,163,0.14)] hover:shadow-[0_25px_60px_rgba(245,228,163,0.25)]",
+      gradient: "from-[#f5e4a3]/40 to-[#ebd787]/30",
+      animalKey: "M"
+    },
+    { 
+      id: "sorting", 
+      name: "Sort", 
+      subtitle: "Sorting Basket",
+      clayVariant: "glass",
+      textColor: "text-[#5e1c22]",
+      disabled: false,
+      floatDuration: 4.2,
+      colSpan: "col-span-1",
+      benefit: "Logic & Math",
+      glowColor: "shadow-[0_20px_50px_rgba(247,194,179,0.14)] hover:shadow-[0_25px_60px_rgba(247,194,179,0.25)]",
+      gradient: "from-[#f7c2b3]/40 to-[#f9b5a2]/30",
+      animalKey: "P"
+    },
+    { 
+      id: "bunny", 
+      name: "Bunny", 
+      subtitle: "Where is Bunny?",
+      clayVariant: "glass",
+      textColor: "text-[#0d4036]",
+      disabled: false,
+      floatDuration: 4.9,
+      colSpan: "col-span-2 sm:col-span-1 md:col-span-2",
+      benefit: "Spatial",
+      glowColor: "shadow-[0_20px_50px_rgba(196,240,225,0.18)] hover:shadow-[0_25px_60px_rgba(196,240,225,0.3)]",
+      gradient: "from-[#c3e6dc]/40 to-[#a3d9cf]/30",
+      animalKey: "R"
+    },
+    { 
+      id: "story", 
+      name: "Story", 
+      subtitle: "3-Piece Sequence",
+      clayVariant: "glass",
+      textColor: "text-[#42236b]",
+      disabled: false,
+      floatDuration: 5.1,
+      colSpan: "col-span-2",
+      benefit: "Narrative",
+      glowColor: "shadow-[0_20px_50px_rgba(221,203,245,0.18)] hover:shadow-[0_25px_60px_rgba(221,203,245,0.3)]",
+      gradient: "from-[#ddcbf5]/40 to-[#ceb5f2]/30",
+      animalKey: "O"
+    },
+    { 
+      id: "mark", 
+      name: "Draw", 
+      subtitle: "Flamingo Trace",
+      clayVariant: "glass",
+      textColor: "text-[#544001]",
+      disabled: false,
+      floatDuration: 4.4,
+      colSpan: "col-span-2 sm:col-span-1 md:col-span-2",
+      benefit: "Writing",
+      glowColor: "shadow-[0_20px_50px_rgba(245,228,163,0.18)] hover:shadow-[0_25px_60px_rgba(245,228,163,0.3)]",
+      gradient: "from-[#f5e4a3]/40 to-[#ebd787]/30",
+      animalKey: "G"
     }
   ];
 
+  const getAnimalIcon = (key: string, floatDuration: number) => {
+    const props = {
+      size: "100%",
+      className: "w-full h-full drop-shadow-[4px_6px_10px_rgba(0,0,0,0.1)] hover:rotate-2 select-none pointer-events-none"
+    };
+
+    switch (key) {
+      case "E": return <Elephant {...props} animClass="anim-breathe" style={{ animationDuration: `${floatDuration}s` }} />;
+      case "C": return <Cat {...props} animClass="anim-sway" style={{ animationDuration: `${floatDuration}s` }} />;
+      case "W": return <Whale {...props} animClass="anim-float" style={{ animationDuration: `${floatDuration}s` }} />;
+      case "L": return <Lion {...props} animClass="anim-breathe" style={{ animationDuration: `${floatDuration}s` }} />;
+      case "F": return <Fox {...props} animClass="anim-float" style={{ animationDuration: `${floatDuration}s` }} />;
+      case "U": return <Unicorn {...props} animClass="anim-sway" style={{ animationDuration: `${floatDuration}s` }} />;
+      case "H": return <Hippo {...props} animClass="anim-float" style={{ animationDuration: `${floatDuration}s` }} />;
+      case "Z": return <Zebra {...props} animClass="anim-sway" style={{ animationDuration: `${floatDuration}s` }} />;
+      case "M": return <Monkey {...props} animClass="anim-breathe" style={{ animationDuration: `${floatDuration}s` }} />;
+      case "P": return <Pig {...props} animClass="anim-float" style={{ animationDuration: `${floatDuration}s` }} />;
+      case "R": return <Rabbit {...props} animClass="anim-breathe" style={{ animationDuration: `${floatDuration}s` }} />;
+      case "O": return <Owl {...props} animClass="anim-sway" style={{ animationDuration: `${floatDuration}s` }} />;
+      case "G": return <Giraffe {...props} animClass="anim-float" style={{ animationDuration: `${floatDuration}s` }} />;
+      default: return null;
+    }
+  };
 
   const containerVariants = {
     hidden: { opacity: 0 },
     show: {
       opacity: 1,
-      transition: { staggerChildren: 0.08 }
+      transition: { staggerChildren: 0.05 }
     }
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, scale: 0.96, y: 15 },
+    hidden: { opacity: 0, scale: 0.95, y: 15 },
     show: { 
       opacity: 1, 
       scale: 1, 
       y: 0, 
-      transition: { type: "spring" as const, stiffness: 200, damping: 16 } 
+      transition: { type: "spring" as const, stiffness: 180, damping: 15 } 
     }
   };
 
@@ -195,9 +278,9 @@ export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps
       variants={containerVariants}
       initial="hidden"
       animate="show"
-      className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 w-full max-w-4xl mx-auto p-4 z-10 relative"
+      className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-5 w-full max-w-4xl mx-auto p-4 z-10 relative overflow-visible"
     >
-      {/* Playful boy mascot header speech bubble spanning all columns */}
+      {/* Playful speech bubble header spanning all columns */}
       <motion.div 
         variants={itemVariants}
         className="relative flex items-center justify-center gap-4 col-span-2 sm:col-span-3 md:col-span-4 mb-4 max-w-md mx-auto w-full px-2"
@@ -211,9 +294,9 @@ export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps
         <MascotSVG className="w-16 h-16 select-none shrink-0 filter drop-shadow-[2px_4px_6px_rgba(0,0,0,0.06)] z-10" />
         
         {/* Speech Bubble */}
-        <div className="relative bg-white p-4 rounded-[2rem] border-[3px] border-white/50 shadow-clay-card flex-grow">
+        <div className="relative bg-white/90 backdrop-blur-md p-4 rounded-[2rem] border-[3px] border-white/60 shadow-[0_8px_32px_rgba(0,0,0,0.03)] flex-grow">
           {/* Rotated square tail */}
-          <div className="absolute left-[-9px] top-1/2 -translate-y-1/2 w-4 h-4 rotate-45 bg-white border-l-[3px] border-b-[3px] border-white/50" />
+          <div className="absolute left-[-9px] top-1/2 -translate-y-1/2 w-4 h-4 rotate-45 bg-white/90 border-l-[3px] border-b-[3px] border-white/60" />
           
           <div className="text-left relative z-10 pl-1">
             <p className="text-[10px] font-black text-[#d4a919] uppercase tracking-wider leading-none mb-1">Buddy says:</p>
@@ -222,62 +305,116 @@ export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps
         </div>
       </motion.div>
 
-      {activities.map((act) => (
-        <ClayCard
-          key={act.id}
-          variant={act.disabled ? "default" : act.clayVariant}
-          hoverEffect={!act.disabled}
-          onClick={() => {
-            if (act.disabled) return;
-            if (act.id === "scavenger-advanced") {
-              router.push("/advanced-search");
-            } else {
-              onSelectActivity(act.id as "tracing" | "reveal" | "bubbles" | "monster" | "scavenger" | "rhyme" | "match" | "drummer");
-            }
-          }}
-          className={`relative overflow-hidden aspect-[1.1] p-5 sm:p-6 flex flex-col items-center justify-center text-center w-full ${
-            act.disabled ? "opacity-55 saturate-50 cursor-not-allowed border-dashed border-[#9eb1bd]/40" : "cursor-pointer"
-          }`}
-        >
-          {/* Recessed carved clay pocket for icons */}
-          <motion.div 
-            animate={act.disabled ? {} : { 
-              y: [0, -4, 0],
-              rotate: [0, 1.5, -1.5, 0]
-            }}
-            transition={{
-              repeat: Infinity,
-              duration: act.floatDuration,
-              ease: "easeInOut"
-            }}
-            className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center border-t-[2px] border-l-[2px] border-b-white/30 border-r-white/30 border-t-black/10 border-l-black/10 bg-black/5 shadow-[inset_2px_2.5px_5px_rgba(0,0,0,0.12),_inset_-1.5px_-1.5px_3px_rgba(255,255,255,0.45)] shrink-0 mb-3"
+      {activities.map((act) => {
+        // Layout calculations for responsive grid cells
+        const isTracing = act.id === "tracing";
+        const isDoubleWidth = act.colSpan.includes("col-span-2");
+        
+        return (
+          <motion.div
+            key={act.id}
+            variants={itemVariants}
+            className={`${act.colSpan} ${act.rowSpan || "row-span-1"}`}
+            whileHover={{ scale: 1.02, y: -4 }}
+            whileTap={{ scale: 0.98, y: 2 }}
+            transition={{ type: "spring" as const, stiffness: 260, damping: 16 }}
           >
-            {act.icon}
+            <ClayCard
+              variant="glass"
+              hoverEffect={false} // Handle animations using direct parent motion.div for smoother Bento layout response
+              onClick={() => {
+                if (act.disabled) return;
+                if (act.id === "scavenger-advanced") {
+                  router.push("/advanced-search");
+                } else {
+                  onSelectActivity(act.id as "tracing" | "reveal" | "bubbles" | "monster" | "scavenger" | "rhyme" | "match" | "drummer" | "sorting" | "bunny" | "story" | "mark");
+                }
+              }}
+              className={`relative overflow-visible p-5 sm:p-6 flex flex-col justify-between h-full w-full select-none cursor-pointer border-white/40 border-[3px] ${act.glowColor} ${act.disabled ? "opacity-60 saturate-50 cursor-not-allowed" : ""}`}
+            >
+              {/* Gold highlight badge for new/featured "Trace" activity */}
+              {!act.disabled && act.id === "tracing" && (
+                <div className="absolute top-3 left-3 z-20 w-8 h-8 rounded-full border-2 border-white/60 bg-[#f2c94c] text-[#544001] flex items-center justify-center text-xs font-black shadow-[inset_1px_1px_2px_rgba(255,255,255,0.8),0px_2px_4px_rgba(212,169,25,0.3)] animate-pulse-bounce">
+                  ⭐
+                </div>
+              )}
+
+              {/* Bento Inner Content Layouts */}
+              {isTracing ? (
+                // Tracing card (2x2 Featured Hero Card)
+                <div className="flex flex-col justify-between h-full w-full min-h-[300px] relative overflow-visible">
+                  {/* Top Text Details */}
+                  <div className="flex flex-col text-left gap-1 mt-6">
+                    <h2 className={`text-2xl font-black tracking-wide uppercase ${act.textColor} leading-tight`}>
+                      {act.name}
+                    </h2>
+                    <span className={`text-xs font-bold ${act.textColor}/60`}>
+                      {act.subtitle}
+                    </span>
+                  </div>
+
+                  {/* Character Illustration breaking borders (bottom right placement) */}
+                  <div className="absolute bottom-6 -right-6 w-36 h-36 md:w-44 md:h-44 overflow-visible z-10">
+                    {getAnimalIcon(act.animalKey, act.floatDuration)}
+                  </div>
+
+                  {/* Bottom developmental benefit pill */}
+                  <div className="mt-auto self-start z-10">
+                    <span className={`inline-flex px-3 py-1 bg-white/70 border border-white/50 rounded-full text-[9px] font-black uppercase tracking-wider ${act.textColor}`}>
+                      💡 {act.benefit}
+                    </span>
+                  </div>
+                </div>
+              ) : isDoubleWidth ? (
+                // Horizontal 2x1 Spanning Cards (e.g. advanced search, sequence story, bunny, mark trace)
+                // Using responsive flex layout that wraps on tablet viewports where bunny & mark become 1x1
+                <div className={`flex flex-row ${act.id === 'bunny' || act.id === 'mark' ? 'sm:flex-col sm:justify-between' : ''} md:flex-row items-center justify-between h-full w-full gap-4 relative overflow-visible min-h-[120px]`}>
+                  {/* Left-aligned text info */}
+                  <div className="flex flex-col text-left gap-1 justify-center flex-1">
+                    <h2 className={`text-lg sm:text-xl font-black tracking-wide uppercase ${act.textColor} leading-tight`}>
+                      {act.name}
+                    </h2>
+                    <span className={`text-xs font-bold ${act.textColor}/60 mb-2`}>
+                      {act.subtitle}
+                    </span>
+                    <div className="self-start">
+                      <span className={`inline-flex px-2.5 py-0.5 bg-white/70 border border-white/50 rounded-full text-[9px] font-black uppercase tracking-wider ${act.textColor}`}>
+                        💡 {act.benefit}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Right-aligned animal illustration popping out */}
+                  <div className={`relative flex items-center justify-center shrink-0 w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 overflow-visible ${act.id === 'bunny' || act.id === 'mark' ? 'sm:w-20 sm:h-20 sm:mx-auto' : ''}`}>
+                    {getAnimalIcon(act.animalKey, act.floatDuration)}
+                  </div>
+                </div>
+              ) : (
+                // Standard 1x1 Cards
+                <div className="flex flex-col items-center justify-between text-center h-full w-full gap-3 relative overflow-visible min-h-[140px] pt-1">
+                  {/* Top-aligned animal illustration floating freely */}
+                  <div className="w-18 h-18 sm:w-20 sm:h-20 overflow-visible relative flex items-center justify-center z-10">
+                    {getAnimalIcon(act.animalKey, act.floatDuration)}
+                  </div>
+
+                  {/* Bottom-aligned text info */}
+                  <div className="flex flex-col items-center w-full mt-1">
+                    <h2 className={`text-sm sm:text-base font-black tracking-wide uppercase ${act.textColor} leading-tight`}>
+                      {act.name}
+                    </h2>
+                    <span className={`text-[10px] sm:text-xs font-bold ${act.textColor}/60 mb-1.5`}>
+                      {act.subtitle}
+                    </span>
+                    <span className={`inline-flex px-2 py-0.5 bg-white/75 border border-white/40 rounded-full text-[8px] font-black uppercase tracking-wider ${act.textColor}`}>
+                      {act.benefit}
+                    </span>
+                  </div>
+                </div>
+              )}
+            </ClayCard>
           </motion.div>
-          
-          <div className="flex flex-col items-center">
-            <h2 className={`text-base sm:text-lg font-black tracking-wide uppercase ${act.textColor} leading-tight`}>{act.name}</h2>
-            <span className={`text-[10px] sm:text-xs font-bold ${act.textColor}/60 mt-0.5`}>
-              {act.subtitle}
-            </span>
-          </div>
-
-          {/* Gold highlight badge for new/featured "Trace" activity */}
-          {!act.disabled && act.id === "tracing" && (
-            <div className="absolute top-2 right-2 w-7 h-7 rounded-full border-2 border-white/60 bg-[#f2c94c] text-[#544001] flex items-center justify-center text-[10px] font-black shadow-[inset_1px_1px_2px_rgba(255,255,255,0.8),_inset_-1px_-1px_2px_rgba(0,0,0,0.1),0px_2px_4px_rgba(212,169,25,0.3)] animate-pulse-bounce">
-              ⭐
-            </div>
-          )}
-
-          {/* Locked overlay badge if disabled */}
-          {act.disabled && (
-            <div className="absolute top-2 right-2 w-7 h-7 rounded-full border border-white/30 bg-white/95 flex items-center justify-center text-xs shadow-[inset_1.5px_1.5px_3px_rgba(255,255,255,0.9),_inset_-1.5px_-1.5px_3px_rgba(0,0,0,0.04)] shrink-0">
-              🔒
-            </div>
-          )}
-        </ClayCard>
-      ))}
+        );
+      })}
     </motion.div>
   );
 }
-
