@@ -103,17 +103,99 @@ const getAnimalIcon = (name: string): React.FC<any> | null => {
   return item ? item.icon : null;
 };
 
+const ForestScene = (props: any) => {
+  const TreeComp = getAnimalIcon("Tree");
+  if (!TreeComp) return null;
+  return (
+    <div className="relative w-full h-full flex items-center justify-center min-h-[90px] sm:min-h-[120px]">
+      {/* Left Tree */}
+      <div className="absolute -translate-x-5 translate-y-1.5 z-10 scale-90 opacity-90 w-12 h-12 sm:w-16 sm:h-16">
+        {React.createElement(TreeComp, props)}
+      </div>
+      {/* Right Tree */}
+      <div className="absolute translate-x-5 translate-y-1.5 z-10 scale-90 opacity-90 w-12 h-12 sm:w-16 sm:h-16">
+        {React.createElement(TreeComp, props)}
+      </div>
+      {/* Middle Tree (front) */}
+      <div className="absolute z-20 w-16 h-16 sm:w-20 sm:h-20 drop-shadow-md">
+        {React.createElement(TreeComp, props)}
+      </div>
+    </div>
+  );
+};
+
 const renderShelterIcon = (choice: ShelterItem, className?: string) => {
   const name = choice.name.toLowerCase();
   const props = { className: className || "w-full h-full" };
 
-  if (name === "tree") {
-    const TreeComp = getAnimalIcon("Tree");
-    return TreeComp ? React.createElement(TreeComp, props) : null;
+  if (name === "forest" || name === "tree") {
+    return <ForestScene {...props} />;
   }
   if (name === "doghouse" || name === "house") {
     const HouseComp = getAnimalIcon("House");
     return HouseComp ? React.createElement(HouseComp, props) : null;
+  }
+  if (name === "flower") {
+    const SunflowerComp = getAnimalIcon("Sunflower");
+    return SunflowerComp ? React.createElement(SunflowerComp, props) : null;
+  }
+
+  // Composed emoji/SVG scenes for clarity and straightforward visual representation
+  if (name === "ocean") {
+    return (
+      <div className="flex items-center justify-center gap-1">
+        <span className="text-5xl sm:text-6xl select-none">🌊</span>
+        <span className="text-3xl sm:text-4xl select-none">🐚</span>
+      </div>
+    );
+  }
+  if (name === "farm") {
+    return (
+      <div className="flex items-center justify-center gap-2">
+        <span className="text-5xl sm:text-6xl select-none">🚜</span>
+        <span className="text-4xl sm:text-5xl select-none">🏡</span>
+      </div>
+    );
+  }
+  if (name === "pond") {
+    return (
+      <div className="flex items-center justify-center gap-1.5">
+        <span className="text-5xl sm:text-6xl select-none">🪷</span>
+        <span className="text-4xl sm:text-5xl select-none">🌊</span>
+      </div>
+    );
+  }
+  if (name === "ice") {
+    return (
+      <div className="flex items-center justify-center gap-2">
+        <span className="text-5xl sm:text-6xl select-none">🧊</span>
+        <span className="text-4xl sm:text-5xl select-none">❄️</span>
+      </div>
+    );
+  }
+  if (name === "cave") {
+    return (
+      <div className="flex items-center justify-center gap-2">
+        <span className="text-5xl sm:text-6xl select-none">⛰️</span>
+        <span className="text-4xl sm:text-5xl select-none">🪨</span>
+      </div>
+    );
+  }
+  if (name === "nest") {
+    return (
+      <div className="flex items-center justify-center gap-2">
+        <span className="text-5xl sm:text-6xl select-none">🪺</span>
+        <span className="text-3xl sm:text-4xl select-none">🌿</span>
+      </div>
+    );
+  }
+  if (name === "beehive") {
+    return (
+      <div className="flex items-center justify-center gap-2">
+        <span className="text-5xl sm:text-6xl select-none">🛖</span>
+        <span className="text-3xl sm:text-4xl select-none">🐝</span>
+      </div>
+    );
   }
 
   return <span className="text-5xl sm:text-6xl select-none">{choice.emoji}</span>;
@@ -126,7 +208,7 @@ const shelterPool: ShelterQuestion[] = [
     questionText: "Where does the fish live?",
     correctShelter: { emoji: "🌊", name: "Ocean", label: "Ocean" },
     wrongShelters: [
-      { emoji: "🌳", name: "Tree", label: "Tree" },
+      { emoji: "🌳", name: "Forest", label: "Forest" },
       { emoji: "🚜", name: "Farm", label: "Farm" }
     ]
   },
@@ -134,10 +216,10 @@ const shelterPool: ShelterQuestion[] = [
     animal: "monkey",
     animalEmoji: "🐒",
     questionText: "Where does the monkey live?",
-    correctShelter: { emoji: "🌳", name: "Tree", label: "Tree" },
+    correctShelter: { emoji: "🌳", name: "Forest", label: "Forest" },
     wrongShelters: [
       { emoji: "🌊", name: "Ocean", label: "Ocean" },
-      { emoji: "🕸️", name: "Web", label: "Web" }
+      { emoji: "🚜", name: "Farm", label: "Farm" }
     ]
   },
   {
@@ -177,7 +259,7 @@ const shelterPool: ShelterQuestion[] = [
     correctShelter: { emoji: "🏠", name: "Doghouse", label: "Doghouse" },
     wrongShelters: [
       { emoji: "🌊", name: "Ocean", label: "Ocean" },
-      { emoji: "🕸️", name: "Web", label: "Web" }
+      { emoji: "🚜", name: "Farm", label: "Farm" }
     ]
   },
   {
@@ -186,7 +268,7 @@ const shelterPool: ShelterQuestion[] = [
     questionText: "Where does the pig live?",
     correctShelter: { emoji: "🚜", name: "Farm", label: "Farm" },
     wrongShelters: [
-      { emoji: "🌳", name: "Tree", label: "Tree" },
+      { emoji: "🌳", name: "Forest", label: "Forest" },
       { emoji: "🪺", name: "Nest", label: "Nest" }
     ]
   },
@@ -196,7 +278,7 @@ const shelterPool: ShelterQuestion[] = [
     questionText: "Where does the frog live?",
     correctShelter: { emoji: "🪷", name: "Pond", label: "Pond" },
     wrongShelters: [
-      { emoji: "🪵", name: "Dry Log", label: "Dry Log" },
+      { emoji: "🌳", name: "Forest", label: "Forest" },
       { emoji: "🏠", name: "Doghouse", label: "Doghouse" }
     ]
   },
@@ -211,13 +293,13 @@ const shelterPool: ShelterQuestion[] = [
     ]
   },
   {
-    animal: "lion",
-    animalEmoji: "🦁",
-    questionText: "Where does the lion live?",
-    correctShelter: { emoji: "🌿", name: "Savanna", label: "Savanna" },
+    animal: "penguin",
+    animalEmoji: "🐧",
+    questionText: "Where does the penguin live?",
+    correctShelter: { emoji: "🧊", name: "Ice", label: "Ice" },
     wrongShelters: [
       { emoji: "🏠", name: "Doghouse", label: "Doghouse" },
-      { emoji: "🛖", name: "Beehive", label: "Beehive" }
+      { emoji: "🌻", name: "Flower", label: "Flower" }
     ]
   }
 ];
