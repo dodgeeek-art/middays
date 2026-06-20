@@ -19,7 +19,6 @@ interface SortingItem {
 interface BasketConfig {
   id: "red" | "blue" | "green" | "yellow" | "orange" | "purple" | "white" | "pink" | "brown" | "food" | "animal" | "farm" | "ocean";
   label: string;
-  color: string;
   bg: string;
   border: string;
   text: string;
@@ -30,6 +29,21 @@ interface SortingBasketEngineProps {
   childId: string;
   onBack: () => void;
 }
+
+const cardVariants = {
+  idle: { x: 0, y: 0, scale: 1, rotate: 0, opacity: 1 },
+  correct: {
+    scale: [1, 1.15, 0.9, 1],
+    rotate: [0, -5, 5, 0],
+    opacity: 1,
+    transition: { duration: 0.6 }
+  },
+  incorrect: {
+    x: [0, -8, 8, -6, 6, -4, 4, 0],
+    opacity: 1,
+    transition: { duration: 0.5 }
+  }
+};
 
 // Sound synth helper using Web Audio API
 const playSynthesizedSound = (type: "correct" | "wrong" | "levelUp" | "click") => {
@@ -101,17 +115,17 @@ const playSynthesizedSound = (type: "correct" | "wrong" | "levelUp" | "click") =
 // Define color metadata to avoid duplicate styling configurations
 const COLOR_METADATA: Record<
   "red" | "blue" | "green" | "yellow" | "orange" | "purple" | "white" | "pink" | "brown",
-  { label: string; color: string; bg: string; border: string; text: string; glow: string }
+  { label: string; bg: string; border: string; text: string; glow: string }
 > = {
-  red: { label: "Red", color: "🔴", bg: "bg-[#ffd6d6]/60", border: "border-[#e07383]", text: "text-[#590d22]", glow: "bg-[#e07383]" },
-  blue: { label: "Blue", color: "🔵", bg: "bg-[#d6e4ff]/60", border: "border-[#4a90e2]", text: "text-[#1d3d68]", glow: "bg-[#4a90e2]" },
-  green: { label: "Green", color: "🟢", bg: "bg-[#d6ffd6]/60", border: "border-[#38b000]", text: "text-[#0d4001]", glow: "bg-[#38b000]" },
-  yellow: { label: "Yellow", color: "🟡", bg: "bg-[#fffad6]/60", border: "border-[#ffd166]", text: "text-[#5c4d00]", glow: "bg-[#ffd166]" },
-  orange: { label: "Orange", color: "🟠", bg: "bg-[#ffe6d6]/60", border: "border-[#ff9f1c]", text: "text-[#663c00]", glow: "bg-[#ff9f1c]" },
-  purple: { label: "Purple", color: "🟣", bg: "bg-[#ebd6ff]/60", border: "border-[#9d4edd]", text: "text-[#3c0066]", glow: "bg-[#9d4edd]" },
-  white: { label: "White", color: "⚪", bg: "bg-[#f5f5f5]/60", border: "border-[#b0b0b0]", text: "text-[#4a4a4a]", glow: "bg-[#b0b0b0]" },
-  pink: { label: "Pink", color: "🌸", bg: "bg-[#ffd6eb]/60", border: "border-[#e073c1]", text: "text-[#590d43]", glow: "bg-[#e073c1]" },
-  brown: { label: "Brown", color: "🐻", bg: "bg-[#ede0d4]/60", border: "border-[#b08968]", text: "text-[#4e3526]", glow: "bg-[#b08968]" }
+  red: { label: "Red", bg: "bg-[#ffe5ec]", border: "border-[#ff4d6d]", text: "text-[#800f2f]", glow: "bg-[#ff4d6d]" },
+  blue: { label: "Blue", bg: "bg-[#e0f2fe]", border: "border-[#0ea5e9]", text: "text-[#0369a1]", glow: "bg-[#0ea5e9]" },
+  green: { label: "Green", bg: "bg-[#dcfce7]", border: "border-[#22c55e]", text: "text-[#15803d]", glow: "bg-[#22c55e]" },
+  yellow: { label: "Yellow", bg: "bg-[#fef9c3]", border: "border-[#eab308]", text: "text-[#854d0e]", glow: "bg-[#eab308]" },
+  orange: { label: "Orange", bg: "bg-[#ffedd5]", border: "border-[#f97316]", text: "text-[#c2410c]", glow: "bg-[#f97316]" },
+  purple: { label: "Purple", bg: "bg-[#f3e8ff]", border: "border-[#a855f7]", text: "text-[#7e22ce]", glow: "bg-[#a855f7]" },
+  white: { label: "White", bg: "bg-[#f8fafc]", border: "border-[#94a3b8]", text: "text-[#475569]", glow: "bg-[#cbd5e1]" },
+  pink: { label: "Pink", bg: "bg-[#fce7f3]", border: "border-[#ec4899]", text: "text-[#be185d]", glow: "bg-[#ec4899]" },
+  brown: { label: "Brown", bg: "bg-[#f5ebe0]", border: "border-[#a3704c]", text: "text-[#6f4e37]", glow: "bg-[#a3704c]" }
 };
 
 // Map vocabulary names to exact visual color categories
@@ -126,25 +140,25 @@ const colorMap: Record<string, "red" | "blue" | "green" | "yellow" | "orange" | 
   Rose: "red",
   Tulip: "red",
   Cup: "red",
-  Volcano: "red",
   Car: "red",
   Rocket: "red",
   Mushroom: "red",
   Balloon: "red",
   Drum: "red",
+  Octopus: "red", // Mapped to Red (SVG is coral/red)
 
   // Blue
   Whale: "blue",
   Dolphin: "blue",
   Rain: "blue",
   Plane: "blue",
-  Boat: "blue",
   Truck: "blue",
   Helicopter: "blue",
-  Ninja: "blue",
   "X-ray Fish": "blue",
   Ball: "blue",
   Hat: "blue",
+  Fish: "blue", // Mapped to Blue (SVG is blue)
+  Jellyfish: "blue", // Mapped to Blue (SVG is blue)
 
   // Green
   Frog: "green",
@@ -156,7 +170,6 @@ const colorMap: Record<string, "red" | "blue" | "green" | "yellow" | "orange" | 
   Snake: "green",
   Turtle: "green",
   Watermelon: "green",
-  Gift: "green",
 
   // Yellow
   Sun: "yellow",
@@ -178,18 +191,15 @@ const colorMap: Record<string, "red" | "blue" | "green" | "yellow" | "orange" | 
 
   // Orange
   Carrot: "orange",
-  Fish: "orange",
   Cat: "orange",
   Fox: "orange",
 
   // Purple
   Grapes: "purple",
-  Octopus: "purple",
   Butterfly: "purple",
-  Hippo: "purple",
   Queen: "purple",
   Unicorn: "purple",
-  Kite: "purple",
+  Ninja: "purple", // Mapped to Purple (SVG is dark purple)
 
   // White (includes Grey/Black & White)
   Snowman: "white",
@@ -203,10 +213,10 @@ const colorMap: Record<string, "red" | "blue" | "green" | "yellow" | "orange" | 
   Zebra: "white",
   Penguin: "white",
   Rabbit: "white",
+  Hippo: "white", // Mapped to White (SVG is grey)
 
   // Pink
   Pig: "pink",
-  Jellyfish: "pink",
   Cake: "pink",
   Donut: "pink",
   "Ice Cream": "pink",
@@ -261,8 +271,8 @@ const getItemsForLevel = (level: number): { items: SortingItem[]; baskets: Baske
     };
   } else if (level === 2) {
     const baskets: BasketConfig[] = [
-      { id: "food", label: "Yummy Food", color: "🍎", bg: "bg-[#f5e4a3]/45", border: "border-[#d4a919]/45", text: "text-[#544001]", glow: "bg-[#d4a919]" },
-      { id: "animal", label: "Cute Animals", color: "🦁", bg: "bg-[#bee8d4]/45", border: "border-[#3fa394]/45", text: "text-[#0d4036]", glow: "bg-[#3fa394]" }
+      { id: "food", label: "Yummy Food", bg: "bg-[#fef9c3]", border: "border-[#ca8a04]", text: "text-[#854d0e]", glow: "bg-[#eab308]" },
+      { id: "animal", label: "Cute Animals", bg: "bg-[#dcfce7]", border: "border-[#16a34a]", text: "text-[#14532d]", glow: "bg-[#22c55e]" }
     ];
 
     const foodItems: SortingItem[] = [];
@@ -290,8 +300,8 @@ const getItemsForLevel = (level: number): { items: SortingItem[]; baskets: Baske
     };
   } else {
     const baskets: BasketConfig[] = [
-      { id: "farm", label: "Farm Animals", color: "🚜", bg: "bg-[#bee8d4]/45", border: "border-[#3fa394]/45", text: "text-[#0d4036]", glow: "bg-[#3fa394]" },
-      { id: "ocean", label: "Ocean Animals", color: "🐳", bg: "bg-[#b5cce6]/45", border: "border-[#6372af]/45", text: "text-[#1f3d68]", glow: "bg-[#6372af]" }
+      { id: "farm", label: "Farm Animals", bg: "bg-[#fef2f2]", border: "border-[#ef4444]", text: "text-[#991b1b]", glow: "bg-[#ef4444]" },
+      { id: "ocean", label: "Ocean Animals", bg: "bg-[#f0f9ff]", border: "border-[#06b6d4]", text: "text-[#155e75]", glow: "bg-[#06b6d4]" }
     ];
 
     const farmNames = ["Cat", "Dog", "Pig", "Rabbit", "Duck", "Chicken", "Cow", "Sheep", "Horse"];
@@ -411,7 +421,7 @@ export default function SortingBasketEngine({ childId, onBack }: SortingBasketEn
       } else {
         handleLevelComplete();
       }
-    }, 1500);
+    }, 1400);
   };
 
   const handleIncorrectMatch = () => {
@@ -419,11 +429,10 @@ export default function SortingBasketEngine({ childId, onBack }: SortingBasketEn
     playSynthesizedSound("wrong");
     setErrorsThisRound(prev => prev + 1);
 
-    // Errorless learning: glide back after brief wiggle
     setTimeout(() => {
       setFeedbackState("idle");
       setDragOffsetKey(prev => prev + 1);
-    }, 1000);
+    }, 800);
   };
 
   const handleLevelComplete = async () => {
@@ -485,7 +494,7 @@ export default function SortingBasketEngine({ childId, onBack }: SortingBasketEn
       <div className="absolute -z-10 bg-[#bee8d4] w-64 h-64 rounded-full blur-[80px] opacity-40 -top-10 -right-10"></div>
       
       {/* Header bar */}
-      <div className="flex items-center justify-between mb-4 shrink-0">
+      <div className="flex items-center justify-between gap-2 mb-3 shrink-0">
         <ClayButton
           variant="surface"
           size="sm"
@@ -497,19 +506,30 @@ export default function SortingBasketEngine({ childId, onBack }: SortingBasketEn
           <ArrowLeft size={24} strokeWidth={3.5} />
         </ClayButton>
 
-        <h1 className="text-xl sm:text-2xl font-black uppercase text-[#4A5358] tracking-wider flex items-center gap-2">
-          <Grid size={24} className="text-[#3fa394]" strokeWidth={3.5} />
-          Sorting Basket
-        </h1>
+        {/* Integrated Progress Dots Container - Acts as the centered layout element */}
+        <div className="bg-white/85 border-2 border-white/40 shadow-[inset_-2px_-2px_4px_rgba(0,0,0,0.02),_inset_2px_2px_4px_rgba(255,255,255,0.85)] px-4 py-2 rounded-[1.5rem] flex gap-1.5 items-center justify-center min-h-[46px] shadow-sm">
+          {items.map((_, idx) => (
+            <div
+              key={idx}
+              className={`w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full border border-white/85 transition-all duration-300 ${
+                idx === currentIndex
+                  ? "bg-[#3fa394] scale-125 shadow-[0_0_8px_#3fa394]"
+                  : idx < currentIndex
+                  ? "bg-[#bee8d4]"
+                  : "bg-[#e2efe9]"
+              }`}
+            />
+          ))}
+        </div>
 
-        <div className="bg-white/80 border-2 border-white/40 shadow-inner px-4 py-2 rounded-full font-black text-[#3fa394] text-sm tracking-wide">
+        <div className="bg-white/85 border-2 border-white/40 shadow-[inset_-2px_-2px_4px_rgba(0,0,0,0.02),_inset_2px_2px_4px_rgba(255,255,255,0.85)] px-4 py-2.5 rounded-[1.5rem] font-black text-[#3fa394] text-xs sm:text-sm tracking-wide shadow-sm shrink-0">
           LEVEL {level}/3
         </div>
       </div>
 
       {/* Parental Co-Play Banner */}
-      <div className="bg-[#ddcbf5]/80 border-2 border-white/50 text-[#42236b] p-3 rounded-2xl mb-4 text-center font-bold text-xs sm:text-sm shadow-[inset_-2px_-2px_4px_rgba(0,0,0,0.02),_inset_2px_2px_4px_rgba(255,255,255,0.8)] leading-snug shrink-0">
-        <span className="text-[10px] font-black uppercase tracking-wider text-[#7c52c7] block mb-0.5">🧑‍🍼 Parent & Child Co-Play Option</span>
+      <div className="bg-[#ddcbf5]/85 border-2 border-white/45 text-[#42236b] px-3.5 py-2.5 rounded-[1.8rem] mb-3 text-center font-bold text-xs sm:text-sm shadow-[inset_-2px_-2px_4px_rgba(0,0,0,0.02),_inset_2px_2px_4px_rgba(255,255,255,0.85)] leading-snug shrink-0">
+        <span className="text-[9px] font-black uppercase tracking-wider text-[#7c52c7] block mb-0.5">🧑‍🍼 Parent & Child Co-Play Option</span>
         {activeParentPrompt}
       </div>
 
@@ -551,21 +571,7 @@ export default function SortingBasketEngine({ childId, onBack }: SortingBasketEn
       {/* Main play space */}
       <div className="flex-grow flex flex-col justify-between min-h-0 relative z-10">
         
-        {/* Progress Dots */}
-        <div className="flex justify-center gap-2 mb-4 shrink-0">
-          {items.map((_, idx) => (
-            <div
-              key={idx}
-              className={`w-3.5 h-3.5 rounded-full border-[1.5px] border-white transition-all duration-300 ${
-                idx === currentIndex
-                  ? "bg-[#3fa394] scale-125 shadow-[0_0_8px_#3fa394]"
-                  : idx < currentIndex
-                  ? "bg-[#bee8d4]"
-                  : "bg-white/40"
-              }`}
-            />
-          ))}
-        </div>
+
 
         {/* Drag Staging Center */}
         <div className="flex-grow flex items-center justify-center relative min-h-0">
@@ -574,25 +580,26 @@ export default function SortingBasketEngine({ childId, onBack }: SortingBasketEn
               <motion.div
                 key={`${currentItem.id}-${dragOffsetKey}`}
                 initial={{ scale: 0.3, opacity: 0, y: -20 }}
-                animate={{ scale: 1, opacity: 1, y: 0 }}
-                exit={{ scale: 0.3, opacity: 0 }}
+                animate={feedbackState === "correct" ? "correct" : feedbackState === "incorrect" ? "incorrect" : "idle"}
+                exit={{ scale: 0, opacity: 0, y: 50 }}
+                variants={cardVariants}
                 transition={{ type: "spring", stiffness: 300, damping: 18 }}
-                className="relative z-20 cursor-grab active:cursor-grabbing toddler-target select-none"
-                style={{ touchAction: "none" }}
+                className="relative z-20 select-none"
               >
                 {/* Visual Glow rings matching target color */}
                 <div className={`absolute inset-0 rounded-[2rem] filter blur-xl opacity-35 scale-110 -z-10 ${activeGlow}`} />
 
                 <motion.div
                   drag
-                  dragSnapToOrigin={feedbackState !== "correct"}
+                  dragSnapToOrigin={true}
                   dragElastic={0.65}
                   onDragEnd={handleDragEnd}
                   whileDrag={{ scale: 1.15, rotate: 2 }}
-                  className={`w-36 h-36 flex flex-col items-center justify-center p-4 bg-white rounded-[2.5rem] border-[4px] border-white/60 shadow-clay-card select-none ${
-                    feedbackState === "correct" ? "border-green-400 bg-green-50 animate-pulse-bounce pointer-events-none" : 
-                    feedbackState === "incorrect" ? "border-red-400 bg-red-50 animate-shake pointer-events-none" : ""
+                  className={`w-36 h-36 flex flex-col items-center justify-center p-4 bg-white rounded-[2.5rem] border-[4px] shadow-clay-card select-none cursor-grab active:cursor-grabbing toddler-target transition-colors duration-200 ${
+                    feedbackState === "correct" ? "border-emerald-400 bg-emerald-50/80 pointer-events-none" : 
+                    feedbackState === "incorrect" ? "border-rose-400 bg-rose-50/80 pointer-events-none" : "border-white/60"
                   }`}
+                  style={{ touchAction: "none" }}
                 >
                   <currentItem.icon size={80} className="select-none pointer-events-none filter drop-shadow-[2px_3px_4px_rgba(0,0,0,0.06)]" />
                   <span className="text-[11px] font-black tracking-wide uppercase text-slate-dark mt-2 select-none pointer-events-none">
@@ -607,23 +614,20 @@ export default function SortingBasketEngine({ childId, onBack }: SortingBasketEn
         {/* Drop Baskets (Drop zones) */}
         <div className={`grid gap-2 sm:gap-3 mt-4 shrink-0 pb-2 ${
           level === 1 
-            ? "grid-cols-3 sm:grid-cols-9" 
+            ? "grid-cols-3 sm:grid-cols-5 md:grid-cols-9" 
             : "grid-cols-2"
         }`}>
           {baskets.map((basket, idx) => (
             <div
               key={basket.id}
               ref={el => { basketRefs.current[idx] = el; }}
-              className={`p-3 rounded-[1.75rem] border-[2.5px] border-dashed transition-all duration-300 flex flex-col items-center justify-center gap-1.5 min-h-[90px] relative select-none ${
+              className={`p-2.5 sm:p-4 rounded-[1.75rem] border-[3px] transition-all duration-300 flex flex-col items-center justify-center min-h-[62px] sm:min-h-[76px] relative select-none shadow-clay-card hover:scale-[1.03] active:scale-[0.98] ${
                 basket.bg
-              } ${basket.border} ${basket.text} shadow-[inset_4px_4px_10px_rgba(0,0,0,0.02)]`}
+              } ${basket.border} ${basket.text}`}
             >
-              <div className="absolute inset-1.5 rounded-[1.5rem] border-2 border-white/30 pointer-events-none" />
+              <div className="absolute inset-1 rounded-[1.4rem] border-2 border-white/40 pointer-events-none" />
               
-              <span className="text-2xl filter drop-shadow-[1px_2px_2px_rgba(0,0,0,0.05)] select-none pointer-events-none">
-                {basket.color}
-              </span>
-              <h3 className="font-black text-[10px] sm:text-xs uppercase tracking-wide text-center leading-none select-none pointer-events-none">
+              <h3 className="font-black text-[10px] sm:text-xs md:text-sm uppercase tracking-wider text-center leading-tight select-none pointer-events-none">
                 {basket.label}
               </h3>
             </div>

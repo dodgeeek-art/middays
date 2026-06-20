@@ -265,7 +265,7 @@ export default function WhereIsBunnyEngine({ childId, onBack }: { childId: strin
 
   // Initialize rounds
   useEffect(() => {
-    const selected = shuffleArray(shelterPool).slice(0, 5);
+    const selected = shuffleArray(shelterPool);
     setRoundsList(selected);
     setCurrentRoundIdx(0);
   }, []);
@@ -334,11 +334,11 @@ export default function WhereIsBunnyEngine({ childId, onBack }: { childId: strin
     });
 
     setTimeout(() => {
-      if (currentRoundIdx < roundsList.length - 1) {
-        setCurrentRoundIdx(prev => prev + 1);
-      } else {
-        handleGameComplete();
+      // Append more shuffled questions if we are getting close to the end
+      if (currentRoundIdx >= roundsList.length - 2) {
+        setRoundsList(prev => [...prev, ...shuffleArray(shelterPool)]);
       }
+      setCurrentRoundIdx(prev => prev + 1);
     }, 2200);
   };
 
@@ -356,35 +356,37 @@ export default function WhereIsBunnyEngine({ childId, onBack }: { childId: strin
     }, 500);
   };
 
-  const handleGameComplete = async () => {
-    playSynthesizedSound("levelUp");
-    setGameState("success");
+  const handleExit = async () => {
+    if (currentRoundIdx >= 1) {
+      const elapsed = Date.now() - startTime;
+      if (childId) {
+        try {
+          await fetch(`/api/progress/${childId}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              targetLetter: "SHELTER",
+              tracingScore: Math.max(0, 100 - errorsThisGame * 15),
+              phonemicScore: 100,
+              timeSpentMs: elapsed
+            })
+          });
 
-    const elapsed = Date.now() - startTime;
-    if (childId) {
-      try {
-        await fetch(`/api/progress/${childId}`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            targetLetter: "SHELTER",
-            tracingScore: Math.max(0, 100 - errorsThisGame * 15),
-            phonemicScore: 100,
-            timeSpentMs: elapsed
-          })
-        });
-
-        await fetch(`/api/badges/${childId}`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            badgeName: "Shelter Master"
-          })
-        });
-      } catch (err) {
-        console.error("Telemetry failed:", err);
+          if (currentRoundIdx >= 5) {
+            await fetch(`/api/badges/${childId}`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                badgeName: "Shelter Master"
+              })
+            });
+          }
+        } catch (err) {
+          console.error("Telemetry failed:", err);
+        }
       }
     }
+    onBack();
   };
 
   return (
@@ -516,53 +518,15 @@ export default function WhereIsBunnyEngine({ childId, onBack }: { childId: strin
         <ClayButton
           variant="surface"
           size="sm"
-          onClick={() => {
-            onBack();
-          }}
+          onClick={handleExit}
         >
           <ArrowLeft size={24} strokeWidth={3.5} />
         </ClayButton>
 
         <span className="text-[10px] font-black uppercase tracking-wider text-[#0b4a45]/80 bg-white/70 px-4 py-1.5 rounded-full border border-white/40 shadow-sm shadow-black/02">
-          ROUND {currentRoundIdx + 1}/{roundsList.length || 5}
+          ROUND {currentRoundIdx + 1}
         </span>
       </div>
-
-      {/* Success Modal */}
-      <AnimatePresence>
-        {gameState === "success" && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="absolute inset-0 z-40 bg-black/40 backdrop-blur-md flex items-center justify-center p-6 rounded-[2.5rem]"
-          >
-            <ClayCard
-              variant="secondary"
-              className="max-w-md w-full p-8 text-center flex flex-col items-center gap-6 border-white/40"
-              initial={{ scale: 0.9, y: 20 }}
-              animate={{ scale: 1, y: 0 }}
-            >
-              <div className="w-20 h-20 rounded-full bg-[#3fa394] text-white flex items-center justify-center shadow-clay-mint mb-2">
-                <Trophy size={44} className="text-white" />
-              </div>
-              <h2 className="text-3xl font-black text-[#0d4036] tracking-wide uppercase">Shelter Master!</h2>
-              <p className="text-sm font-bold text-[#0d4036]/85 leading-relaxed">
-                Super science skills! You know exactly where all the animals live. You earned the Shelter Master badge!
-              </p>
-
-              <ClayButton
-                variant="primary"
-                onClick={onBack}
-                className="w-full py-4 text-lg font-black rounded-full mt-2 toddler-target flex items-center justify-center gap-2"
-              >
-                <span>Back to Map</span>
-                <Trophy size={20} className="text-white" />
-              </ClayButton>
-            </ClayCard>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       {/* Mascot Command at the top (under header) to make room for lower play area */}
       <div 

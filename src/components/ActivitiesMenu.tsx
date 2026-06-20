@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import ClayCard from '@/components/ui/ClayCard';
+import ClayButton from '@/components/ui/ClayButton';
 import MascotSVG from '@/components/MascotSVG';
 import { CartoonSVG } from '@/lib/svgDictionary';
 import { 
@@ -123,6 +124,7 @@ const PaletteIcon = (props: any) => (
 
 export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps) {
   const router = useRouter();
+  const [activeCategory, setActiveCategory] = useState<"all" | "phonics" | "logic" | "creative">("all");
 
   const activities: ActivityItem[] = [
     { 
@@ -285,7 +287,7 @@ export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps
     { 
       id: "mark", 
       name: "Draw", 
-      subtitle: "Flamingo Trace",
+      subtitle: "Trace & Color",
       clayVariant: "glass",
       textColor: "text-[#544001]",
       disabled: false,
@@ -296,6 +298,20 @@ export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps
       gradient: "from-[#f5e4a3]/40 to-[#ebd787]/30"
     }
   ];
+
+  const filteredActivities = activities.filter(act => {
+    if (activeCategory === "all") return true;
+    if (activeCategory === "phonics") {
+      return ["tracing", "reveal", "bubbles", "monster", "scavenger", "scavenger-advanced"].includes(act.id);
+    }
+    if (activeCategory === "logic") {
+      return ["match", "drummer", "sorting", "bunny"].includes(act.id);
+    }
+    if (activeCategory === "creative") {
+      return ["story", "mark"].includes(act.id);
+    }
+    return true;
+  });
 
   const getGameIcon = (id: string, floatDuration: number) => {
     const props = {
@@ -395,7 +411,30 @@ export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps
         </div>
       </motion.div>
 
-      {activities.map((act) => {
+      {/* Playful Category Switcher */}
+      <div className="col-span-2 sm:col-span-3 md:col-span-4 flex flex-wrap justify-center gap-2.5 my-2 z-10">
+        {(["all", "phonics", "logic", "creative"] as const).map((cat) => {
+          const isActive = activeCategory === cat;
+          const labels = {
+            all: "🌈 All Games",
+            phonics: "🔤 Letters & Sounds",
+            logic: "🧩 Word & Logic",
+            creative: "🎨 Story & Draw"
+          };
+          return (
+            <ClayButton
+              key={cat}
+              variant={isActive ? "primary" : "surface"}
+              onClick={() => setActiveCategory(cat)}
+              className="py-2.5 px-5 text-xs font-black uppercase rounded-full toddler-target shadow-sm active:scale-95 transition-all"
+            >
+              {labels[cat]}
+            </ClayButton>
+          );
+        })}
+      </div>
+
+      {filteredActivities.map((act) => {
         // Layout calculations for responsive grid cells
         const isTracing = act.id === "tracing";
         const isDoubleWidth = act.colSpan.includes("col-span-2");
@@ -403,6 +442,7 @@ export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps
         return (
           <motion.div
             key={act.id}
+            layout
             variants={itemVariants}
             className={`${act.colSpan} ${act.rowSpan || "row-span-1"}`}
             whileHover={{ scale: 1.02, y: -4 }}

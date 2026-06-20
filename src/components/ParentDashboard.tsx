@@ -129,76 +129,71 @@ export default function ParentDashboard({ childId }: { childId?: string }) {
           <ClayButton variant="surface" size="sm" className="text-xs">Download Report</ClayButton>
         </div>
 
-        <ClayCard className="border border-white/20 rounded-[2rem] overflow-hidden bg-white p-0">
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse">
-              <thead>
-                <tr className="bg-[#FAF9F5] text-left">
-                  <th className="p-5 text-xs font-black uppercase tracking-wider text-[#4A5358]/60 border-b border-[#9eb1bd]/20">Date</th>
-                  <th className="p-5 text-xs font-black uppercase tracking-wider text-[#4A5358]/60 border-b border-[#9eb1bd]/20">Activity</th>
-                  <th className="p-5 text-xs font-black uppercase tracking-wider text-[#4A5358]/60 border-b border-[#9eb1bd]/20">Accuracy</th>
-                  <th className="p-5 text-xs font-black uppercase tracking-wider text-[#4A5358]/60 border-b border-[#9eb1bd]/20">Progress</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[#9eb1bd]/10">
-                {data.progressRecord.map((record) => {
-                  let progressColor = "bg-primary";
-                  let textColor = "text-primary";
-                  let bgBadge = "bg-primary-container/60";
-                  
-                  if (record.tracingScore < 90) {
-                    progressColor = "bg-secondary";
-                    textColor = "text-secondary";
-                    bgBadge = "bg-secondary-container/60";
-                  }
-                  if (record.tracingScore < 80) {
-                    progressColor = "bg-tertiary";
-                    textColor = "text-tertiary";
-                    bgBadge = "bg-tertiary-container/60";
-                  }
+        <div className="flex flex-col gap-4">
+          {data.progressRecord.map((record) => {
+            let progressColor = "bg-primary";
+            let textColor = "text-primary";
+            let bgBadge = "bg-primary-container/60";
+            
+            if (record.tracingScore < 90) {
+              progressColor = "bg-secondary";
+              textColor = "text-secondary";
+              bgBadge = "bg-secondary-container/60";
+            }
+            if (record.tracingScore < 80) {
+              progressColor = "bg-tertiary";
+              textColor = "text-tertiary";
+              bgBadge = "bg-tertiary-container/60";
+            }
 
-                  return (
-                    <tr key={record.id} className="hover:bg-[#f3f8fc]/40 transition-colors">
-                      <td className="p-5 text-sm font-bold text-[#4A5358]">
-                        {new Date(record.createdAt).toLocaleDateString(undefined, { 
-                          month: 'short', 
-                          day: 'numeric', 
-                          year: 'numeric' 
-                        })}
-                      </td>
-                      <td className="p-5">
-                        <div className="flex items-center gap-3">
-                          <div className={`w-10 h-10 rounded-xl ${bgBadge} flex items-center justify-center border border-white/20 shadow-[inset_1px_1px_3px_rgba(255,255,255,0.9),_inset_-1px_-1px_3px_rgba(0,0,0,0.03)]`}>
-                            <BookOpen size={20} className="text-[#4a5358]" strokeWidth={2.5} />
-                          </div>
-                          <span className="text-sm font-black text-[#4A5358]">Trace Letter {record.targetLetter}</span>
-                        </div>
-                      </td>
-                      <td className={`p-5 text-sm font-black ${textColor}`}>{record.tracingScore}%</td>
-                      <td className="p-5 min-w-[150px]">
-                        <div className="bg-[#dbe8f2] rounded-full h-3.5 p-0.5 overflow-hidden border border-white/20 shadow-inner">
-                          <motion.div 
-                            initial={{ width: 0 }}
-                            animate={{ width: `${record.tracingScore}%` }}
-                            transition={{ duration: 1, ease: "easeOut" }}
-                            className={`h-full rounded-full ${progressColor}`}
-                          />
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
-                {totalSessions === 0 && (
-                  <tr>
-                    <td colSpan={4} className="p-8 text-center text-gray-500 font-bold">
-                      No sessions recorded yet. Time to play!
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-        </ClayCard>
+            return (
+              <ClayCard
+                key={record.id}
+                className="flex flex-col sm:flex-row items-center justify-between p-5 bg-white border border-white/20 rounded-[2rem] shadow-clay-card gap-4 hover:scale-[1.01] transition-transform duration-200"
+              >
+                {/* Left side: Icon, Name & Date */}
+                <div className="flex items-center gap-4 w-full sm:w-auto text-left">
+                  <div className={`w-12 h-12 rounded-2xl ${bgBadge} flex items-center justify-center border border-white/20 shadow-[inset_1px_1px_3px_rgba(255,255,255,0.9),_inset_-1px_-1px_3px_rgba(0,0,0,0.03)] shrink-0`}>
+                    <BookOpen size={24} className="text-[#4a5358]" strokeWidth={2.5} />
+                  </div>
+                  <div className="flex flex-col gap-0.5">
+                    <span className="text-sm font-black text-[#4A5358]">Trace Letter {record.targetLetter}</span>
+                    <span className="text-xs font-bold text-[#4A5358]/55">
+                      {new Date(record.createdAt).toLocaleDateString(undefined, { 
+                        month: 'short', 
+                        day: 'numeric', 
+                        year: 'numeric' 
+                      })}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Right side: Accuracy & Progress Bar */}
+                <div className="flex items-center gap-6 w-full sm:w-auto justify-between sm:justify-end flex-grow">
+                  {/* Accuracy Stat */}
+                  <div className="flex flex-col items-start sm:items-end shrink-0">
+                    <span className="text-[9px] font-black uppercase tracking-wider text-[#4A5358]/40 leading-none mb-0.5">Accuracy</span>
+                    <span className={`text-base font-black ${textColor}`}>{record.tracingScore}%</span>
+                  </div>
+                  {/* Progress Pill Bar */}
+                  <div className="w-full sm:w-44 bg-[#dbe8f2] rounded-full h-4 p-0.5 overflow-hidden border border-white/20 shadow-inner shrink-0">
+                    <motion.div 
+                      initial={{ width: 0 }}
+                      animate={{ width: `${record.tracingScore}%` }}
+                      transition={{ duration: 1, ease: "easeOut" }}
+                      className={`h-full rounded-full ${progressColor}`}
+                    />
+                  </div>
+                </div>
+              </ClayCard>
+            );
+          })}
+          {totalSessions === 0 && (
+            <div className="p-8 text-center text-gray-500 font-bold bg-white/40 border border-dashed border-[#9eb1bd]/40 rounded-[2rem]">
+              No sessions recorded yet. Time to play!
+            </div>
+          )}
+        </div>
       </motion.div>
 
       {/* Weekly Focus Suggestion */}

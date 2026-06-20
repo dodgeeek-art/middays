@@ -1,11 +1,12 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { ArrowLeft, Volume2, Lightbulb } from "@/components/Icons";
+import { ArrowLeft, Volume2, PenTool, Sparkles } from "@/components/Icons";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 import ClayButton from "@/components/ui/ClayButton";
 import ClayCard from "@/components/ui/ClayCard";
+import { vocabularyList } from "@/lib/svgDictionary";
 
 interface Point {
   x: number;
@@ -77,40 +78,53 @@ const playSynthesizedSound = (type: "correct" | "wrong" | "levelUp" | "click" | 
   }
 };
 
-const guideTemplates = [
+const tracingTemplates = [
   {
-    id: "circle",
-    name: "Golden Sun Circle",
-    d: "M 150,50 A 100,100 0 1,1 149.9,50 Z",
-    length: 628,
+    id: "heart",
+    name: "Red Heart",
+    vocabName: "Heart",
+    d: "M6 6c4.665-2.332 8.5.5 10 2.5c1.5-2 5.335-4.832 10-2.5c6 3 4.5 10.5 0 15c-2.196 2.196-6.063 6.063-8.891 8.214a1.764 1.764 0 0 1-2.186-.041C12.33 27.08 8.165 23.165 6 21C1.5 16.5 0 9 6 6",
+    color: "#ff4d6d"
+  },
+  {
+    id: "star",
+    name: "Golden Star",
+    vocabName: "Star",
+    d: "m18.7 4.627l2.247 4.31a2.27 2.27 0 0 0 1.686 1.189l4.746.65c2.538.35 3.522 3.479 1.645 5.219l-3.25 2.999a2.23 2.23 0 0 0-.683 2.04l.793 4.398c.441 2.45-2.108 4.36-4.345 3.24l-4.536-2.25a2.28 2.28 0 0 0-2.006 0l-4.536 2.25c-2.238 1.11-4.786-.79-4.345-3.24l.793-4.399c.14-.75-.12-1.52-.682-2.04l-3.251-2.998c-1.877-1.73-.893-4.87 1.645-5.22l4.746-.65a2.23 2.23 0 0 0 1.686-1.189l2.248-4.309c1.144-2.17 4.264-2.17 5.398 0",
     color: "#ffd166"
   },
   {
-    id: "wave",
-    name: "Ocean Wave Path",
-    d: "M 30,150 Q 80,80 150,150 T 270,150",
-    length: 300,
-    color: "#3fa394"
+    id: "sun",
+    name: "Bright Sun",
+    vocabName: "Sun",
+    d: "M13.638 3.202a2.936 2.936 0 0 1 4.724 0a2.94 2.94 0 0 0 3.25 1.055a2.936 2.936 0 0 1 3.822 2.778a2.94 2.94 0 0 0 2.008 2.763a2.936 2.936 0 0 1 1.46 4.494a2.94 2.94 0 0 0 0 3.416a2.936 2.936 0 0 1-1.46 4.494a2.94 2.94 0 0 0-2.008 2.763a2.936 2.936 0 0 1-3.823 2.778a2.94 2.94 0 0 0-3.249 1.055a2.936 2.936 0 0 1-4.724 0a2.94 2.94 0 0 0-3.25-1.055a2.936 2.936 0 0 1-3.822-2.778a2.94 2.94 0 0 0-2.008-2.763a2.936 2.936 0 0 1-1.46-4.494a2.94 2.94 0 0 0 0-3.416a2.936 2.936 0 0 1 1.46-4.494a2.94 2.94 0 0 0 2.008-2.763a2.936 2.936 0 0 1 3.823-2.778a2.94 2.94 0 0 0 3.249-1.055",
+    color: "#f97316"
   },
   {
-    id: "zigzag",
-    name: "Flamingo Zigzag",
-    d: "M 30,80 L 100,220 L 170,80 L 270,220",
-    length: 420,
-    color: "#ff85a1"
+    id: "cat",
+    name: "Cute Cat",
+    vocabName: "Cat",
+    d: "M4 25.942C4 28.174 5.763 30 7.918 30h16.164C26.237 30 28 28.073 28 25.84V6.43c0-1.3-1.59-1.9-2.485-1L20.975 10h-9.812L6.5 5.43c-.9-.9-2.5-.3-2.5 1z",
+    color: "#ff9f1c"
   }
 ];
 
 export default function MarkMakerEngine({ childId, onBack }: { childId: string; onBack: () => void }) {
-  const [phase, setPhase] = useState<"instructions" | "timer" | "drawing" | "success">("instructions");
-  const [countdown, setCountdown] = useState(5);
+  const [phase, setPhase] = useState<"drawing" | "success">("drawing");
   const [activeTemplateIdx, setActiveTemplateIdx] = useState(0);
-  const [points, setPoints] = useState<Point[]>([]);
-  const [isDrawing, setIsDrawing] = useState(false);
+  const [allCheckpointsHit, setAllCheckpointsHit] = useState(false);
   const [startTime] = useState<number>(() => Date.now());
 
-  const svgRef = useRef<SVGSVGElement>(null);
-  const template = guideTemplates[activeTemplateIdx];
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const svgPathRef = useRef<SVGPathElement>(null);
+  const checkpointsRef = useRef<{ x: number; y: number; hit: boolean }[]>([]);
+  const isDrawingRef = useRef(false);
+  const drawnStrokes = useRef<Point[][]>([]);
+  const particles = useRef<{ x: number; y: number; color: string; alpha: number; vx: number; vy: number }[]>([]);
+
+  const template = tracingTemplates[activeTemplateIdx];
+  const vocabItem = vocabularyList.find(v => v.name === template.vocabName);
+  const TemplateIcon = vocabItem?.icon;
 
   const speakText = useCallback((text: string) => {
     if (typeof window !== "undefined" && window.speechSynthesis) {
@@ -122,93 +136,210 @@ export default function MarkMakerEngine({ childId, onBack }: { childId: string; 
     }
   }, []);
 
-  const runCountdown = useCallback(() => {
-    setCountdown(5);
-    playSynthesizedSound("tick");
-    const interval = setInterval(() => {
-      setCountdown(prev => {
-        if (prev <= 1) {
-          clearInterval(interval);
-          setPhase("drawing");
-          return 0;
+  // Initialize and scale checkpoints when template changes
+  useEffect(() => {
+    drawnStrokes.current = [];
+    particles.current = [];
+    setAllCheckpointsHit(false);
+
+    // Speak template name
+    speakText(`Let's trace the ${template.name}!`);
+
+    // Redraw canvas base state
+    const canvas = canvasRef.current;
+    if (canvas) {
+      const ctx = canvas.getContext("2d");
+      if (ctx) ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    const timer = setTimeout(() => {
+      if (svgPathRef.current) {
+        const length = svgPathRef.current.getTotalLength();
+        const pts = [];
+        for (let i = 0; i <= 20; i++) {
+          const p = svgPathRef.current.getPointAtLength((i / 20) * length);
+          // Scale & center coordinates: translate(2,2) scale(0.875) -> scale(8) translate(22,22) -> scale(5/3)
+          const x_svg = 22 + 8 * (2 + 0.875 * p.x);
+          const y_svg = 22 + 8 * (2 + 0.875 * p.y);
+          pts.push({
+            x: x_svg * 5 / 3,
+            y: y_svg * 5 / 3,
+            hit: false
+          });
         }
-        playSynthesizedSound("tick");
-        return prev - 1;
-      });
-    }, 1000);
+        checkpointsRef.current = pts;
+      }
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, [activeTemplateIdx, template, speakText]);
+
+  // Smooth canvas animation loop
+  useEffect(() => {
+    let animFrameId: number;
+    const tick = () => {
+      drawCanvas();
+      animFrameId = requestAnimationFrame(tick);
+    };
+    animFrameId = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(animFrameId);
   }, []);
 
-  useEffect(() => {
-    if (phase === "instructions") {
-      speakText("Can you stand on one foot like a flamingo? Let's count to five!");
-    } else if (phase === "drawing") {
-      speakText("Great balance! Now draw the flamingo's path on the screen.");
+  const drawCanvas = () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // 1. Redraw user's strokes (Glowing thick line)
+    if (drawnStrokes.current.length > 0) {
+      // Glow underlay
+      ctx.save();
+      ctx.lineWidth = 24;
+      ctx.strokeStyle = "rgba(255, 133, 161, 0.35)";
+      ctx.shadowColor = "#ff85a1";
+      ctx.shadowBlur = 12;
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
+      drawnStrokes.current.forEach(stroke => {
+        if (stroke.length > 0) {
+          ctx.beginPath();
+          ctx.moveTo(stroke[0].x, stroke[0].y);
+          for (let i = 1; i < stroke.length; i++) {
+            ctx.lineTo(stroke[i].x, stroke[i].y);
+          }
+          ctx.stroke();
+        }
+      });
+      ctx.restore();
+
+      // Main white core line
+      ctx.save();
+      ctx.lineWidth = 10;
+      ctx.strokeStyle = "#ffffff";
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
+      drawnStrokes.current.forEach(stroke => {
+        if (stroke.length > 0) {
+          ctx.beginPath();
+          ctx.moveTo(stroke[0].x, stroke[0].y);
+          for (let i = 1; i < stroke.length; i++) {
+            ctx.lineTo(stroke[i].x, stroke[i].y);
+          }
+          ctx.stroke();
+        }
+      });
+      ctx.restore();
     }
-  }, [phase, speakText]);
 
-  // Convert client coordinate points into relative SVG coordinates
-  const getSVGCoordinates = (e: React.PointerEvent<SVGSVGElement>): Point | null => {
-    if (!svgRef.current) return null;
-    const rect = svgRef.current.getBoundingClientRect();
-    
-    // Scale coords to the 300x300 viewBox
-    const x = ((e.clientX - rect.left) / rect.width) * 300;
-    const y = ((e.clientY - rect.top) / rect.height) * 300;
-    return { x, y };
-  };
+    // 2. Update and draw sparkles
+    particles.current = particles.current.filter(p => {
+      p.x += p.vx;
+      p.y += p.vy;
+      p.alpha -= 0.035;
+      if (p.alpha <= 0) return false;
 
-  const handlePointerDown = (e: React.PointerEvent<SVGSVGElement>) => {
-    if (phase !== "drawing") return;
-    const coords = getSVGCoordinates(e);
-    if (!coords) return;
-
-    setIsDrawing(true);
-    setPoints([coords]);
-  };
-
-  const handlePointerMove = (e: React.PointerEvent<SVGSVGElement>) => {
-    if (!isDrawing || phase !== "drawing") return;
-    const coords = getSVGCoordinates(e);
-    if (!coords) return;
-
-    // Append new point
-    setPoints(prev => {
-      const newPoints = [...prev, coords];
-      // Real-time stroke smoothing: moving average of the last 3 points
-      if (newPoints.length >= 3) {
-        const lastIdx = newPoints.length - 2;
-        newPoints[lastIdx] = {
-          x: (newPoints[lastIdx - 1].x + newPoints[lastIdx].x + newPoints[lastIdx + 1].x) / 3,
-          y: (newPoints[lastIdx - 1].y + newPoints[lastIdx].y + newPoints[lastIdx + 1].y) / 3
-        };
-      }
-      return newPoints;
+      ctx.save();
+      ctx.globalAlpha = p.alpha;
+      ctx.fillStyle = p.color;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.alpha * 12 + 2, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+      return true;
     });
   };
 
-  const handlePointerUp = () => {
-    setIsDrawing(false);
-    if (points.length < 5) return;
+  const getCanvasCoordinates = (e: React.PointerEvent<HTMLCanvasElement>) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return { x: 0, y: 0 };
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
 
-    // Check completion threshold:
-    // If they have drawn more than 15 points, we arithmetically assume they traced the line
-    // To keep it errorless and highly rewarding for a 3.5 year old, we reward completion automatically!
-    handleTraceComplete();
+    return {
+      x: (e.clientX - rect.left) * scaleX,
+      y: (e.clientY - rect.top) * scaleY,
+    };
+  };
+
+  const addParticles = (x: number, y: number, count = 3) => {
+    const colors = [template.color, "#ffffff", "#ffc4c0", "#eaddfc", "#faf9f5"];
+    for (let i = 0; i < count; i++) {
+      particles.current.push({
+        x,
+        y,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        alpha: 1.0,
+        vx: (Math.random() - 0.5) * 6,
+        vy: (Math.random() - 0.5) * 6
+      });
+    }
+  };
+
+  const handlePointerDown = (e: React.PointerEvent<HTMLCanvasElement>) => {
+    if (phase !== "drawing") return;
+    e.currentTarget.setPointerCapture(e.pointerId);
+
+    isDrawingRef.current = true;
+    const pt = getCanvasCoordinates(e);
+    drawnStrokes.current.push([pt]);
+    addParticles(pt.x, pt.y, 6);
+    playSynthesizedSound("click");
+  };
+
+  const handlePointerMove = (e: React.PointerEvent<HTMLCanvasElement>) => {
+    if (!isDrawingRef.current || phase !== "drawing") return;
+    const pt = getCanvasCoordinates(e);
+
+    const currentStrokeIndex = drawnStrokes.current.length - 1;
+    if (currentStrokeIndex >= 0) {
+      drawnStrokes.current[currentStrokeIndex].push(pt);
+    }
+
+    addParticles(pt.x, pt.y, 2);
+
+    // Equidistant hit detection
+    let hitCount = 0;
+    checkpointsRef.current.forEach(cp => {
+      if (!cp.hit) {
+        const dist = Math.hypot(pt.x - cp.x, pt.y - cp.y);
+        if (dist < 72) { // Generous hitbox for toddlers
+          cp.hit = true;
+        }
+      }
+      if (cp.hit) hitCount++;
+    });
+
+    if (hitCount === checkpointsRef.current.length) {
+      setAllCheckpointsHit(true);
+    }
+  };
+
+  const handlePointerUp = (e: React.PointerEvent<HTMLCanvasElement>) => {
+    isDrawingRef.current = false;
+    e.currentTarget.releasePointerCapture(e.pointerId);
+
+    const allHit = checkpointsRef.current.every(cp => cp.hit);
+    if (allHit) {
+      handleTraceComplete();
+    }
   };
 
   const handleTraceComplete = () => {
     playSynthesizedSound("correct");
     confetti({
-      particleCount: 50,
+      particleCount: 60,
       spread: 60,
-      origin: { y: 0.7 },
+      origin: { y: 0.75 },
       colors: ["#ff85a1", "#ffd166", "#3fa394", "#ffffff"]
     });
 
     setTimeout(() => {
-      if (activeTemplateIdx < guideTemplates.length - 1) {
+      if (activeTemplateIdx < tracingTemplates.length - 1) {
         setActiveTemplateIdx(prev => prev + 1);
-        setPoints([]);
       } else {
         handleGameComplete();
       }
@@ -246,15 +377,14 @@ export default function MarkMakerEngine({ childId, onBack }: { childId: string; 
     }
   };
 
-  // Convert point array to SVG path
-  const getRenderPath = () => {
-    if (points.length === 0) return "";
-    let d = `M ${points[0].x},${points[0].y}`;
-    for (let i = 1; i < points.length; i++) {
-      d += ` L ${points[i].x},${points[i].y}`;
-    }
-    return d;
+  const handleClear = () => {
+    playSynthesizedSound("click");
+    drawnStrokes.current = [];
+    checkpointsRef.current.forEach(cp => cp.hit = false);
+    setAllCheckpointsHit(false);
   };
+
+  const activeParentPrompt = template ? `Ask your child: "Can you trace the outline of the ${template.name}? What shape does it make?"` : "";
 
   return (
     <div className="flex flex-col w-full max-w-4xl mx-auto h-full min-h-0 bg-[#fef5f6] p-4 rounded-[2.5rem] border-[3px] border-white/50 shadow-clay-card relative overflow-hidden select-none">
@@ -276,22 +406,19 @@ export default function MarkMakerEngine({ childId, onBack }: { childId: string; 
         </ClayButton>
 
         <h1 className="text-xl sm:text-2xl font-black uppercase text-[#4A5358] tracking-wider flex items-center gap-2">
-          <Lightbulb size={24} className="text-[#e07383]" strokeWidth={3.5} />
-          Mark Maker
+          <PenTool size={24} className="text-[#e07383]" strokeWidth={3.5} />
+          Trace & Color
         </h1>
 
         <div className="bg-white/80 border-2 border-white/40 shadow-inner px-4 py-2 rounded-full font-black text-[#e07383] text-sm tracking-wide">
-          {phase === "instructions" || phase === "timer" ? "BALANCE 🦩" : `TRACE ${activeTemplateIdx + 1}/3 ✏️`}
+          TRACE {activeTemplateIdx + 1}/{tracingTemplates.length} ✏️
         </div>
       </div>
 
       {/* Parental Co-Play Banner */}
       <div className="bg-[#f7c2b3]/70 border-2 border-white/50 text-[#732010] p-3 rounded-2xl mb-4 text-center font-bold text-xs sm:text-sm shadow-[inset_-2px_-2px_4px_rgba(0,0,0,0.02),_inset_2px_2px_4px_rgba(255,255,255,0.8)] leading-snug shrink-0">
         <span className="text-[10px] font-black uppercase tracking-wider text-[#e07383] block mb-0.5">🧑‍🍼 Parent & Child Co-Play Option</span>
-        {phase === "instructions" || phase === "timer" 
-          ? 'Encourage your child: "Let\'s stand on one foot together like a bird!"' 
-          : 'Praise trace progress: "Look at your beautiful glowing lines!"'
-        }
+        {activeParentPrompt}
       </div>
 
       {/* Success Modal */}
@@ -314,7 +441,7 @@ export default function MarkMakerEngine({ childId, onBack }: { childId: string; 
               </div>
               <h2 className="text-3xl font-black text-[#732010] tracking-wide uppercase">Drawing Complete!</h2>
               <p className="text-sm font-bold text-[#732010]/80 leading-relaxed">
-                {"Super drawing and balancing! You've earned the Mark Maker Badge!"}
+                Super tracing! You earned the Trace & Color Badge!
               </p>
 
               <ClayButton
@@ -332,53 +459,17 @@ export default function MarkMakerEngine({ childId, onBack }: { childId: string; 
       {/* Active Phase Display */}
       <div className="flex-grow flex flex-col justify-between min-h-0 relative z-10">
 
-        {/* Phase 1: Instruction & Flamingo Animation */}
-        {(phase === "instructions" || phase === "timer") && (
-          <div className="flex-grow flex flex-col items-center justify-center gap-6">
-            <motion.div
-              animate={{
-                y: [0, -10, 0],
-                rotate: [0, 2, -2, 0]
-              }}
-              transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
-              className="text-8xl select-none filter drop-shadow-lg"
-            >
-              🦩
-            </motion.div>
-
-            {phase === "instructions" ? (
-              <ClayButton
-                variant="primary"
-                onClick={() => {
-                  setPhase("timer");
-                  runCountdown();
-                }}
-                className="px-8 py-5 text-xl font-black rounded-full shadow-clay-pink toddler-target"
-              >
-                {"Let's Start! ⏰"}
-              </ClayButton>
-            ) : (
-              <div className="flex flex-col items-center gap-2">
-                <span className="text-2xl font-black text-[#732010] uppercase">Stand on one foot!</span>
-                <motion.div
-                  key={countdown}
-                  initial={{ scale: 0.5, opacity: 0 }}
-                  animate={{ scale: 1.5, opacity: 1 }}
-                  className="text-7xl font-black text-[#e07383] mt-2"
-                >
-                  {countdown}
-                </motion.div>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Phase 2: Drawing Canvas */}
+        {/* Phase: Drawing Canvas */}
         {phase === "drawing" && (
           <div className="flex-grow flex flex-col items-center justify-between min-h-0">
-            {/* Guide Name */}
-            <div className="text-center mb-2 shrink-0">
-              <span className="text-sm font-black text-[#732010] uppercase tracking-wide">
+            {/* Reference Example Card */}
+            <div className="flex flex-col items-center gap-1.5 mb-3 shrink-0">
+              {TemplateIcon && (
+                <div className="w-14 h-14 bg-white rounded-2xl border-[3px] border-white/50 shadow-clay-card flex items-center justify-center p-2.5 hover:scale-105 transition-transform duration-200">
+                  <TemplateIcon size={38} animClass="anim-breathe" />
+                </div>
+              )}
+              <span className="text-xs sm:text-sm font-black text-[#732010] uppercase tracking-wider">
                 Trace the: {template.name}
               </span>
             </div>
@@ -389,64 +480,66 @@ export default function MarkMakerEngine({ childId, onBack }: { childId: string; 
               {/* Brushed texture overlay inside canvas */}
               <div className="absolute inset-0 bg-noise opacity-15 pointer-events-none" />
 
+              {/* Hidden SVG for path length calculations */}
+              <svg width="0" height="0" className="absolute pointer-events-none">
+                <path ref={svgPathRef} d={template.d} />
+              </svg>
+
+              {/* Template background drawing */}
               <svg
-                ref={svgRef}
                 viewBox="0 0 300 300"
-                className="w-full h-full relative z-10 touch-none"
+                className="absolute inset-0 w-full h-full pointer-events-none z-10"
+              >
+                {/* Watermark and Scaled Guide Path */}
+                <g transform="translate(22, 22) scale(8)">
+                  {TemplateIcon && (
+                    <g className="opacity-15 pointer-events-none">
+                      <TemplateIcon size="32" animClass="" />
+                    </g>
+                  )}
+                  
+                  <g transform="translate(2, 2) scale(0.875)">
+                    {/* Dark Guide Track Underlay */}
+                    <path
+                      d={template.d}
+                      fill="none"
+                      stroke="#484d54"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    {/* Glowing Dotted Guide Stroke */}
+                    <path
+                      d={template.d}
+                      fill="none"
+                      stroke={template.color}
+                      strokeWidth="1.2"
+                      strokeDasharray="1.5 2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="opacity-90"
+                    />
+                  </g>
+                </g>
+              </svg>
+
+              {/* Interactive Canvas Overlay */}
+              <canvas
+                ref={canvasRef}
+                width={500}
+                height={500}
+                className="w-full h-full absolute inset-0 cursor-crosshair touch-none z-20"
                 onPointerDown={handlePointerDown}
                 onPointerMove={handlePointerMove}
                 onPointerUp={handlePointerUp}
-              >
-                {/* Guide Dotted Path */}
-                <path
-                  d={template.d}
-                  fill="none"
-                  stroke="#565d68"
-                  strokeWidth="16"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <path
-                  d={template.d}
-                  fill="none"
-                  stroke={template.color}
-                  strokeWidth="8"
-                  strokeDasharray="10 12"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="opacity-75"
-                />
-
-                {/* User Drawn Path (Thick Neon Glowing brush) */}
-                <path
-                  d={getRenderPath()}
-                  fill="none"
-                  stroke="#ff85a1"
-                  strokeWidth="14"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="opacity-95 blur-[2px]"
-                  style={{ filter: "drop-shadow(0px 0px 8px #ff85a1)" }}
-                />
-                <path
-                  d={getRenderPath()}
-                  fill="none"
-                  stroke="#ffffff"
-                  strokeWidth="8"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
+              />
 
               {/* Drawing reset button */}
-              <div className="absolute bottom-4 right-4 z-20">
+              <div className="absolute bottom-4 right-4 z-30">
                 <ClayButton
                   variant="surface"
                   size="sm"
-                  onClick={() => {
-                    playSynthesizedSound("click");
-                    setPoints([]);
-                  }}
+                  onClick={handleClear}
                   className="p-3 shadow-md bg-white/90"
                 >
                   Clear 🔄
@@ -460,7 +553,7 @@ export default function MarkMakerEngine({ childId, onBack }: { childId: string; 
               <ClayButton
                 variant="surface"
                 size="sm"
-                onClick={() => speakText("Draw along the path!")}
+                onClick={() => speakText(`Draw along the outline of the ${template.name}!`)}
                 className="p-1.5 bg-[#fef5f6] rounded-full"
               >
                 <Volume2 size={18} className="text-[#e07383]" strokeWidth={3.5} />
