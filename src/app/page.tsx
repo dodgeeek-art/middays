@@ -20,6 +20,10 @@ import SortingBasketEngine from "@/components/SortingBasketEngine";
 import WhereIsBunnyEngine from "@/components/WhereIsBunnyEngine";
 import StorySequenceEngine from "@/components/StorySequenceEngine";
 import MarkMakerEngine from "@/components/MarkMakerEngine";
+import PatternExplorerEngine from "@/components/PatternExplorerEngine";
+import ClayAlchemyEngine from "@/components/ClayAlchemyEngine";
+import MazeRouterEngine from "@/components/MazeRouterEngine";
+import SymmetryPainterEngine from "@/components/SymmetryPainterEngine";
 
 import { motion, AnimatePresence } from "framer-motion";
 import { Lock, Play, Trophy, Settings } from "@/components/Icons";
@@ -41,9 +45,47 @@ interface Child {
   progressRecord: ProgressRecord[];
 }
 
+const playSynthesizedSound = (type: "correct" | "click") => {
+  if (typeof window === "undefined") return;
+  try {
+    const AudioContextClass = window.AudioContext || (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+    if (!AudioContextClass) return;
+    const ctx = new AudioContextClass();
+    const now = ctx.currentTime;
+    
+    if (type === "correct") {
+      [523.25, 659.25].forEach((freq, idx) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(freq, now + idx * 0.08);
+        gain.gain.setValueAtTime(0.25, now + idx * 0.08);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + idx * 0.08 + 0.15);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(now + idx * 0.08);
+        osc.stop(now + idx * 0.08 + 0.16);
+      });
+    } else if (type === "click") {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(600, now);
+      gain.gain.setValueAtTime(0.1, now);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(now + 0.05);
+    }
+  } catch (e) {
+    console.error(e);
+  }
+};
+
 export default function Home() {
   const [view, setView] = useState<"lesson" | "dashboard" | "trophies">("lesson");
-  const [activeGame, setActiveGame] = useState<"menu" | "tracing" | "reveal" | "bubbles" | "monster" | "scavenger" | "rhyme" | "match" | "drummer" | "sorting" | "bunny" | "story" | "mark">("menu");
+  const [activeGame, setActiveGame] = useState<"menu" | "tracing" | "reveal" | "bubbles" | "monster" | "scavenger" | "rhyme" | "match" | "drummer" | "sorting" | "bunny" | "story" | "mark" | "pattern" | "alchemy" | "maze" | "symmetry">("menu");
   const [childId, setChildId] = useState<string | null>(null);
   const [childProgress, setChildProgress] = useState<Child | null>(null);
 
@@ -55,34 +97,12 @@ export default function Home() {
   // Parent Gate state
   const [pendingTab, setPendingTab] = useState<"trophies" | "dashboard" | null>(null);
   const [showGate, setShowGate] = useState(false);
-  const [holdProgress, setHoldProgress] = useState(0);
-  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const startGateTimer = () => {
-    if (timerRef.current) clearInterval(timerRef.current);
-    setHoldProgress(0);
-    const startTime = Date.now();
-    const duration = 3000; // 3 seconds hold as specified in Stitch DESIGN.md
-    timerRef.current = setInterval(() => {
-      const elapsed = Date.now() - startTime;
-      const progress = Math.min((elapsed / duration) * 100, 100);
-      setHoldProgress(progress);
-      if (progress >= 100) {
-        if (timerRef.current) clearInterval(timerRef.current);
-        timerRef.current = null;
-        if (pendingTab) setView(pendingTab);
-        setShowGate(false);
-        setPendingTab(null);
-      }
-    }, 50);
-  };
-
-  const stopGateTimer = () => {
-    if (timerRef.current) {
-      clearInterval(timerRef.current);
-      timerRef.current = null;
-    }
-    setHoldProgress(0);
+  const handleGateUnlock = () => {
+    playSynthesizedSound("correct");
+    if (pendingTab) setView(pendingTab);
+    setShowGate(false);
+    setPendingTab(null);
   };
 
   const handleTabClick = (tab: "lesson" | "trophies" | "dashboard") => {
@@ -282,6 +302,26 @@ export default function Home() {
                       <MarkMakerEngine childId={childId} onBack={() => setActiveGame("menu")} />
                     </motion.div>
                   )}
+                  {activeGame === "pattern" && (
+                    <motion.div key="pattern" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="h-full min-h-0 flex flex-col justify-center">
+                      <PatternExplorerEngine childId={childId} onBack={() => setActiveGame("menu")} />
+                    </motion.div>
+                  )}
+                  {activeGame === "alchemy" && (
+                    <motion.div key="alchemy" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="h-full min-h-0 flex flex-col justify-center">
+                      <ClayAlchemyEngine childId={childId} onBack={() => setActiveGame("menu")} />
+                    </motion.div>
+                  )}
+                  {activeGame === "maze" && (
+                    <motion.div key="maze" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="h-full min-h-0 flex flex-col justify-center">
+                      <MazeRouterEngine childId={childId} onBack={() => setActiveGame("menu")} />
+                    </motion.div>
+                  )}
+                  {activeGame === "symmetry" && (
+                    <motion.div key="symmetry" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="h-full min-h-0 flex flex-col justify-center">
+                      <SymmetryPainterEngine childId={childId} onBack={() => setActiveGame("menu")} />
+                    </motion.div>
+                  )}
                 </AnimatePresence>
               </motion.div>
             )}
@@ -368,7 +408,7 @@ export default function Home() {
         </nav>
       )}
 
-      {/* Parent Gate Modal with Lavender Theme & 3-Second Unlock */}
+      {/* Parent Gate Modal with Lavender Theme & Swipe Lock */}
       <AnimatePresence>
         {showGate && (
           <motion.div 
@@ -386,49 +426,40 @@ export default function Home() {
               className="p-8 max-w-sm w-full flex flex-col items-center gap-6 rounded-[2.5rem] border-white/30"
             >
               <h2 className="text-3xl font-black text-center text-[#4A5358] uppercase tracking-wide">Adults Only!</h2>
-              <p className="text-sm text-center font-black text-on-secondary-container">Press and hold the lock for 3 seconds to unlock.</p>
+              <p className="text-sm text-center font-black text-on-secondary-container">Swipe the Star ⭐ to the Circle ⭕ to unlock!</p>
               
-              <div className="relative w-36 h-36 flex items-center justify-center select-none">
-                {/* Hold progress circle outline */}
-                <svg className="absolute inset-0 w-full h-full -rotate-90">
-                  <circle 
-                    cx="72" 
-                    cy="72" 
-                    r="64" 
-                    stroke="rgba(0,0,0,0.04)" 
-                    strokeWidth="8" 
-                    fill="none" 
-                  />
-                  <circle 
-                    cx="72" 
-                    cy="72" 
-                    r="64" 
-                    stroke="var(--primary)" 
-                    strokeWidth="8" 
-                    fill="none" 
-                    strokeDasharray={2 * Math.PI * 64}
-                    strokeDashoffset={2 * Math.PI * 64 * (1 - holdProgress / 100)}
-                    strokeLinecap="round"
-                    className="transition-all duration-75"
-                  />
-                </svg>
+              <div className="w-full bg-slate-100/80 border-[3px] border-slate-200/50 rounded-full h-20 relative shadow-[inset_3px_3px_6px_rgba(0,0,0,0.05),_inset_-3px_-3px_6px_rgba(255,255,255,0.9)] flex items-center px-2 select-none overflow-hidden">
+                {/* Track guides */}
+                <div className="absolute inset-0 flex items-center justify-between px-6 pointer-events-none opacity-20">
+                  <span className="text-xl">⭐</span>
+                  <div className="flex-1 border-t-4 border-dashed border-slate-400 mx-4" />
+                  <span className="text-xl">⭕</span>
+                </div>
                 
-                <button
-                  onPointerDown={startGateTimer}
-                  onPointerUp={stopGateTimer}
-                  onPointerLeave={stopGateTimer}
-                  className={`w-24 h-24 rounded-full flex items-center justify-center transition-all duration-200 border border-white/20 relative active:scale-95 shadow-[6px_6px_12px_rgba(0,0,0,0.05),_inset_-4px_-4px_8px_rgba(0,0,0,0.05),_inset_4px_4px_8px_rgba(255,255,255,0.95)] hover:-translate-y-1.5 hover:shadow-[8px_14px_22px_rgba(0,0,0,0.08),_inset_-4px_-4px_8px_rgba(0,0,0,0.04),_inset_4px_4px_8px_rgba(255,255,255,0.95)] active:translate-y-1.5 active:shadow-[inset_-2px_-2px_4px_rgba(255,255,255,0.8),_inset_4px_4px_8px_rgba(0,0,0,0.15)] ${holdProgress >= 100 ? "bg-primary-container text-foreground animate-pulse" : "bg-tertiary-container text-foreground"}`}
-                  style={{
-                    boxShadow: holdProgress > 0 ? `0 0 20px var(--primary)` : undefined,
-                    touchAction: "none"
+                {/* Target Circle */}
+                <div className="absolute right-3 w-14 h-14 rounded-full border-4 border-dashed border-[#e07383] bg-white flex items-center justify-center text-2xl shadow-inner select-none pointer-events-none">
+                  ⭕
+                </div>
+
+                {/* Draggable Star */}
+                <motion.div
+                  drag="x"
+                  dragConstraints={{ left: 0, right: 200 }}
+                  dragElastic={0.1}
+                  dragMomentum={false}
+                  onDragEnd={(event, info) => {
+                    if (info.offset.x >= 150) {
+                      handleGateUnlock();
+                    }
                   }}
+                  className="w-14 h-14 rounded-full bg-white border-2 border-white/50 shadow-clay-btn hover:shadow-clay-btn-hover active:shadow-clay-btn-pressed flex items-center justify-center text-3xl cursor-grab active:cursor-grabbing z-10"
                 >
-                  <Lock size={40} strokeWidth={3} />
-                </button>
+                  ⭐
+                </motion.div>
               </div>
 
               <ClayButton 
-                onClick={() => { setShowGate(false); setPendingTab(null); }}
+                onClick={() => { playSynthesizedSound("click"); setShowGate(false); setPendingTab(null); }}
                 variant="surface"
                 className="mt-2 w-full py-4 text-xl font-black rounded-full"
               >

@@ -20,6 +20,29 @@ interface Child {
   progressRecord: ProgressRecord[];
 }
 
+const getCategory = (target: string): "Literacy" | "Logic" | "Fine Motor" => {
+  const t = target.toUpperCase();
+  if (["SORTING", "PATTERN", "STORY", "DRUMMER", "BUNNY", "LOGIC"].includes(t)) {
+    return "Logic";
+  }
+  if (["MARK", "MARKMAKER", "FINE_MOTOR"].includes(t)) {
+    return "Fine Motor";
+  }
+  return "Literacy";
+};
+
+const getActivityName = (target: string): string => {
+  const t = target.toUpperCase();
+  if (t === "STORY") return "3-Piece Sequence";
+  if (t === "PATTERN") return "Pattern Explorer";
+  if (t === "SORTING") return "Sorting Basket";
+  if (t === "MARK") return "Trace & Color";
+  if (t === "DRUMMER") return "Syllable Drummer";
+  if (t === "BUNNY") return "Animal Homes";
+  if (t.length === 1) return `Trace Letter ${t}`;
+  return t;
+};
+
 export default function ParentDashboard({ childId }: { childId?: string }) {
   const [data, setData] = useState<Child | null>(null);
 
@@ -55,6 +78,32 @@ export default function ParentDashboard({ childId }: { childId?: string }) {
   const totalTimeMs = data.progressRecord.reduce((acc, curr) => acc + curr.timeSpentMs, 0);
   const totalTimeMins = Math.round(totalTimeMs / 60000);
   const totalTimeStr = totalTimeMins > 0 ? `${totalTimeMins}m` : `${Math.round(totalTimeMs / 1000)}s`;
+
+  // Radar Chart Constants & Helpers
+  const cx = 150;
+  const cy = 135;
+  const maxR = 90;
+
+  const records = data.progressRecord;
+  const literacyScores = records.filter(r => getCategory(r.targetLetter) === "Literacy").map(r => r.tracingScore);
+  const logicScores = records.filter(r => getCategory(r.targetLetter) === "Logic").map(r => r.tracingScore);
+  const motorScores = records.filter(r => getCategory(r.targetLetter) === "Fine Motor").map(r => r.tracingScore);
+
+  const avgLiteracy = literacyScores.length > 0 ? Math.round(literacyScores.reduce((a, b) => a + b, 0) / literacyScores.length) : 85;
+  const avgLogic = logicScores.length > 0 ? Math.round(logicScores.reduce((a, b) => a + b, 0) / logicScores.length) : 80;
+  const avgMotor = motorScores.length > 0 ? Math.round(motorScores.reduce((a, b) => a + b, 0) / motorScores.length) : 90;
+
+  const getCoordinates = (literacy: number, logic: number, motor: number) => {
+    const rLit = (literacy / 100) * maxR;
+    const rLog = (logic / 100) * maxR;
+    const rMot = (motor / 100) * maxR;
+    
+    const pLit = { x: cx, y: cy - rLit };
+    const pLog = { x: cx + rLog * Math.cos(Math.PI / 6), y: cy + rLog * Math.sin(Math.PI / 6) };
+    const pMot = { x: cx - rMot * Math.cos(Math.PI / 6), y: cy + rMot * Math.sin(5 * Math.PI / 6) };
+    
+    return `${pLit.x},${pLit.y} ${pLog.x},${pLog.y} ${pMot.x},${pMot.y}`;
+  };
 
   // Animation variants
   const containerVariants = {
@@ -122,6 +171,122 @@ export default function ParentDashboard({ childId }: { childId?: string }) {
         </ClayCard>
       </div>
 
+      {/* Developmental Progress & Weekly Analytics */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-12">
+        {/* Left: Radar Chart */}
+        <ClayCard className="p-6 bg-white border border-white/20 rounded-[2.5rem] shadow-clay-card flex flex-col items-center justify-center">
+          <h3 className="text-xl font-black text-[#4A5358] uppercase mb-4 tracking-wide self-start pl-2">Developmental Radar</h3>
+          <div className="relative w-full max-w-[320px] aspect-square flex items-center justify-center">
+            <svg viewBox="0 0 300 270" className="w-full h-full overflow-visible">
+              {/* Concentric grid lines */}
+              {[0.2, 0.4, 0.6, 0.8, 1].map((scale) => {
+                const r = maxR * scale;
+                const p1 = { x: cx, y: cy - r };
+                const p2 = { x: cx + r * Math.cos(Math.PI / 6), y: cy + r * Math.sin(Math.PI / 6) };
+                const p3 = { x: cx - r * Math.cos(Math.PI / 6), y: cy + r * Math.sin(5 * Math.PI / 6) };
+                return (
+                  <polygon
+                    key={scale}
+                    points={`${p1.x},${p1.y} ${p2.x},${p2.y} ${p3.x},${p3.y}`}
+                    fill="none"
+                    stroke="rgba(74,83,88,0.08)"
+                    strokeWidth="1.5"
+                    strokeDasharray={scale === 1 ? undefined : "3 3"}
+                  />
+                );
+              })}
+              
+              {/* Axis lines */}
+              {[Math.PI / 6, 5 * Math.PI / 6, -Math.PI / 2].map((angle, i) => {
+                const x2 = cx + maxR * Math.cos(angle);
+                const y2 = cy + maxR * Math.sin(angle);
+                return (
+                  <line
+                    key={i}
+                    x1={cx}
+                    y1={cy}
+                    x2={x2}
+                    y2={y2}
+                    stroke="rgba(74,83,88,0.12)"
+                    strokeWidth="1.5"
+                  />
+                );
+              })}
+
+              {/* Labels */}
+              <text x={cx} y={cy - maxR - 10} textAnchor="middle" className="text-[11px] font-black fill-[#ff85a1] uppercase">Literacy ({avgLiteracy}%)</text>
+              <text x={cx + maxR * Math.cos(Math.PI / 6) + 5} y={cy + maxR * Math.sin(Math.PI / 6) + 12} textAnchor="start" className="text-[11px] font-black fill-[#4ecdc4] uppercase">Logic ({avgLogic}%)</text>
+              <text x={cx - maxR * Math.cos(Math.PI / 6) - 5} y={cy + maxR * Math.sin(5 * Math.PI / 6) + 12} textAnchor="end" className="text-[11px] font-black fill-[#ffd166] uppercase">Fine Motor ({avgMotor}%)</text>
+
+              {/* Data area */}
+              <polygon
+                points={getCoordinates(avgLiteracy, avgLogic, avgMotor)}
+                fill="rgba(224, 115, 131, 0.25)"
+                stroke="#e07383"
+                strokeWidth="3.5"
+                strokeLinejoin="round"
+                className="drop-shadow-md"
+              />
+              
+              {/* Data points */}
+              {(() => {
+                const rLit = (avgLiteracy / 100) * maxR;
+                const rLog = (avgLogic / 100) * maxR;
+                const rMot = (avgMotor / 100) * maxR;
+                const pts = [
+                  { x: cx, y: cy - rLit, color: "#ff85a1" },
+                  { x: cx + rLog * Math.cos(Math.PI / 6), y: cy + rLog * Math.sin(Math.PI / 6), color: "#4ecdc4" },
+                  { x: cx - rMot * Math.cos(Math.PI / 6), y: cy + rMot * Math.sin(5 * Math.PI / 6), color: "#ffd166" }
+                ];
+                return pts.map((pt, i) => (
+                  <circle
+                    key={i}
+                    cx={pt.x}
+                    cy={pt.y}
+                    r="5"
+                    fill="white"
+                    stroke={pt.color}
+                    strokeWidth="3.5"
+                    className="shadow-sm"
+                  />
+                ));
+              })()}
+            </svg>
+          </div>
+        </ClayCard>
+
+        {/* Right: Weekly Analytics Summary */}
+        <div className="flex flex-col gap-6">
+          <div className="grid grid-cols-2 gap-4">
+            {/* Play Streak Card */}
+            <ClayCard variant="primary" hoverEffect className="p-5 flex flex-col justify-between h-36">
+              <span className="text-2xl">🔥</span>
+              <div>
+                <h4 className="text-xs font-black uppercase text-[#590d22]/60 tracking-wider">Play Streak</h4>
+                <p className="text-2xl font-black text-[#e07383]">5 Days</p>
+              </div>
+            </ClayCard>
+
+            {/* Badges Card */}
+            <ClayCard variant="secondary" hoverEffect className="p-5 flex flex-col justify-between h-36">
+              <span className="text-2xl">🏅</span>
+              <div>
+                <h4 className="text-xs font-black uppercase text-[#0b4a45]/60 tracking-wider">Badges Earned</h4>
+                <p className="text-2xl font-black text-[#3fa394]">{Math.max(1, totalSessions)} Badges</p>
+              </div>
+            </ClayCard>
+          </div>
+
+          {/* Activity Focus Card */}
+          <ClayCard variant="tertiary" className="p-6 flex-grow flex flex-col justify-center">
+            <h4 className="text-sm font-black uppercase text-[#5c4d00]/70 tracking-wider mb-2">Development Focus</h4>
+            <p className="text-sm font-bold text-[#4A5358]/85 leading-relaxed">
+              {data.name || "Your child"} has made massive strides in <span className="font-extrabold text-[#e07383]">Fine Motor</span> drawing accuracy this week! Focus next on <span className="font-extrabold text-[#3fa394]">Logic & Sequencing</span> (like Pattern Explorer) to balance their milestone chart.
+            </p>
+          </ClayCard>
+        </div>
+      </div>
+
       {/* Session History Section */}
       <motion.div variants={itemVariants} className="mb-12">
         <div className="flex justify-between items-center mb-6 px-2">
@@ -157,7 +322,7 @@ export default function ParentDashboard({ childId }: { childId?: string }) {
                     <BookOpen size={24} className="text-[#4a5358]" strokeWidth={2.5} />
                   </div>
                   <div className="flex flex-col gap-0.5">
-                    <span className="text-sm font-black text-[#4A5358]">Trace Letter {record.targetLetter}</span>
+                    <span className="text-sm font-black text-[#4A5358]">{getActivityName(record.targetLetter)}</span>
                     <span className="text-xs font-bold text-[#4A5358]/55">
                       {new Date(record.createdAt).toLocaleDateString(undefined, { 
                         month: 'short', 

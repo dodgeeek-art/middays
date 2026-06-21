@@ -535,5 +535,38 @@ body::before {
   animation: sparkle-float 3.8s infinite ease-in-out 2.1s;
 }
 
+/* Reusable Claymorphic animation utility classes */
+@keyframes clay-bounce {
+  0%, 100% { transform: scale(1) translateY(0); }
+  30% { transform: scale(1.08, 0.92) translateY(0); }
+  50% { transform: scale(0.92, 1.08) translateY(-10px); }
+  70% { transform: scale(1.03, 0.97) translateY(0); }
+}
+.animate-clay-bounce {
+  animation: clay-bounce 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+@keyframes clay-shake {
+  0%, 100% { transform: translateX(0) rotate(0); }
+  15% { transform: translateX(-8px) rotate(-1.5deg); }
+  30% { transform: translateX(6px) rotate(1deg); }
+  45% { transform: translateX(-5px) rotate(-1deg); }
+  60% { transform: translateX(4px) rotate(0.5deg); }
+  75% { transform: translateX(-2px) rotate(-0.5deg); }
+}
+.animate-clay-shake {
+  animation: clay-shake 0.5s ease-in-out;
+}
+
+@keyframes sparkle-fade {
+  0% { transform: scale(0) rotate(0deg); opacity: 0; }
+  50% { transform: scale(1.2) rotate(90deg); opacity: 1; }
+  100% { transform: scale(0) rotate(180deg); opacity: 0; }
+}
+.animate-sparkle-fade {
+  animation: sparkle-fade 1.5s ease-out infinite;
+}
+
+
 
 

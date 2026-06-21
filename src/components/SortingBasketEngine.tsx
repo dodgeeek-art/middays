@@ -497,13 +497,14 @@ export default function SortingBasketEngine({ childId, onBack }: SortingBasketEn
       <div className="flex items-center justify-between gap-2 mb-3 shrink-0">
         <ClayButton
           variant="surface"
-          size="sm"
+          size="icon"
+          className="min-w-[64px] min-h-[64px]"
           onClick={() => {
             playSynthesizedSound("click");
             onBack();
           }}
         >
-          <ArrowLeft size={24} strokeWidth={3.5} />
+          <ArrowLeft size={28} strokeWidth={3.5} />
         </ClayButton>
 
         {/* Integrated Progress Dots Container - Acts as the centered layout element */}

@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import ClayCard from '@/components/ui/ClayCard';
 import ClayButton from '@/components/ui/ClayButton';
 import MascotSVG from '@/components/MascotSVG';
-import { CartoonSVG } from '@/lib/svgDictionary';
+import { CartoonSVG, vocabularyList } from '@/lib/svgDictionary';
 import { 
   PenTool, 
   Eraser, 
@@ -22,12 +22,12 @@ import {
 
 interface ActivitiesMenuProps {
   onSelectActivity: (
-    activity: "tracing" | "reveal" | "bubbles" | "monster" | "scavenger" | "rhyme" | "match" | "drummer" | "sorting" | "bunny" | "story" | "mark"
+    activity: "tracing" | "reveal" | "bubbles" | "monster" | "scavenger" | "rhyme" | "match" | "drummer" | "sorting" | "bunny" | "story" | "mark" | "pattern" | "alchemy" | "maze" | "symmetry"
   ) => void;
 }
 
 interface ActivityItem {
-  id: "tracing" | "reveal" | "bubbles" | "monster" | "scavenger" | "scavenger-advanced" | "rhyme" | "match" | "drummer" | "sorting" | "bunny" | "story" | "mark";
+  id: "tracing" | "reveal" | "bubbles" | "monster" | "scavenger" | "scavenger-advanced" | "rhyme" | "match" | "drummer" | "sorting" | "bunny" | "story" | "mark" | "pattern" | "alchemy" | "maze" | "symmetry";
   name: string;
   subtitle: string;
   clayVariant: "primary" | "secondary" | "tertiary" | "purple" | "blue" | "lime" | "peach" | "glass";
@@ -120,6 +120,40 @@ const PaletteIcon = (props: any) => (
     <Lightbulb size="100%" className="text-[#e0c11b]" />
   </CartoonSVG>
 );
+
+const PatternIcon = (props: any) => (
+  <CartoonSVG animClass="anim-sway" {...props}>
+    <Grid size="100%" className="text-[#9e7bf5]" />
+  </CartoonSVG>
+);
+
+const SymmetryIcon = (props: any) => {
+  const ButterflyIcon = vocabularyList.find(v => v.name === "Butterfly")?.icon || Sparkles;
+  return (
+    <CartoonSVG animClass="anim-sway" {...props}>
+      <ButterflyIcon size="100%" />
+    </CartoonSVG>
+  );
+};
+
+const AlchemyIcon = (props: any) => {
+  const KoalaIcon = vocabularyList.find(v => v.name === "Koala")?.icon || Smile;
+  return (
+    <CartoonSVG animClass="anim-float" {...props}>
+      <KoalaIcon size="100%" />
+    </CartoonSVG>
+  );
+};
+
+const MazeIcon = (props: any) => {
+  const AlligatorIcon = vocabularyList.find(v => v.name === "Alligator")?.icon || Grid;
+  return (
+    <CartoonSVG animClass="anim-breathe" {...props}>
+      <AlligatorIcon size="100%" />
+    </CartoonSVG>
+  );
+};
+
 
 
 export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps) {
@@ -296,6 +330,58 @@ export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps
       benefit: "Writing",
       glowColor: "shadow-[0_20px_50px_rgba(245,228,163,0.18)] hover:shadow-[0_25px_60px_rgba(245,228,163,0.3)]",
       gradient: "from-[#f5e4a3]/40 to-[#ebd787]/30"
+    },
+    { 
+      id: "pattern", 
+      name: "Patterns", 
+      subtitle: "Pattern Explorer",
+      clayVariant: "glass",
+      textColor: "text-[#42236b]",
+      disabled: false,
+      floatDuration: 4.8,
+      colSpan: "col-span-1",
+      benefit: "Logic",
+      glowColor: "shadow-[0_20px_50px_rgba(221,203,245,0.14)] hover:shadow-[0_25px_60px_rgba(221,203,245,0.25)]",
+      gradient: "from-[#ddcbf5]/40 to-[#ceb5f2]/30"
+    },
+    { 
+      id: "alchemy", 
+      name: "Alchemy", 
+      subtitle: "Clay Alchemy",
+      clayVariant: "glass",
+      textColor: "text-[#0d4036]",
+      disabled: false,
+      floatDuration: 4.7,
+      colSpan: "col-span-1",
+      benefit: "Color Logic",
+      glowColor: "shadow-[0_20px_50px_rgba(63,163,148,0.14)] hover:shadow-[0_25px_60px_rgba(63,163,148,0.25)]",
+      gradient: "from-[#c3e6dc]/40 to-[#a3d9cf]/30"
+    },
+    { 
+      id: "maze", 
+      name: "Maze", 
+      subtitle: "Maze Router",
+      clayVariant: "glass",
+      textColor: "text-[#42236b]",
+      disabled: false,
+      floatDuration: 5.3,
+      colSpan: "col-span-1",
+      benefit: "Spatial Logic",
+      glowColor: "shadow-[0_20px_50px_rgba(221,203,245,0.18)] hover:shadow-[0_25px_60px_rgba(221,203,245,0.3)]",
+      gradient: "from-[#ddcbf5]/40 to-[#ceb5f2]/30"
+    },
+    { 
+      id: "symmetry", 
+      name: "Symmetry", 
+      subtitle: "Symmetry Painter",
+      clayVariant: "glass",
+      textColor: "text-[#5e1c22]",
+      disabled: false,
+      floatDuration: 4.2,
+      colSpan: "col-span-2 sm:col-span-1 md:col-span-2",
+      benefit: "Symmetry",
+      glowColor: "shadow-[0_20px_50px_rgba(247,194,179,0.18)] hover:shadow-[0_25px_60px_rgba(247,194,179,0.3)]",
+      gradient: "from-[#f7c2b3]/40 to-[#f9b5a2]/30"
     }
   ];
 
@@ -305,10 +391,10 @@ export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps
       return ["tracing", "reveal", "bubbles", "monster", "scavenger", "scavenger-advanced"].includes(act.id);
     }
     if (activeCategory === "logic") {
-      return ["match", "drummer", "sorting", "bunny"].includes(act.id);
+      return ["match", "drummer", "sorting", "bunny", "pattern", "maze"].includes(act.id);
     }
     if (activeCategory === "creative") {
-      return ["story", "mark"].includes(act.id);
+      return ["story", "mark", "alchemy", "symmetry"].includes(act.id);
     }
     return true;
   });
@@ -333,6 +419,10 @@ export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps
       case "bunny": return <BunnyIcon {...props} style={{ animationDuration: `${floatDuration}s` }} />;
       case "story": return <BookIcon {...props} style={{ animationDuration: `${floatDuration}s` }} />;
       case "mark": return <PaletteIcon {...props} style={{ animationDuration: `${floatDuration}s` }} />;
+      case "pattern": return <PatternIcon {...props} style={{ animationDuration: `${floatDuration}s` }} />;
+      case "alchemy": return <AlchemyIcon {...props} style={{ animationDuration: `${floatDuration}s` }} />;
+      case "maze": return <MazeIcon {...props} style={{ animationDuration: `${floatDuration}s` }} />;
+      case "symmetry": return <SymmetryIcon {...props} style={{ animationDuration: `${floatDuration}s` }} />;
       default: return null;
     }
   };
@@ -457,7 +547,7 @@ export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps
                 if (act.id === "scavenger-advanced") {
                   router.push("/advanced-search");
                 } else {
-                  onSelectActivity(act.id as "tracing" | "reveal" | "bubbles" | "monster" | "scavenger" | "rhyme" | "match" | "drummer" | "sorting" | "bunny" | "story" | "mark");
+                  onSelectActivity(act.id as "tracing" | "reveal" | "bubbles" | "monster" | "scavenger" | "rhyme" | "match" | "drummer" | "sorting" | "bunny" | "story" | "mark" | "pattern" | "alchemy" | "maze" | "symmetry");
                 }
               }}
               className={`relative overflow-visible p-5 sm:p-6 flex flex-col justify-between h-full w-full select-none cursor-pointer border-white/40 border-[3px] ${act.glowColor} ${act.disabled ? "opacity-60 saturate-50 cursor-not-allowed" : ""}`}

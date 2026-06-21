@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 import { vocabularyList, VocabularyItem } from "@/lib/svgDictionary";
 import MascotSVG from "./MascotSVG";
+import ClayButton from "@/components/ui/ClayButton";
 
 interface SoundScavengerEngineProps {
   childId: string;
@@ -239,14 +240,15 @@ export default function SoundScavengerEngine({ childId, onBack }: SoundScavenger
     <div className="w-full max-w-3xl mx-auto p-3 sm:p-6 clay-card border border-white/20 flex flex-col items-center justify-between h-full min-h-0 relative overflow-hidden">
       {/* Top Bar */}
       <div className="w-full flex justify-between items-center mb-3 sm:mb-4 z-10">
-        <button
+        <ClayButton
+          variant="surface"
+          size="icon"
+          className="min-w-[64px] min-h-[64px]"
           onClick={onBack}
-          className="flex items-center gap-2 font-black text-xs uppercase px-4 py-2 bg-white border border-white/20 rounded-full clay-btn hover:scale-102 active:scale-96 transition-all cursor-pointer shadow-[3px_3px_6px_rgba(0,0,0,0.04)]"
         >
-          <ArrowLeft className="w-4 h-4 text-[#4A5358]" />
-          <span>Back</span>
-        </button>
-        <span className="text-[10px] font-black uppercase tracking-wider text-[#0b4a45]/80 bg-[#bfdbfe]/50 px-3 py-1.5 rounded-full border border-white/20">
+          <ArrowLeft size={28} strokeWidth={3.5} />
+        </ClayButton>
+        <span className="text-[10px] font-black uppercase tracking-wider text-[#0b4a45]/80 bg-[#bfdbfe]/50 px-4 py-2 rounded-full border border-white/20">
           Sound Scavenger
         </span>
       </div>
@@ -279,52 +281,65 @@ export default function SoundScavengerEngine({ childId, onBack }: SoundScavenger
         </div>
       </div>
 
-      {/* Grid of Choices */}
-      <div className="w-full grid grid-cols-3 gap-3 sm:gap-6 z-10">
-        <AnimatePresence>
-          {roundData.choices.map((choice, idx) => {
-            const isWrong = wrongSelections.includes(idx);
-            const isSelected = selectedIdx === idx;
-            
-            return (
-              <motion.button
-                key={choice.letter + "-" + idx}
-                whileHover={gameState === "playing" && !isWrong ? { scale: 1.03 } : {}}
-                whileTap={gameState === "playing" && !isWrong ? { scale: 0.97 } : {}}
-                onClick={() => handleChoiceClick(idx)}
-                disabled={gameState !== "playing" || isWrong}
-                className={`relative aspect-square rounded-[2rem] border border-white/20 p-2.5 sm:p-4 flex flex-col items-center justify-center transition-all duration-300 ${
-                  isWrong 
-                    ? "bg-[#E8E4D9]/20 border-white/20 opacity-30 cursor-default" 
-                    : isSelected 
-                      ? "bg-[#d2f4e6] shadow-[4px_4px_12px_rgba(78,205,196,0.25),_inset_3px_3px_6px_rgba(255,255,255,0.9),_inset_-3px_-3px_6px_rgba(0,0,0,0.03)]" 
-                      : "bg-white shadow-[4px_4px_10px_rgba(0,0,0,0.04),_inset_3px_3px_6px_rgba(255,255,255,0.9),_inset_-3px_-3px_6px_rgba(0,0,0,0.04)]"
-                }`}
-                animate={isWrong ? { rotate: [0, -6, 6, -6, 6, 0] } : {}}
-                transition={{ duration: 0.4 }}
-              >
-                {/* SVG Icon */}
-                <div className={`w-14 h-14 sm:w-28 sm:h-28 transition-transform duration-500 ${isSelected ? "scale-110" : ""}`}>
-                  {React.createElement(choice.icon, { size: "100%" })}
+      {/* Horizontal Scrollable Bento Collage of Choices */}
+      <div className="w-full flex-grow overflow-x-auto overflow-y-hidden pb-4 pt-2 px-1 snap-x snap-mandatory scrollbar-none flex items-center gap-4">
+        {roundData.choices.map((choice, idx) => {
+          const isWrong = wrongSelections.includes(idx);
+          const isSelected = selectedIdx === idx;
+          
+          const sizeClasses = [
+            "w-44 h-44 sm:w-56 sm:h-56 snap-center", // Large
+            "w-36 h-48 sm:w-48 sm:h-64 snap-center", // Tall
+            "w-36 h-36 sm:w-44 sm:h-44 snap-center", // Small
+            "w-48 h-40 sm:w-60 sm:h-52 snap-center", // Wide
+          ];
+          const bentoStyle = sizeClasses[idx % sizeClasses.length];
+
+          const cardColors = [
+            "bg-[#ffcad4] border-[#ffb3c1]/40", // Pink
+            "bg-[#c3f2ec] border-[#b2ebe2]/40", // Mint
+            "bg-[#f5e4a3] border-[#ebd787]/40", // Yellow
+            "bg-[#ddcbf5] border-[#ceb5f2]/40", // Purple
+            "bg-[#b5cce6] border-[#9cbcdb]/40", // Blue
+          ];
+          const cardColor = isWrong 
+            ? "bg-[#E8E4D9]/20 border-white/20 opacity-30" 
+            : isSelected 
+              ? "bg-[#d2f4e6] border-[#4ecdc4]/40" 
+              : cardColors[idx % cardColors.length];
+
+          return (
+            <motion.button
+              key={choice.letter + "-" + idx}
+              whileHover={gameState === "playing" && !isWrong ? { scale: 1.04, rotate: 1 } : {}}
+              whileTap={gameState === "playing" && !isWrong ? { scale: 0.95, y: 4 } : {}}
+              onClick={() => handleChoiceClick(idx)}
+              disabled={gameState !== "playing" || isWrong}
+              className={`flex-shrink-0 rounded-[2rem] border-[4px] p-4 flex flex-col items-center justify-center transition-all duration-300 relative shadow-clay-card ${bentoStyle} ${cardColor}`}
+              animate={isWrong ? { rotate: [0, -6, 6, -6, 6, 0] } : {}}
+              transition={{ duration: 0.4 }}
+            >
+              {/* SVG Icon */}
+              <div className={`w-[70%] h-[70%] flex items-center justify-center transition-transform duration-500 ${isSelected ? "scale-110" : ""}`}>
+                {React.createElement(choice.icon, { size: "100%" })}
+              </div>
+
+              {/* Subtitle name (appears on correct tap or after round) */}
+              <span className={`text-xs font-black uppercase tracking-wider mt-2 transition-opacity duration-300 ${
+                isSelected || gameState === "success" ? "opacity-100 text-[#4A5358]" : "opacity-0"
+              }`}>
+                {choice.name}
+              </span>
+
+              {/* Success Overlay Indicator */}
+              {isSelected && (
+                <div className="absolute top-4 right-4 bg-white border-2 border-slate-100 rounded-full p-1 shadow-md text-[#4ecdc4] animate-clay-bounce">
+                  <CheckCircle2 className="w-6 h-6 fill-[#d2f4e6] stroke-[#0b4a45]" strokeWidth={3.5} />
                 </div>
-
-                {/* Subtitle name (appears on correct tap or after round) */}
-                <span className={`text-[10px] sm:text-xs font-black uppercase tracking-wider mt-1 sm:mt-2 transition-opacity duration-300 ${
-                  isSelected || gameState === "success" ? "opacity-100 text-[#4A5358]" : "opacity-0"
-                }`}>
-                  {choice.name}
-                </span>
-
-                {/* Success Overlay Indicator */}
-                {isSelected && (
-                  <div className="absolute top-3 right-3 text-[#4ecdc4]">
-                    <CheckCircle2 className="w-6 h-6 fill-white stroke-[#4A5358]" strokeWidth={2.5} />
-                  </div>
-                )}
-              </motion.button>
-            );
-          })}
-        </AnimatePresence>
+              )}
+            </motion.button>
+          );
+        })}
       </div>
 
       {/* Ambient Zen Wave Decor */}

@@ -5,6 +5,7 @@ import { ArrowLeft, Music, Trophy } from "@/components/Icons";
 import { motion } from "framer-motion";
 import confetti from "canvas-confetti";
 import { objectDictionary } from "@/lib/svgDictionary";
+import ClayButton from "@/components/ui/ClayButton";
 
 interface SyllableDrummerEngineProps {
   childId: string;
@@ -53,7 +54,6 @@ export default function SyllableDrummerEngine({ childId, onBack }: SyllableDrumm
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
     
-    // Triangle wave + quick exponential decay makes it sound like a hollow wooden block
     osc.type = "triangle";
     osc.frequency.setValueAtTime(pitch, ctx.currentTime);
     osc.frequency.exponentialRampToValueAtTime(pitch * 0.5, ctx.currentTime + duration);
@@ -66,6 +66,86 @@ export default function SyllableDrummerEngine({ childId, onBack }: SyllableDrumm
     
     osc.start();
     osc.stop(ctx.currentTime + duration);
+  };
+
+  // Water drop frequency sweep tone
+  const playWaterDropSound = () => {
+    if (!audioCtxRef.current) return;
+    const ctx = audioCtxRef.current;
+    const now = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(300, now);
+    osc.frequency.exponentialRampToValueAtTime(1200, now + 0.15);
+    
+    gain.gain.setValueAtTime(0.3, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+    
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    
+    osc.start();
+    osc.stop(now + 0.16);
+  };
+
+  // Low bass thud kick tone
+  const playBassThudSound = () => {
+    if (!audioCtxRef.current) return;
+    const ctx = audioCtxRef.current;
+    const now = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(150, now);
+    osc.frequency.exponentialRampToValueAtTime(40, now + 0.2);
+    
+    gain.gain.setValueAtTime(0.5, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+    
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    
+    osc.start();
+    osc.stop(now + 0.21);
+  };
+
+  // Metallic cowbell detuned tone
+  const playCowbellSound = () => {
+    if (!audioCtxRef.current) return;
+    const ctx = audioCtxRef.current;
+    const now = ctx.currentTime;
+    
+    [540, 800].forEach((freq) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = "triangle";
+      osc.frequency.setValueAtTime(freq, now);
+      
+      gain.gain.setValueAtTime(0.18, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+      
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      
+      osc.start();
+      osc.stop(now + 0.26);
+    });
+  };
+
+  const playDrumSound = (idx: number) => {
+    initAudio();
+    if (idx === 0) {
+      playWoodBlockSound(400, 0.18);
+    } else if (idx === 1) {
+      playWaterDropSound();
+    } else if (idx === 2) {
+      playBassThudSound();
+    } else {
+      playCowbellSound();
+    }
   };
 
   const playSuccessChime = () => {
@@ -87,23 +167,21 @@ export default function SyllableDrummerEngine({ childId, onBack }: SyllableDrumm
       osc.stop(ctx.currentTime + start + 0.45);
     };
 
-    // Pentatonic rise
     playNote(440.00, 0); // A4
     playNote(554.37, 0.1); // C#5
     playNote(659.25, 0.2); // E5
     playNote(880.00, 0.3); // A5
   };
 
-  const handleDrumTap = () => {
+  const handleDrumTap = (idx: number) => {
     if (gameState !== "playing") return;
+    if (idx !== currentTapIdx) return;
     initAudio();
 
     setIsDrumActive(true);
     setTimeout(() => setIsDrumActive(false), 120);
 
-    // Play pitch depending on which syllable we are on
-    const pitch = 300 + currentTapIdx * 60;
-    playWoodBlockSound(pitch, 0.18);
+    playDrumSound(idx);
 
     // Speak the current syllable sound!
     const syllable = currentWord.syllables[currentTapIdx];
@@ -198,14 +276,15 @@ export default function SyllableDrummerEngine({ childId, onBack }: SyllableDrumm
     <div className="w-full max-w-3xl mx-auto p-3 sm:p-6 clay-card border border-white/20 flex flex-col items-center justify-between h-full min-h-0 relative overflow-hidden">
       {/* Top Bar */}
       <div className="w-full flex justify-between items-center mb-3 sm:mb-4 z-10">
-        <button
+        <ClayButton
+          variant="surface"
+          size="icon"
+          className="min-w-[64px] min-h-[64px]"
           onClick={onBack}
-          className="flex items-center gap-2 font-black text-xs uppercase px-4 py-2 bg-white border border-white/20 rounded-full clay-btn hover:scale-102 active:scale-96 transition-all cursor-pointer shadow-[3px_3px_6px_rgba(0,0,0,0.04)] text-[#4A5358]"
         >
-          <ArrowLeft className="w-4 h-4" />
-          <span>Back</span>
-        </button>
-        <span className="text-[10px] font-black uppercase tracking-wider text-[#3c1e70]/80 bg-[#e9d5ff]/60 px-3 py-1.5 rounded-full border border-white/20">
+          <ArrowLeft size={28} strokeWidth={3.5} />
+        </ClayButton>
+        <span className="text-[10px] font-black uppercase tracking-wider text-[#3c1e70]/80 bg-[#e9d5ff]/60 px-4 py-2 rounded-full border border-white/20">
           Syllable Drummer
         </span>
       </div>
@@ -266,26 +345,67 @@ export default function SyllableDrummerEngine({ childId, onBack }: SyllableDrumm
           })}
         </div>
 
-        {/* Large Wood Drum Pad */}
-        <button
-          onClick={handleDrumTap}
-          disabled={gameState !== "playing"}
-          className={`w-36 h-36 sm:w-48 sm:h-48 rounded-full border-4 border-white/40 bg-gradient-to-b from-[#fef5d1] to-[#ffd166] flex items-center justify-center relative shadow-[0_12px_24px_rgba(255,209,102,0.3),_inset_-6px_-6px_12px_rgba(0,0,0,0.06),_inset_6px_6px_12px_rgba(255,255,255,0.95)] active:shadow-[0_4px_8px_rgba(255,209,102,0.25),_inset_-3px_-3px_6px_rgba(255,255,255,0.9),_inset_4px_4px_8px_rgba(0,0,0,0.12)] active:translate-y-2 transition-all cursor-pointer ${
-            isDrumActive ? "brightness-95 scale-95" : ""
-          }`}
-          style={{ touchAction: "none" }}
-        >
-          {/* Inner ring */}
-          <div className="w-26 h-26 sm:w-36 sm:h-36 rounded-full border border-dashed border-white/40 flex items-center justify-center">
-            <span className="font-black text-white/70 uppercase tracking-widest text-xs">
-              TAP DRUM
-            </span>
-          </div>
-          
-          {/* Drum sticks visual decor */}
-          <div className="absolute top-2 left-6 w-1 h-12 sm:h-16 bg-white/15 rounded-full transform -rotate-45 pointer-events-none" />
-          <div className="absolute top-2 right-6 w-1 h-12 sm:h-16 bg-white/15 rounded-full transform rotate-45 pointer-events-none" />
-        </button>
+        {/* Colorful Clay Pot Drums */}
+        <div className="flex gap-4 justify-center items-end mt-4 w-full px-2">
+          {currentWord.syllables.map((syl, index) => {
+            const isPassed = index < currentTapIdx;
+            const isActive = index === currentTapIdx && gameState === "playing";
+            const isDisabled = index > currentTapIdx || gameState !== "playing";
+            
+            const drumColors = [
+              { bg: "bg-[#e07383] border-[#f2c1c6]", text: "text-white", labelBg: "bg-[#f2c1c6]" }, // primary
+              { bg: "bg-[#3fa394] border-[#c3e6dc]", text: "text-white", labelBg: "bg-[#c3e6dc]" }, // secondary
+              { bg: "bg-[#d4a919] border-[#f5e4a3]", text: "text-white", labelBg: "bg-[#f5e4a3]" }, // tertiary
+              { bg: "bg-[#9e7bf5] border-[#e9d5ff]", text: "text-white", labelBg: "bg-[#e9d5ff]" }, // purple
+            ];
+            
+            const color = drumColors[index % drumColors.length];
+            
+            return (
+              <motion.button
+                key={index}
+                onClick={() => handleDrumTap(index)}
+                disabled={isDisabled}
+                animate={isActive ? { scale: [1, 1.05, 1], y: [0, -6, 0] } : {}}
+                transition={isActive ? { repeat: Infinity, duration: 1.5, ease: "easeInOut" } : {}}
+                whileTap={isDisabled ? {} : { scale: 0.92, y: 4 }}
+                className={`w-20 sm:w-28 flex flex-col items-center relative transition-all duration-300 ${
+                  isDisabled && !isPassed ? "opacity-45" : "opacity-100"
+                }`}
+                style={{ touchAction: "none" }}
+              >
+                {/* Drum skin top (oval) */}
+                <div className="w-full h-6 sm:h-8 bg-[#fdfaf7] rounded-full border-[3px] border-slate-300 shadow-inner z-10 flex items-center justify-center relative overflow-hidden">
+                  {/* Visual beat ripple */}
+                  {isDrumActive && isActive && (
+                    <motion.div
+                      initial={{ scale: 0.5, opacity: 0.8 }}
+                      animate={{ scale: 1.2, opacity: 0 }}
+                      className="absolute inset-0 rounded-full bg-white/40 border border-white"
+                    />
+                  )}
+                </div>
+                
+                {/* Drum clay pot body */}
+                <div className={`w-[95%] -mt-3 h-20 sm:h-28 rounded-b-[1.75rem] rounded-t-[1rem] border-4 border-t-0 flex flex-col items-center justify-center shadow-clay-card ${color.bg} ${color.text} relative overflow-hidden`}>
+                  <span className="font-extrabold text-sm sm:text-lg tracking-wider opacity-90 uppercase">
+                    {syl}
+                  </span>
+                  
+                  {/* Decorative clay pattern */}
+                  <div className="w-full h-1 bg-white/20 mt-2 border-y border-white/5 opacity-50" />
+                </div>
+                
+                {/* Visual completion checkmark */}
+                {isPassed && (
+                  <div className="absolute top-8 bg-emerald-400 text-white rounded-full p-1 border-2 border-white shadow-md z-20">
+                    ✔️
+                  </div>
+                )}
+              </motion.button>
+            );
+          })}
+        </div>
 
       </div>
 
