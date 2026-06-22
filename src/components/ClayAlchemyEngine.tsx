@@ -290,11 +290,16 @@ export default function ClayAlchemyEngine({ childId, onBack }: { childId: string
     const cy = rect.top + rect.height / 2;
 
     const angle = Math.atan2(e.clientY - cy, e.clientX - cx);
-    const diff = Math.abs(angle - crankAngleRef.current);
-    if (diff > 0.05 && diff < 1.0) {
+    let delta = angle - crankAngleRef.current;
+    // Normalize delta to [-PI, PI] to handle boundary wrap-around
+    delta = Math.atan2(Math.sin(delta), Math.cos(delta));
+    const absDelta = Math.abs(delta);
+
+    if (absDelta > 0.05) {
       crankAngleRef.current = angle;
       setMixProgress(prev => {
-        const next = Math.min(100, prev + 1.2);
+        const increment = absDelta * 5.5; // Proportional progress (~3 full rotations)
+        const next = Math.min(100, prev + increment);
         if (Math.floor(next) > Math.floor(prev) && Math.floor(next) % 15 === 0) {
           playSynthesizedSound("blend");
         }

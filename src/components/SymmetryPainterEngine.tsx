@@ -413,13 +413,13 @@ export default function SymmetryPainterEngine({ childId, onBack }: { childId: st
             viewBox="0 0 300 300"
             className="absolute inset-0 w-full h-full pointer-events-none z-10"
           >
-            {/* Define the left-half and right-half clip paths */}
+            {/* Define the left-half and right-half clip paths in local coordinates */}
             <defs>
               <clipPath id="left-half-clip">
-                <rect x="0" y="0" width="150" height="300" />
+                <rect x="-10" y="-10" width="26" height="52" />
               </clipPath>
               <clipPath id="right-half-clip">
-                <rect x="150" y="0" width="150" height="300" />
+                <rect x="16" y="-10" width="26" height="52" />
               </clipPath>
             </defs>
 

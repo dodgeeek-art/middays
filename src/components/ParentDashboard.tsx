@@ -22,10 +22,10 @@ interface Child {
 
 const getCategory = (target: string): "Literacy" | "Logic" | "Fine Motor" => {
   const t = target.toUpperCase();
-  if (["SORTING", "PATTERN", "STORY", "DRUMMER", "BUNNY", "LOGIC"].includes(t)) {
+  if (["SORTING", "PATTERN", "STORY", "DRUMMER", "BUNNY", "LOGIC", "ALCH", "MAZE"].includes(t)) {
     return "Logic";
   }
-  if (["MARK", "MARKMAKER", "FINE_MOTOR"].includes(t)) {
+  if (["MARK", "MARKMAKER", "FINE_MOTOR", "SYMM"].includes(t)) {
     return "Fine Motor";
   }
   return "Literacy";
@@ -39,6 +39,9 @@ const getActivityName = (target: string): string => {
   if (t === "MARK") return "Trace & Color";
   if (t === "DRUMMER") return "Syllable Drummer";
   if (t === "BUNNY") return "Animal Homes";
+  if (t === "ALCH") return "Clay Alchemy";
+  if (t === "MAZE") return "Maze Router";
+  if (t === "SYMM") return "Symmetry Painter";
   if (t.length === 1) return `Trace Letter ${t}`;
   return t;
 };
