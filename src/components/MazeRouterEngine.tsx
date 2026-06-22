@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState, useEffect, useRef, useCallback } from "react";
-import { ArrowLeft, Volume2, Sparkles, Smile, RefreshCw } from "@/components/Icons";
+import React, { useState, useEffect, useCallback } from "react";
+import { ArrowLeft, Volume2, Smile } from "@/components/Icons";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 import ClayButton from "@/components/ui/ClayButton";
@@ -17,22 +17,54 @@ interface CellState {
   rotation: number; // 0, 90, 180, 270
 }
 
+type AnimalName =
+  | "Pig"
+  | "Alligator"
+  | "Bear"
+  | "Rabbit"
+  | "Whale"
+  | "Fox"
+  | "Frog"
+  | "Turtle"
+  | "Penguin";
+
+interface GoalOption {
+  label: string;
+  color: string;
+  animal: AnimalName;
+}
+
 interface MazeLevel {
   id: number;
-  targetName: "Pig" | "Alligator" | "Bear";
+  goals: [GoalOption, GoalOption, GoalOption];
   targetCol: 0 | 1 | 2;
-  marbleColor: string;
-  mascotSpeech: string;
   grid: CellState[][];
+}
+
+function FluentAnimalIcon({
+  name,
+  size = "100%",
+  animClass,
+  style,
+}: {
+  name: AnimalName;
+  size?: string | number;
+  animClass?: string;
+  style?: React.CSSProperties;
+}) {
+  const icon = vocabularyList.find(v => v.name === name)?.icon || Smile;
+  return React.createElement(icon, { size, animClass, style });
 }
 
 const levels: MazeLevel[] = [
   {
     id: 1,
-    targetName: "Pig",
+    goals: [
+      { label: "Pink", color: "#ff2a5f", animal: "Pig" },
+      { label: "Green", color: "#00d26a", animal: "Alligator" },
+      { label: "Brown", color: "#b25329", animal: "Bear" },
+    ],
     targetCol: 0,
-    marbleColor: "#ff758f", // Pink marble
-    mascotSpeech: "Help the Pig get the pink marble! Connect the pipes to the Pink Basket on the left!",
     grid: [
       [
         { type: "curved", rotation: 90 },    // Needs rotation 0
@@ -53,10 +85,12 @@ const levels: MazeLevel[] = [
   },
   {
     id: 2,
-    targetName: "Bear",
+    goals: [
+      { label: "Orange", color: "#ff7a1a", animal: "Fox" },
+      { label: "Blue", color: "#1f9bd7", animal: "Whale" },
+      { label: "Brown", color: "#b25329", animal: "Bear" },
+    ],
     targetCol: 2,
-    marbleColor: "#a06040", // Brown marble
-    mascotSpeech: "Help the Bear get the brown marble! Connect the pipes to the Brown Basket on the right!",
     grid: [
       [
         { type: "straight", rotation: 90 },
@@ -77,10 +111,12 @@ const levels: MazeLevel[] = [
   },
   {
     id: 3,
-    targetName: "Alligator",
+    goals: [
+      { label: "Yellow", color: "#f7c948", animal: "Rabbit" },
+      { label: "Green", color: "#00d26a", animal: "Alligator" },
+      { label: "Purple", color: "#9b6ce3", animal: "Penguin" },
+    ],
     targetCol: 1,
-    marbleColor: "#00D26A", // Green marble
-    mascotSpeech: "Help the Alligator get the green marble! Connect the pipes to the Green Basket in the middle!",
     grid: [
       [
         { type: "curved", rotation: 0 },
@@ -98,28 +134,99 @@ const levels: MazeLevel[] = [
         { type: "cross", rotation: 180 }
       ]
     ]
-  }
+  },
+  {
+    id: 4,
+    goals: [
+      { label: "Teal", color: "#18b8a6", animal: "Turtle" },
+      { label: "Pink", color: "#ff2a5f", animal: "Pig" },
+      { label: "Blue", color: "#1f9bd7", animal: "Whale" },
+    ],
+    targetCol: 0,
+    grid: [
+      [
+        { type: "curved", rotation: 180 },
+        { type: "straight", rotation: 0 },
+        { type: "curved", rotation: 90 }
+      ],
+      [
+        { type: "straight", rotation: 0 },
+        { type: "cross", rotation: 90 },
+        { type: "curved", rotation: 180 }
+      ],
+      [
+        { type: "straight", rotation: 90 },
+        { type: "curved", rotation: 0 },
+        { type: "straight", rotation: 0 }
+      ]
+    ]
+  },
+  {
+    id: 5,
+    goals: [
+      { label: "Red", color: "#f43f5e", animal: "Fox" },
+      { label: "Lime", color: "#84cc16", animal: "Frog" },
+      { label: "Purple", color: "#9b6ce3", animal: "Penguin" },
+    ],
+    targetCol: 2,
+    grid: [
+      [
+        { type: "straight", rotation: 0 },
+        { type: "curved", rotation: 0 },
+        { type: "straight", rotation: 90 }
+      ],
+      [
+        { type: "curved", rotation: 90 },
+        { type: "curved", rotation: 180 },
+        { type: "straight", rotation: 0 }
+      ],
+      [
+        { type: "straight", rotation: 90 },
+        { type: "cross", rotation: 0 },
+        { type: "curved", rotation: 270 }
+      ]
+    ]
+  },
+  {
+    id: 6,
+    goals: [
+      { label: "Orange", color: "#ff7a1a", animal: "Fox" },
+      { label: "Aqua", color: "#06b6d4", animal: "Whale" },
+      { label: "Green", color: "#00d26a", animal: "Turtle" },
+    ],
+    targetCol: 1,
+    grid: [
+      [
+        { type: "curved", rotation: 90 },
+        { type: "straight", rotation: 0 },
+        { type: "curved", rotation: 270 }
+      ],
+      [
+        { type: "straight", rotation: 90 },
+        { type: "curved", rotation: 90 },
+        { type: "straight", rotation: 0 }
+      ],
+      [
+        { type: "curved", rotation: 180 },
+        { type: "straight", rotation: 90 },
+        { type: "cross", rotation: 0 }
+      ]
+    ]
+  },
 ];
 
 export default function MazeRouterEngine({ childId, onBack }: { childId: string; onBack: () => void }) {
   const [levelIdx, setLevelIdx] = useState(0);
-  const [grid, setGrid] = useState<CellState[][]>([]);
+  const [grid, setGrid] = useState<CellState[][]>(() => levels[0].grid.map(row => row.map(cell => ({ ...cell }))));
   const [isRolling, setIsRolling] = useState(false);
-  const [rollResult, setRollResult] = useState<{ success: boolean; path: Point[] } | null>(null);
   const [marblePos, setMarblePos] = useState<Point>({ x: 150, y: -40 });
   const [highlightedCell, setHighlightedCell] = useState<{ r: number; c: number } | null>(null);
   const [startTime] = useState<number>(() => Date.now());
 
   const activeLevel = levels[levelIdx];
-
-  // Helper to load vocabulary animal icon
-  const pigVocab = vocabularyList.find(v => v.name === "Pig");
-  const bearVocab = vocabularyList.find(v => v.name === "Bear");
-  const alligatorVocab = vocabularyList.find(v => v.name === "Alligator");
-
-  const PigIcon = pigVocab?.icon || Smile;
-  const BearIcon = bearVocab?.icon || Smile;
-  const AlligatorIcon = alligatorVocab?.icon || Smile;
+  const goalItems = activeLevel.goals;
+  const targetGoal = goalItems[activeLevel.targetCol];
+  const instructionText = `Connect the pipes to the ${targetGoal.label} goal for the ${targetGoal.animal}.`;
 
   const speakText = useCallback((text: string) => {
     if (typeof window !== "undefined" && window.speechSynthesis) {
@@ -198,15 +305,21 @@ export default function MazeRouterEngine({ childId, onBack }: { childId: string;
 
   // Initialize level grid state
   useEffect(() => {
-    // Deep copy to prevent mutations
-    const gridCopy = activeLevel.grid.map(row => row.map(cell => ({ ...cell })));
+    speakText(instructionText);
+  }, [levelIdx, instructionText, speakText]);
+
+  const resetLevelState = useCallback((level: MazeLevel) => {
+    const gridCopy = level.grid.map(row => row.map(cell => ({ ...cell })));
     setGrid(gridCopy);
-    setRollResult(null);
     setIsRolling(false);
     setMarblePos({ x: 150, y: -40 });
     setHighlightedCell(null);
-    speakText(activeLevel.mascotSpeech);
-  }, [levelIdx, activeLevel, speakText]);
+  }, []);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => resetLevelState(activeLevel), 0);
+    return () => window.clearTimeout(timer);
+  }, [activeLevel, resetLevelState]);
 
   // Handle cell rotation tap
   const handleCellTap = (r: number, c: number) => {
@@ -357,7 +470,6 @@ export default function MazeRouterEngine({ childId, onBack }: { childId: string;
     setIsRolling(true);
 
     const { success, path, finalCell } = tracePath(grid);
-    setRollResult({ success, path });
 
     // Animate marble point by point
     let stepIdx = 0;
@@ -406,7 +518,6 @@ export default function MazeRouterEngine({ childId, onBack }: { childId: string;
           setTimeout(() => {
             setHighlightedCell(null);
             setIsRolling(false);
-            setRollResult(null);
             setMarblePos({ x: 150, y: -40 });
           }, 1500);
         }
@@ -417,7 +528,7 @@ export default function MazeRouterEngine({ childId, onBack }: { childId: string;
   };
 
   return (
-    <div className="relative flex flex-col items-center justify-start w-full h-full min-h-0 bg-gradient-to-b from-[#f3f8f6] to-[#e6edea] overflow-hidden p-3 sm:p-5 select-none">
+    <div className="relative flex flex-col items-center justify-start w-full h-full min-h-0 bg-gradient-to-b from-[#f3f8f6] to-[#e6edea] overflow-hidden p-3 sm:p-4 select-none">
       
       {/* Grid Table Pattern decor background */}
       <div 
@@ -448,67 +559,63 @@ export default function MazeRouterEngine({ childId, onBack }: { childId: string;
       <div className="absolute -top-20 -left-20 w-80 h-80 rounded-full bg-sky-500/5 blur-3xl pointer-events-none" />
 
       {/* Top Header */}
-      <div className="flex items-center justify-between w-full max-w-3xl mb-3 sm:mb-4 shrink-0 z-20">
+      <div className="flex items-center justify-between w-full max-w-3xl mb-2 sm:mb-3 shrink-0 z-20">
         <ClayButton
           onClick={onBack}
           variant="surface"
-          className="min-w-[64px] min-h-[64px] rounded-full flex items-center justify-center border-2 border-white/50 active:scale-95 shadow-md"
+          className="min-w-[56px] min-h-[56px] sm:min-w-[64px] sm:min-h-[64px] rounded-full flex items-center justify-center border-2 border-white/50 active:scale-95 shadow-md"
         >
           <ArrowLeft className="w-6 h-6 text-[#5c6b73]" strokeWidth={3.5} />
         </ClayButton>
         <div className="flex flex-col items-center">
-          <h2 className="text-xl sm:text-2xl font-black text-[#2f3e46] uppercase tracking-wide">
+          <h2 className="text-lg sm:text-2xl font-black text-[#2f3e46] uppercase tracking-wide">
             Maze Router
           </h2>
           <span className="text-xs font-bold text-[#5c6b73]/80">
             Puzzle {levelIdx + 1} of {levels.length}
           </span>
         </div>
-        <div className="w-16 h-16 rounded-full bg-[#ddcbf5] border-2 border-white flex items-center justify-center shadow-md">
+        <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-[#ddcbf5] border-2 border-white flex items-center justify-center shadow-md">
           <span className="text-lg font-black text-[#5c3e7f]">🧩</span>
         </div>
       </div>
 
-      {/* Mascot Speech Bubble Instruction */}
-      <div 
-        onClick={() => speakText(activeLevel.mascotSpeech)}
-        className="w-full max-w-xl flex items-center gap-4 mb-4 sm:mb-6 z-10 cursor-pointer select-none active:scale-[0.99] transition-all self-center"
+      {/* Instruction Card */}
+      <button
+        type="button"
+        onClick={() => speakText(instructionText)}
+        className="z-10 mb-3 flex w-full max-w-xl cursor-pointer items-center gap-3 self-center rounded-[1.7rem] border-2 border-white/70 bg-white/90 p-3 text-left shadow-sm outline-none transition-all active:scale-[0.99] focus-visible:ring-4 focus-visible:ring-[#118ab2]/25 sm:mb-4 sm:p-4"
+        aria-label={`Hear instructions: ${instructionText}`}
       >
-        {/* Mascot Face Icon */}
-        <div className="w-16 h-16 sm:w-20 sm:h-20 shrink-0 flex items-center justify-center overflow-visible relative">
-          {activeLevel.targetCol === 0 && <PigIcon size="100%" animClass="anim-sway" />}
-          {activeLevel.targetCol === 1 && <AlligatorIcon size="100%" animClass="anim-sway" />}
-          {activeLevel.targetCol === 2 && <BearIcon size="100%" animClass="anim-sway" />}
-        </div>
-        
-        {/* Speech Bubble */}
-        <div className="flex-1 relative bg-white border border-[#4a5358]/10 p-3 sm:p-4 rounded-[2rem] shadow-[4px_4px_12px_rgba(0,0,0,0.03),_inset_2px_2px_4px_rgba(255,255,255,0.9)] text-left flex flex-col justify-center min-h-[64px] sm:min-h-[72px] min-w-0">
-          {/* Arrow */}
-          <div className="absolute top-1/2 -left-3 -translate-y-1/2 w-0 h-0 border-t-[8px] border-t-transparent border-r-[12px] border-r-white border-b-[8px] border-b-transparent filter drop-shadow-[-1px_0_0_rgba(74,83,88,0.06)]"></div>
-          
-          <div className="flex items-center gap-2 w-full min-w-0 justify-between">
-            <p className="text-sm font-bold text-[#4A5358] leading-snug">
-              {activeLevel.mascotSpeech}
-            </p>
-            <Volume2 className="w-5 h-5 text-slate-400 shrink-0 animate-pulse ml-2" />
-          </div>
-        </div>
-      </div>
+        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[#fff4ca] text-lg shadow-inner" aria-hidden="true">
+          →
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="block text-[10px] font-black uppercase tracking-[0.22em] text-slate-500">Instruction</span>
+          <span className="block text-sm font-bold leading-snug text-[#4A5358] sm:text-base">
+            {instructionText}
+          </span>
+        </span>
+        <Volume2 className="h-5 w-5 shrink-0 text-slate-400" aria-hidden="true" />
+      </button>
 
       {/* Main Layout Grid */}
-      <div className="flex flex-col md:flex-row items-center justify-center gap-6 w-full max-w-4xl min-h-0 flex-1 relative overflow-visible px-2">
+      <div className="flex flex-col md:flex-row items-center justify-center gap-4 w-full max-w-4xl min-h-0 flex-1 relative overflow-visible px-1">
         
         {/* Center: Puzzle Arena */}
-        <div className="relative flex flex-col items-center min-h-0 w-full max-w-[320px] sm:max-w-[360px] overflow-visible">
+        <div className="relative flex flex-col items-center min-h-0 w-full max-w-[300px] sm:max-w-[340px] overflow-visible">
           {/* Top Entrance Dispenser */}
           <div className="w-full flex justify-center mb-1 overflow-visible h-10 relative">
-            <div className="absolute top-0 w-16 h-10 bg-[#e07383] border-[3px] border-white rounded-b-2xl shadow-md flex items-center justify-center z-10">
-              <div className="w-6 h-6 rounded-full bg-black/10 border-2 border-dashed border-white/40" />
+            <div className="absolute top-0 z-10 flex h-12 w-20 items-center justify-center rounded-b-[1.5rem] border-[3px] border-white bg-[#e07383] shadow-md">
+              <span className="absolute -top-8 grid h-12 w-12 place-items-center" aria-hidden="true">
+                <FluentAnimalIcon name={targetGoal.animal} size="100%" animClass="anim-sway" />
+              </span>
+              <div className="mt-2 h-5 w-5 rounded-full border-2 border-dashed border-white/55 bg-black/10" />
             </div>
           </div>
 
           {/* 3x3 Pipe Grid Clay Tray Container */}
-          <div className="relative bg-[#ebe6dd] border-[5px] border-white rounded-[2.8rem] shadow-[inset_0_8px_16px_rgba(0,0,0,0.06),_0_12px_24px_rgba(0,0,0,0.1)] w-[320px] h-[320px] sm:w-[350px] sm:h-[350px] p-2.5 select-none overflow-visible">
+          <div className="relative bg-[#ebe6dd] border-[5px] border-white rounded-[2.25rem] sm:rounded-[2.6rem] shadow-[inset_0_8px_16px_rgba(0,0,0,0.06),_0_12px_24px_rgba(0,0,0,0.1)] w-[300px] h-[300px] sm:w-[340px] sm:h-[340px] p-2.5 select-none overflow-visible">
             {/* Base grid layout */}
             <div className="grid grid-cols-3 grid-rows-3 gap-2 w-full h-full select-none">
               {grid.map((row, r) =>
@@ -518,7 +625,7 @@ export default function MazeRouterEngine({ childId, onBack }: { childId: string;
                     <motion.div
                       key={`${r}-${c}`}
                       onClick={() => handleCellTap(r, c)}
-                      className={`relative bg-white border-[3px] border-white rounded-[1.25rem] cursor-pointer select-none shadow-[0_6px_12px_rgba(0,0,0,0.05),_inset_0_-4px_0_rgba(0,0,0,0.08),_inset_0_4px_0_rgba(255,255,255,0.7)] flex items-center justify-center p-1 ${
+                      className={`relative bg-[#fdfdfb] border-[3px] border-white rounded-[1.1rem] sm:rounded-[1.25rem] cursor-pointer select-none shadow-[0_6px_12px_rgba(0,0,0,0.05),_inset_0_-4px_0_rgba(0,0,0,0.08),_inset_0_4px_0_rgba(255,255,255,0.7)] flex items-center justify-center p-1 ${
                         isRolling ? "pointer-events-none" : "hover:scale-[1.03] hover:border-emerald-300 active:scale-95"
                       }`}
                       animate={
@@ -538,8 +645,8 @@ export default function MazeRouterEngine({ childId, onBack }: { childId: string;
                           {cell.type === "straight" && (
                             <g>
                               {/* Outer pipe shadow */}
-                              <rect x={0} y={33} width={100} height={34} rx={17} fill="url(#pipeShadowGrad)" />
-                              <rect x={0} y={37} width={100} height={26} rx={13} fill="url(#pipeGrad)" />
+                              <rect x={0} y={33} width={100} height={34} rx={17} fill="#b8c8d2" />
+                              <rect x={0} y={37} width={100} height={26} rx={13} fill="#2f9ee5" />
                               {/* Inner highlight */}
                               <rect x={0} y={40} width={100} height={6} fill="#ffffff" opacity={0.45} />
                             </g>
@@ -547,8 +654,8 @@ export default function MazeRouterEngine({ childId, onBack }: { childId: string;
                           {cell.type === "curved" && (
                             <g>
                               {/* Outer pipe shadow */}
-                              <path d="M 50 100 A 50 50 0 0 1 100 50" fill="none" stroke="url(#pipeShadowGrad)" strokeWidth={34} strokeLinecap="round" />
-                              <path d="M 50 100 A 50 50 0 0 1 100 50" fill="none" stroke="url(#pipeGrad)" strokeWidth={26} strokeLinecap="round" />
+                              <path d="M 50 100 A 50 50 0 0 1 100 50" fill="none" stroke="#b8c8d2" strokeWidth={34} strokeLinecap="round" />
+                              <path d="M 50 100 A 50 50 0 0 1 100 50" fill="none" stroke="#2f9ee5" strokeWidth={26} strokeLinecap="round" />
                               {/* Inner highlight */}
                               <path d="M 50 100 A 50 50 0 0 1 100 50" fill="none" stroke="#ffffff" strokeWidth={6} strokeLinecap="round" opacity={0.45} />
                             </g>
@@ -556,10 +663,10 @@ export default function MazeRouterEngine({ childId, onBack }: { childId: string;
                           {cell.type === "cross" && (
                             <g>
                               {/* Outer pipe shadow */}
-                              <rect x={0} y={33} width={100} height={34} rx={17} fill="url(#pipeShadowGrad)" />
-                              <rect x={33} y={0} width={34} height={100} rx={17} fill="url(#pipeShadowGrad)" />
-                              <rect x={0} y={37} width={100} height={26} rx={13} fill="url(#pipeGrad)" />
-                              <rect x={37} y={0} width={26} height={100} rx={13} fill="url(#pipeGrad)" />
+                              <rect x={0} y={33} width={100} height={34} rx={17} fill="#b8c8d2" />
+                              <rect x={33} y={0} width={34} height={100} rx={17} fill="#b8c8d2" />
+                              <rect x={0} y={37} width={100} height={26} rx={13} fill="#2f9ee5" />
+                              <rect x={37} y={0} width={26} height={100} rx={13} fill="#2f9ee5" />
                               {/* Inner highlights */}
                               <rect x={0} y={40} width={100} height={6} fill="#ffffff" opacity={0.45} />
                               <rect x={40} y={0} width={6} height={100} fill="#ffffff" opacity={0.45} />
@@ -599,63 +706,59 @@ export default function MazeRouterEngine({ childId, onBack }: { childId: string;
               <defs>
                 <radialGradient id="marbleGrad" cx="35%" cy="35%" r="65%">
                   <stop offset="0%" stopColor="#ffffff" stopOpacity={0.6} />
-                  <stop offset="40%" stopColor={activeLevel.marbleColor} />
+                  <stop offset="40%" stopColor={targetGoal.color} />
                   <stop offset="100%" stopColor="#1a0a00" />
                 </radialGradient>
               </defs>
             </svg>
           </div>
 
-          {/* Bottom Saturated Color Baskets (Perfectly aligned columns via Grid) */}
-          <div className="w-full grid grid-cols-3 justify-items-center mt-4 shrink-0 overflow-visible z-10">
-            {/* Basket Col 0 */}
-            <div className="flex flex-col items-center w-20 relative">
-              <div className="w-20 h-14 rounded-b-2xl rounded-t-lg bg-[#ff2a5f] border-[3px] border-white shadow-clay-card flex items-center justify-center relative overflow-visible">
-                {/* Vertical reflection highlight */}
-                <div className="absolute left-2 top-2 bottom-2 w-2 bg-white/25 rounded-full pointer-events-none" />
-                <span className="absolute -top-6 w-12 h-12 flex items-center justify-center pointer-events-none">
-                  <PigIcon size="100%" animClass="anim-float" style={{ animationDelay: "0s" }} />
-                </span>
-                <div className="absolute bottom-1 w-12 h-3.5 rounded-full bg-black/15 shadow-inner" />
-              </div>
-              <span className="text-[11px] font-black uppercase text-[#ff2a5f] mt-1.5">Pink</span>
-            </div>
+          {/* Bottom Color Goals */}
+          <p className="mt-3 rounded-full bg-white/80 px-4 py-1.5 text-center text-[11px] font-black uppercase tracking-wider text-[#5c6b73] shadow-sm">
+            Tap pipes to rotate, then roll.
+          </p>
 
-            {/* Basket Col 1 */}
-            <div className="flex flex-col items-center w-20 relative">
-              <div className="w-20 h-14 rounded-b-2xl rounded-t-lg bg-[#00d26a] border-[3px] border-white shadow-clay-card flex items-center justify-center relative overflow-visible">
-                {/* Vertical reflection highlight */}
-                <div className="absolute left-2 top-2 bottom-2 w-2 bg-white/25 rounded-full pointer-events-none" />
-                <span className="absolute -top-6 w-12 h-12 flex items-center justify-center pointer-events-none">
-                  <AlligatorIcon size="100%" animClass="anim-float" style={{ animationDelay: "0.5s" }} />
-                </span>
-                <div className="absolute bottom-1 w-12 h-3.5 rounded-full bg-black/15 shadow-inner" />
-              </div>
-              <span className="text-[11px] font-black uppercase text-[#00d26a] mt-1.5">Green</span>
-            </div>
-
-            {/* Basket Col 2 */}
-            <div className="flex flex-col items-center w-20 relative">
-              <div className="w-20 h-14 rounded-b-2xl rounded-t-lg bg-[#b25329] border-[3px] border-white shadow-clay-card flex items-center justify-center relative overflow-visible">
-                {/* Vertical reflection highlight */}
-                <div className="absolute left-2 top-2 bottom-2 w-2 bg-white/25 rounded-full pointer-events-none" />
-                <span className="absolute -top-6 w-12 h-12 flex items-center justify-center pointer-events-none">
-                  <BearIcon size="100%" animClass="anim-float" style={{ animationDelay: "1s" }} />
-                </span>
-                <div className="absolute bottom-1 w-12 h-3.5 rounded-full bg-black/15 shadow-inner" />
-              </div>
-              <span className="text-[11px] font-black uppercase text-[#b25329] mt-1.5">Brown</span>
-            </div>
+          <div className="mt-3 grid w-full grid-cols-3 gap-2 overflow-visible z-10">
+            {goalItems.map((goal) => {
+              const isTarget = goal.animal === targetGoal.animal && goal.label === targetGoal.label;
+              return (
+                <div
+                  key={`${goal.label}-${goal.animal}`}
+                  className={`relative flex min-h-[72px] flex-col items-center justify-center rounded-[1.25rem] border-[3px] bg-white px-2 py-2 shadow-sm ${
+                    isTarget ? "border-white ring-4 ring-[#ffd166]/55" : "border-white/70 opacity-80"
+                  }`}
+                >
+                  {isTarget && (
+                    <span className="absolute -top-3 rounded-full bg-[#2f3e46] px-2 py-0.5 text-[8px] font-black uppercase tracking-wider text-white shadow-md">
+                      Goal
+                    </span>
+                  )}
+                  <span
+                    className="mb-1 grid h-8 w-12 place-items-center rounded-full border-2 border-white shadow-inner"
+                    style={{ backgroundColor: goal.color }}
+                    aria-hidden="true"
+                  >
+                    <span className="h-3 w-8 rounded-full bg-black/16" />
+                  </span>
+                  <span className="text-[10px] font-black uppercase tracking-wider" style={{ color: goal.color }}>
+                    {goal.label}
+                  </span>
+                  <span className="mt-0.5 h-5 w-5" aria-hidden="true">
+                    <FluentAnimalIcon name={goal.animal} size="100%" />
+                  </span>
+                </div>
+              );
+            })}
           </div>
         </div>
 
         {/* Right Panel: Roll controls */}
-        <div className="flex flex-col gap-3 justify-center items-center w-full md:w-36 shrink-0 z-10">
+        <div className="flex flex-col gap-3 justify-center items-center w-full max-w-[300px] md:w-36 shrink-0 z-10">
           <ClayButton
             onClick={handleRoll}
             isDisabled={isRolling}
             variant="primary"
-            className="w-full py-5 rounded-[2rem] text-xl font-black uppercase tracking-wider flex flex-col items-center gap-1 active:scale-95 shadow-lg select-none disabled:opacity-60 disabled:cursor-not-allowed"
+            className="w-full py-4 md:py-5 rounded-[1.75rem] md:rounded-[2rem] text-lg md:text-xl font-black uppercase tracking-wider flex flex-col items-center gap-1 active:scale-95 shadow-lg select-none disabled:opacity-60 disabled:cursor-not-allowed"
           >
             <span>Roll!</span>
             <span className="text-xs font-normal lowercase select-none">tap to drop</span>
@@ -666,7 +769,6 @@ export default function MazeRouterEngine({ childId, onBack }: { childId: string;
             onClick={() => {
               playSynthesizedSound("click");
               setIsRolling(false);
-              setRollResult(null);
               setMarblePos({ x: 150, y: -40 });
             }}
             variant="surface"

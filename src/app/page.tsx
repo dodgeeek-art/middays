@@ -45,6 +45,8 @@ interface Child {
   progressRecord: ProgressRecord[];
 }
 
+const DEMO_CHILD_ID = "demo-child";
+
 const playSynthesizedSound = (type: "correct" | "click") => {
   if (typeof window === "undefined") return;
   try {
@@ -86,7 +88,7 @@ const playSynthesizedSound = (type: "correct" | "click") => {
 export default function Home() {
   const [view, setView] = useState<"lesson" | "dashboard" | "trophies">("lesson");
   const [activeGame, setActiveGame] = useState<"menu" | "tracing" | "reveal" | "bubbles" | "monster" | "scavenger" | "rhyme" | "match" | "drummer" | "sorting" | "bunny" | "story" | "mark" | "pattern" | "alchemy" | "maze" | "symmetry">("menu");
-  const [childId, setChildId] = useState<string | null>(null);
+  const [childId, setChildId] = useState<string>(DEMO_CHILD_ID);
   const [childProgress, setChildProgress] = useState<Child | null>(null);
 
   // Dynamic state for curriculum engine
@@ -137,7 +139,6 @@ export default function Home() {
 
   // Fetch progress records whenever childId is set or view changes
   useEffect(() => {
-    if (!childId) return;
     const fetchProgress = () => {
       fetch(`/api/progress/${childId}`)
         .then((res) => res.json())
@@ -207,18 +208,7 @@ export default function Home() {
           ? "h-[calc(100dvh-1rem)] max-h-[calc(100dvh-1rem)] sm:h-[calc(100dvh-2rem)] sm:max-h-[calc(100dvh-2rem)] p-2 sm:p-4 pb-2 sm:pb-4 overflow-hidden mt-1 sm:mt-2" 
           : `p-4 pb-28 sm:pb-32 md:pb-8 ${view === "lesson" ? "pt-6 sm:pt-8" : "pt-24 sm:pt-28"}`
       }`}>
-        {!childId ? (
-          <div className="flex justify-center items-center h-64">
-            <motion.p 
-              animate={{ opacity: [0.5, 1, 0.5] }}
-              transition={{ repeat: Infinity, duration: 1.5 }}
-              className="text-2xl font-bold text-primary"
-            >
-              Loading adventure...
-            </motion.p>
-          </div>
-        ) : (
-          <AnimatePresence mode="wait">
+        <AnimatePresence mode="wait">
             {view === "lesson" && (
               <motion.div 
                 key="lesson" 
@@ -336,7 +326,6 @@ export default function Home() {
               </motion.div>
             )}
           </AnimatePresence>
-        )}
       </main>
 
       {/* BottomNavBar Shell matching Stitch layout */}

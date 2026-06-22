@@ -1,14 +1,15 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
+const DEMO_CHILD_ID = 'demo-child';
+
 export async function POST() {
   try {
-    let child = await prisma.child.findFirst();
-    if (!child) {
-      child = await prisma.child.create({
-        data: { name: 'Demo Student' },
-      });
-    }
+    const child = await prisma.child.upsert({
+      where: { id: DEMO_CHILD_ID },
+      update: { name: 'Demo Student' },
+      create: { id: DEMO_CHILD_ID, name: 'Demo Student' },
+    });
     return NextResponse.json({ child }, { status: 200 });
   } catch (error) {
     console.error('Seed error:', error);
