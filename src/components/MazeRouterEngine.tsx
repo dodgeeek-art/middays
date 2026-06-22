@@ -124,9 +124,13 @@ export default function MazeRouterEngine({ childId, onBack }: { childId: string;
   const speakText = useCallback((text: string) => {
     if (typeof window !== "undefined" && window.speechSynthesis) {
       window.speechSynthesis.cancel();
+      if (window.speechSynthesis.paused) {
+        window.speechSynthesis.resume();
+      }
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.rate = 0.85;
       utterance.pitch = 1.25;
+      utterance.volume = 1.0;
       window.speechSynthesis.speak(utterance);
     }
   }, []);
@@ -413,9 +417,38 @@ export default function MazeRouterEngine({ childId, onBack }: { childId: string;
   };
 
   return (
-    <div className="relative flex flex-col items-center justify-start w-full h-full min-h-0 bg-[#f4f7f6] overflow-hidden p-3 sm:p-5 select-none">
+    <div className="relative flex flex-col items-center justify-start w-full h-full min-h-0 bg-gradient-to-b from-[#f3f8f6] to-[#e6edea] overflow-hidden p-3 sm:p-5 select-none">
+      
+      {/* Grid Table Pattern decor background */}
+      <div 
+        className="absolute inset-0 opacity-[0.06] pointer-events-none" 
+        style={{
+          backgroundImage: "linear-gradient(rgba(0, 0, 0, 0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 0, 0, 0.15) 1px, transparent 1px)",
+          backgroundSize: "28px 28px"
+        }}
+      />
+
+      {/* Global SVG Gradients for Pipes */}
+      <svg className="hidden">
+        <defs>
+          <linearGradient id="pipeGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="#64b5f6" />
+            <stop offset="45%" stopColor="#2196f3" />
+            <stop offset="100%" stopColor="#1565c0" />
+          </linearGradient>
+          <linearGradient id="pipeShadowGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="#cfd8dc" />
+            <stop offset="100%" stopColor="#90a4ae" />
+          </linearGradient>
+        </defs>
+      </svg>
+
+      {/* Background ambient glow shapes */}
+      <div className="absolute -bottom-20 -right-20 w-80 h-80 rounded-full bg-emerald-500/10 blur-3xl pointer-events-none" />
+      <div className="absolute -top-20 -left-20 w-80 h-80 rounded-full bg-sky-500/5 blur-3xl pointer-events-none" />
+
       {/* Top Header */}
-      <div className="flex items-center justify-between w-full max-w-3xl mb-3 sm:mb-5 shrink-0 z-20">
+      <div className="flex items-center justify-between w-full max-w-3xl mb-3 sm:mb-4 shrink-0 z-20">
         <ClayButton
           onClick={onBack}
           variant="surface"
@@ -436,25 +469,35 @@ export default function MazeRouterEngine({ childId, onBack }: { childId: string;
         </div>
       </div>
 
-      {/* Main Layout Grid */}
-      <div className="flex flex-col md:flex-row items-center justify-center gap-6 w-full max-w-4xl min-h-0 flex-1 relative overflow-visible px-2">
-        {/* Left Side: Mascot Speech Bubble */}
-        <div className="flex flex-col items-center w-full md:w-56 shrink-0 z-10">
-          <div className="relative bg-white/95 border-[3px] border-white/40 p-4 rounded-3xl shadow-lg text-center max-w-xs md:max-w-none">
-            {/* Speech bubble arrow */}
-            <div className="absolute hidden md:block right-[-8px] top-1/2 -translate-y-1/2 w-4 h-4 rotate-45 bg-white border-r-[3px] border-t-[3px] border-white/40" />
-            <div className="absolute md:hidden bottom-[-8px] left-1/2 -translate-x-1/2 w-4 h-4 rotate-45 bg-white border-b-[3px] border-r-[3px] border-white/40" />
+      {/* Mascot Speech Bubble Instruction */}
+      <div 
+        onClick={() => speakText(activeLevel.mascotSpeech)}
+        className="w-full max-w-xl flex items-center gap-4 mb-4 sm:mb-6 z-10 cursor-pointer select-none active:scale-[0.99] transition-all self-center"
+      >
+        {/* Mascot Face Icon */}
+        <div className="w-16 h-16 sm:w-20 sm:h-20 shrink-0 flex items-center justify-center overflow-visible relative">
+          {activeLevel.targetCol === 0 && <PigIcon size="100%" animClass="anim-sway" />}
+          {activeLevel.targetCol === 1 && <AlligatorIcon size="100%" animClass="anim-sway" />}
+          {activeLevel.targetCol === 2 && <BearIcon size="100%" animClass="anim-sway" />}
+        </div>
+        
+        {/* Speech Bubble */}
+        <div className="flex-1 relative bg-white border border-[#4a5358]/10 p-3 sm:p-4 rounded-[2rem] shadow-[4px_4px_12px_rgba(0,0,0,0.03),_inset_2px_2px_4px_rgba(255,255,255,0.9)] text-left flex flex-col justify-center min-h-[64px] sm:min-h-[72px] min-w-0">
+          {/* Arrow */}
+          <div className="absolute top-1/2 -left-3 -translate-y-1/2 w-0 h-0 border-t-[8px] border-t-transparent border-r-[12px] border-r-white border-b-[8px] border-b-transparent filter drop-shadow-[-1px_0_0_rgba(74,83,88,0.06)]"></div>
+          
+          <div className="flex items-center gap-2 w-full min-w-0 justify-between">
             <p className="text-sm font-bold text-[#4A5358] leading-snug">
               {activeLevel.mascotSpeech}
             </p>
-          </div>
-          <div className="w-20 h-20 sm:w-24 sm:h-24 mt-4 relative">
-            {activeLevel.targetCol === 0 && <PigIcon className="w-full h-full filter drop-shadow-md animate-float" />}
-            {activeLevel.targetCol === 1 && <AlligatorIcon className="w-full h-full filter drop-shadow-md animate-float" />}
-            {activeLevel.targetCol === 2 && <BearIcon className="w-full h-full filter drop-shadow-md animate-float" />}
+            <Volume2 className="w-5 h-5 text-slate-400 shrink-0 animate-pulse ml-2" />
           </div>
         </div>
+      </div>
 
+      {/* Main Layout Grid */}
+      <div className="flex flex-col md:flex-row items-center justify-center gap-6 w-full max-w-4xl min-h-0 flex-1 relative overflow-visible px-2">
+        
         {/* Center: Puzzle Arena */}
         <div className="relative flex flex-col items-center min-h-0 w-full max-w-[320px] sm:max-w-[360px] overflow-visible">
           {/* Top Entrance Dispenser */}
@@ -495,8 +538,8 @@ export default function MazeRouterEngine({ childId, onBack }: { childId: string;
                           {cell.type === "straight" && (
                             <g>
                               {/* Outer pipe shadow */}
-                              <rect x={0} y={33} width={100} height={34} rx={17} fill="#cfd2cd" />
-                              <rect x={0} y={37} width={100} height={26} rx={13} fill="#5a7df5" />
+                              <rect x={0} y={33} width={100} height={34} rx={17} fill="url(#pipeShadowGrad)" />
+                              <rect x={0} y={37} width={100} height={26} rx={13} fill="url(#pipeGrad)" />
                               {/* Inner highlight */}
                               <rect x={0} y={40} width={100} height={6} fill="#ffffff" opacity={0.45} />
                             </g>
@@ -504,8 +547,8 @@ export default function MazeRouterEngine({ childId, onBack }: { childId: string;
                           {cell.type === "curved" && (
                             <g>
                               {/* Outer pipe shadow */}
-                              <path d="M 50 100 A 50 50 0 0 1 100 50" fill="none" stroke="#cfd2cd" strokeWidth={34} strokeLinecap="round" />
-                              <path d="M 50 100 A 50 50 0 0 1 100 50" fill="none" stroke="#5a7df5" strokeWidth={26} strokeLinecap="round" />
+                              <path d="M 50 100 A 50 50 0 0 1 100 50" fill="none" stroke="url(#pipeShadowGrad)" strokeWidth={34} strokeLinecap="round" />
+                              <path d="M 50 100 A 50 50 0 0 1 100 50" fill="none" stroke="url(#pipeGrad)" strokeWidth={26} strokeLinecap="round" />
                               {/* Inner highlight */}
                               <path d="M 50 100 A 50 50 0 0 1 100 50" fill="none" stroke="#ffffff" strokeWidth={6} strokeLinecap="round" opacity={0.45} />
                             </g>
@@ -513,10 +556,10 @@ export default function MazeRouterEngine({ childId, onBack }: { childId: string;
                           {cell.type === "cross" && (
                             <g>
                               {/* Outer pipe shadow */}
-                              <rect x={0} y={33} width={100} height={34} rx={17} fill="#cfd2cd" />
-                              <rect x={33} y={0} width={34} height={100} rx={17} fill="#cfd2cd" />
-                              <rect x={0} y={37} width={100} height={26} rx={13} fill="#5a7df5" />
-                              <rect x={37} y={0} width={26} height={100} rx={13} fill="#5a7df5" />
+                              <rect x={0} y={33} width={100} height={34} rx={17} fill="url(#pipeShadowGrad)" />
+                              <rect x={33} y={0} width={34} height={100} rx={17} fill="url(#pipeShadowGrad)" />
+                              <rect x={0} y={37} width={100} height={26} rx={13} fill="url(#pipeGrad)" />
+                              <rect x={37} y={0} width={26} height={100} rx={13} fill="url(#pipeGrad)" />
                               {/* Inner highlights */}
                               <rect x={0} y={40} width={100} height={6} fill="#ffffff" opacity={0.45} />
                               <rect x={40} y={0} width={6} height={100} fill="#ffffff" opacity={0.45} />
@@ -563,33 +606,45 @@ export default function MazeRouterEngine({ childId, onBack }: { childId: string;
             </svg>
           </div>
 
-          {/* Bottom Saturated Color Baskets */}
-          <div className="w-full flex justify-between px-3 mt-4 shrink-0 overflow-visible z-10">
+          {/* Bottom Saturated Color Baskets (Perfectly aligned columns via Grid) */}
+          <div className="w-full grid grid-cols-3 justify-items-center mt-4 shrink-0 overflow-visible z-10">
             {/* Basket Col 0 */}
             <div className="flex flex-col items-center w-20 relative">
-              <div className="w-20 h-14 rounded-b-2xl rounded-t-lg bg-[#ff1a4a] border-[3px] border-white shadow-clay-card flex items-center justify-center relative overflow-visible">
-                <span className="absolute -top-4 text-2xl animate-float" style={{ animationDelay: "0s" }}>🐷</span>
+              <div className="w-20 h-14 rounded-b-2xl rounded-t-lg bg-[#ff2a5f] border-[3px] border-white shadow-clay-card flex items-center justify-center relative overflow-visible">
+                {/* Vertical reflection highlight */}
+                <div className="absolute left-2 top-2 bottom-2 w-2 bg-white/25 rounded-full pointer-events-none" />
+                <span className="absolute -top-6 w-12 h-12 flex items-center justify-center pointer-events-none">
+                  <PigIcon size="100%" animClass="anim-float" style={{ animationDelay: "0s" }} />
+                </span>
                 <div className="absolute bottom-1 w-12 h-3.5 rounded-full bg-black/15 shadow-inner" />
               </div>
-              <span className="text-[11px] font-black uppercase text-[#ff1a4a] mt-1.5">Pink</span>
+              <span className="text-[11px] font-black uppercase text-[#ff2a5f] mt-1.5">Pink</span>
             </div>
 
             {/* Basket Col 1 */}
             <div className="flex flex-col items-center w-20 relative">
-              <div className="w-20 h-14 rounded-b-2xl rounded-t-lg bg-[#00c853] border-[3px] border-white shadow-clay-card flex items-center justify-center relative overflow-visible">
-                <span className="absolute -top-4 text-2xl animate-float" style={{ animationDelay: "0.5s" }}>🐊</span>
+              <div className="w-20 h-14 rounded-b-2xl rounded-t-lg bg-[#00d26a] border-[3px] border-white shadow-clay-card flex items-center justify-center relative overflow-visible">
+                {/* Vertical reflection highlight */}
+                <div className="absolute left-2 top-2 bottom-2 w-2 bg-white/25 rounded-full pointer-events-none" />
+                <span className="absolute -top-6 w-12 h-12 flex items-center justify-center pointer-events-none">
+                  <AlligatorIcon size="100%" animClass="anim-float" style={{ animationDelay: "0.5s" }} />
+                </span>
                 <div className="absolute bottom-1 w-12 h-3.5 rounded-full bg-black/15 shadow-inner" />
               </div>
-              <span className="text-[11px] font-black uppercase text-[#00c853] mt-1.5">Green</span>
+              <span className="text-[11px] font-black uppercase text-[#00d26a] mt-1.5">Green</span>
             </div>
 
             {/* Basket Col 2 */}
             <div className="flex flex-col items-center w-20 relative">
-              <div className="w-20 h-14 rounded-b-2xl rounded-t-lg bg-[#8d6e63] border-[3px] border-white shadow-clay-card flex items-center justify-center relative overflow-visible">
-                <span className="absolute -top-4 text-2xl animate-float" style={{ animationDelay: "1s" }}>🐻</span>
+              <div className="w-20 h-14 rounded-b-2xl rounded-t-lg bg-[#b25329] border-[3px] border-white shadow-clay-card flex items-center justify-center relative overflow-visible">
+                {/* Vertical reflection highlight */}
+                <div className="absolute left-2 top-2 bottom-2 w-2 bg-white/25 rounded-full pointer-events-none" />
+                <span className="absolute -top-6 w-12 h-12 flex items-center justify-center pointer-events-none">
+                  <BearIcon size="100%" animClass="anim-float" style={{ animationDelay: "1s" }} />
+                </span>
                 <div className="absolute bottom-1 w-12 h-3.5 rounded-full bg-black/15 shadow-inner" />
               </div>
-              <span className="text-[11px] font-black uppercase text-[#8d6e63] mt-1.5">Brown</span>
+              <span className="text-[11px] font-black uppercase text-[#b25329] mt-1.5">Brown</span>
             </div>
           </div>
         </div>

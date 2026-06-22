@@ -34,8 +34,6 @@ interface ActivityItem {
   textColor: string;
   disabled: boolean;
   floatDuration: number;
-  colSpan: string;
-  rowSpan?: string;
   benefit: string;
   glowColor: string;
   gradient: string;
@@ -169,8 +167,6 @@ export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps
       textColor: "text-[#5e1c22]",
       disabled: false,
       floatDuration: 4.5,
-      colSpan: "col-span-2",
-      rowSpan: "row-span-2",
       benefit: "Fine Motor",
       glowColor: "shadow-[0_20px_50px_rgba(224,115,131,0.18)] hover:shadow-[0_25px_60px_rgba(224,115,131,0.3)]",
       gradient: "from-[#fcd5ce]/40 to-[#ffb5a7]/30"
@@ -183,7 +179,6 @@ export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps
       textColor: "text-[#0d4036]",
       disabled: false,
       floatDuration: 5.2,
-      colSpan: "col-span-1",
       benefit: "Visual ID",
       glowColor: "shadow-[0_20px_50px_rgba(63,163,148,0.14)] hover:shadow-[0_25px_60px_rgba(63,163,148,0.25)]",
       gradient: "from-[#c3e6dc]/40 to-[#a3d9cf]/30"
@@ -196,7 +191,6 @@ export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps
       textColor: "text-[#732010]",
       disabled: false,
       floatDuration: 4.1,
-      colSpan: "col-span-1",
       benefit: "Motor Skills",
       glowColor: "shadow-[0_20px_50px_rgba(247,194,179,0.18)] hover:shadow-[0_25px_60px_rgba(247,194,179,0.3)]",
       gradient: "from-[#f7c2b3]/40 to-[#f9b5a2]/30"
@@ -209,7 +203,6 @@ export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps
       textColor: "text-[#0d4036]",
       disabled: false,
       floatDuration: 4.8,
-      colSpan: "col-span-1",
       benefit: "Phonics",
       glowColor: "shadow-[0_20px_50px_rgba(63,163,148,0.14)] hover:shadow-[0_25px_60px_rgba(63,163,148,0.25)]",
       gradient: "from-[#c3e6dc]/40 to-[#a3d9cf]/30"
@@ -222,7 +215,6 @@ export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps
       textColor: "text-[#16533f]",
       disabled: false,
       floatDuration: 5.5,
-      colSpan: "col-span-1",
       benefit: "Sound ID",
       glowColor: "shadow-[0_20px_50px_rgba(190,232,212,0.14)] hover:shadow-[0_25px_60px_rgba(190,232,212,0.25)]",
       gradient: "from-[#bee8d4]/40 to-[#a3d8c1]/30"
@@ -235,7 +227,6 @@ export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps
       textColor: "text-[#42236b]",
       disabled: false,
       floatDuration: 5.0,
-      colSpan: "col-span-2",
       benefit: "Vocabulary",
       glowColor: "shadow-[0_20px_50px_rgba(221,203,245,0.18)] hover:shadow-[0_25px_60px_rgba(221,203,245,0.3)]",
       gradient: "from-[#ddcbf5]/40 to-[#ceb5f2]/30"
@@ -248,7 +239,6 @@ export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps
       textColor: "text-[#1f3d68]",
       disabled: false,
       floatDuration: 4.3,
-      colSpan: "col-span-1",
       benefit: "Language",
       glowColor: "shadow-[0_20px_50px_rgba(181,204,230,0.14)] hover:shadow-[0_25px_60px_rgba(181,204,230,0.25)]",
       gradient: "from-[#b5cce6]/40 to-[#9cbcdb]/30"
@@ -261,7 +251,6 @@ export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps
       textColor: "text-[#42236b]",
       disabled: false,
       floatDuration: 5.0,
-      colSpan: "col-span-1",
       benefit: "Memory",
       glowColor: "shadow-[0_20px_50px_rgba(221,203,245,0.14)] hover:shadow-[0_25px_60px_rgba(221,203,245,0.25)]",
       gradient: "from-[#ddcbf5]/40 to-[#ceb5f2]/30"
@@ -274,7 +263,6 @@ export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps
       textColor: "text-[#544001]",
       disabled: false,
       floatDuration: 4.6,
-      colSpan: "col-span-1",
       benefit: "Rhythm",
       glowColor: "shadow-[0_20px_50px_rgba(245,228,163,0.14)] hover:shadow-[0_25px_60px_rgba(245,228,163,0.25)]",
       gradient: "from-[#f5e4a3]/40 to-[#ebd787]/30"
@@ -287,7 +275,6 @@ export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps
       textColor: "text-[#5e1c22]",
       disabled: false,
       floatDuration: 4.2,
-      colSpan: "col-span-1",
       benefit: "Logic & Math",
       glowColor: "shadow-[0_20px_50px_rgba(247,194,179,0.14)] hover:shadow-[0_25px_60px_rgba(247,194,179,0.25)]",
       gradient: "from-[#f7c2b3]/40 to-[#f9b5a2]/30"
@@ -300,7 +287,6 @@ export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps
       textColor: "text-[#0d4036]",
       disabled: false,
       floatDuration: 4.9,
-      colSpan: "col-span-2 sm:col-span-1 md:col-span-2",
       benefit: "Biology",
       glowColor: "shadow-[0_20px_50px_rgba(196,240,225,0.18)] hover:shadow-[0_25px_60px_rgba(196,240,225,0.3)]",
       gradient: "from-[#c3e6dc]/40 to-[#a3d9cf]/30"
@@ -313,7 +299,6 @@ export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps
       textColor: "text-[#42236b]",
       disabled: false,
       floatDuration: 5.1,
-      colSpan: "col-span-2",
       benefit: "Narrative",
       glowColor: "shadow-[0_20px_50px_rgba(221,203,245,0.18)] hover:shadow-[0_25px_60px_rgba(221,203,245,0.3)]",
       gradient: "from-[#ddcbf5]/40 to-[#ceb5f2]/30"
@@ -326,7 +311,6 @@ export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps
       textColor: "text-[#544001]",
       disabled: false,
       floatDuration: 4.4,
-      colSpan: "col-span-2 sm:col-span-1 md:col-span-2",
       benefit: "Writing",
       glowColor: "shadow-[0_20px_50px_rgba(245,228,163,0.18)] hover:shadow-[0_25px_60px_rgba(245,228,163,0.3)]",
       gradient: "from-[#f5e4a3]/40 to-[#ebd787]/30"
@@ -339,7 +323,6 @@ export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps
       textColor: "text-[#42236b]",
       disabled: false,
       floatDuration: 4.8,
-      colSpan: "col-span-1",
       benefit: "Logic",
       glowColor: "shadow-[0_20px_50px_rgba(221,203,245,0.14)] hover:shadow-[0_25px_60px_rgba(221,203,245,0.25)]",
       gradient: "from-[#ddcbf5]/40 to-[#ceb5f2]/30"
@@ -352,7 +335,6 @@ export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps
       textColor: "text-[#0d4036]",
       disabled: false,
       floatDuration: 4.7,
-      colSpan: "col-span-1",
       benefit: "Color Logic",
       glowColor: "shadow-[0_20px_50px_rgba(63,163,148,0.14)] hover:shadow-[0_25px_60px_rgba(63,163,148,0.25)]",
       gradient: "from-[#c3e6dc]/40 to-[#a3d9cf]/30"
@@ -365,7 +347,6 @@ export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps
       textColor: "text-[#42236b]",
       disabled: false,
       floatDuration: 5.3,
-      colSpan: "col-span-1",
       benefit: "Spatial Logic",
       glowColor: "shadow-[0_20px_50px_rgba(221,203,245,0.18)] hover:shadow-[0_25px_60px_rgba(221,203,245,0.3)]",
       gradient: "from-[#ddcbf5]/40 to-[#ceb5f2]/30"
@@ -378,7 +359,6 @@ export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps
       textColor: "text-[#5e1c22]",
       disabled: false,
       floatDuration: 4.2,
-      colSpan: "col-span-2 sm:col-span-1 md:col-span-2",
       benefit: "Symmetry",
       glowColor: "shadow-[0_20px_50px_rgba(247,194,179,0.18)] hover:shadow-[0_25px_60px_rgba(247,194,179,0.3)]",
       gradient: "from-[#f7c2b3]/40 to-[#f9b5a2]/30"
@@ -450,73 +430,59 @@ export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps
       variants={containerVariants}
       initial="hidden"
       animate="show"
-      className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-5 w-full max-w-4xl mx-auto p-4 z-10 relative overflow-visible"
+      className="grid grid-cols-3 gap-2.5 sm:gap-6 w-full max-w-4xl mx-auto p-2 sm:p-4 z-10 relative overflow-visible"
     >
-      {/* Playful header layout: Mascot on the left, Speech Bubble on the right */}
+      {/* Playful compact header bar */}
       <motion.div 
         variants={itemVariants}
-        className="col-span-2 sm:col-span-3 md:col-span-4 mb-2 flex items-center gap-4 sm:gap-6 overflow-visible w-full"
+        className="col-span-3 mb-1 flex items-center justify-between w-full bg-white/95 backdrop-blur-md px-4 py-2.5 rounded-[1.8rem] border-white/60 border-[3px] shadow-[0_8px_20px_rgba(0,0,0,0.02)] overflow-visible"
       >
-        {/* Floating Boy Mascot on the left */}
-        <div className="relative shrink-0 select-none w-18 h-18 sm:w-20 sm:h-20">
-          <div className="absolute top-0 -left-1.5 text-[#ffd166] text-xs animate-sparkle-1 pointer-events-none">✨</div>
-          <div className="absolute -bottom-1 -right-1 text-[#e07383] text-xs animate-sparkle-2 pointer-events-none">✨</div>
-          <MascotSVG className="w-full h-full filter drop-shadow-[2px_4px_8px_rgba(0,0,0,0.06)] animate-float" />
-        </div>
-
-        {/* Speech Bubble on the right containing Midday branding + message */}
-        <div className="flex-1 relative bg-white/95 backdrop-blur-md px-6 py-4 rounded-[2.2rem] border-white/60 border-[3px] shadow-[0_12px_30px_rgba(0,0,0,0.03)] flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
-          {/* Rotated square tail pointing to the left towards Buddy */}
-          <div className="absolute left-[-8px] top-1/2 -translate-y-1/2 w-4 h-4 rotate-45 bg-white/95 border-b-2 border-l-2 border-white/60 z-20" />
-          
-          <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 w-full text-left relative z-10">
-            {/* Brand Logo & Title */}
-            <div className="flex items-center gap-3 shrink-0">
-              <div className="w-11 h-11 rounded-xl bg-white border-2 border-white/10 p-1 shadow-[0_4px_12px_rgba(0,0,0,0.03)] flex items-center justify-center shrink-0">
-                <img
-                  alt="Midday Logo"
-                  className="w-full h-full object-contain"
-                  src="/logo.png"
-                />
-              </div>
-              <div className="flex flex-col items-start leading-none text-left">
-                <h1 className="font-sans text-xl sm:text-2xl text-primary tracking-tight font-black uppercase">
-                  Midday
-                </h1>
-                <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-[#0d4036]/50 mt-0.5">
-                  Playbook
-                </span>
-              </div>
-            </div>
-
-            {/* Vertical divider on desktop, horizontal on mobile */}
-            <div className="hidden sm:block w-[2px] h-8 bg-[#0d4036]/10 self-center" />
-
-            {/* Speech text */}
-            <div className="flex-grow flex flex-col justify-center text-center sm:text-left">
-              <p className="text-[9px] font-black text-[#d4a919] uppercase tracking-wider leading-none mb-1">Buddy says:</p>
-              <p className="text-xs sm:text-sm font-bold text-[#4A5358]/85 leading-snug">Pick a game to play together!</p>
+        <div className="flex items-center gap-2.5">
+          {/* Small Mascot avatar */}
+          <div className="relative shrink-0 select-none w-9 h-9">
+            <MascotSVG className="w-full h-full filter drop-shadow-[1px_2px_4px_rgba(0,0,0,0.05)] animate-float" />
+          </div>
+          {/* Logo Branding */}
+          <div className="flex items-center gap-2">
+            <img
+              alt="Midday Logo"
+              className="w-6 h-6 object-contain shrink-0"
+              src="/logo.png"
+            />
+            <div className="flex flex-col text-left leading-none">
+              <h1 className="font-sans text-sm sm:text-base text-primary tracking-tight font-black uppercase">
+                Midday
+              </h1>
+              <span className="text-[7px] sm:text-[8px] font-black uppercase tracking-widest text-[#0d4036]/50">
+                Playbook
+              </span>
             </div>
           </div>
+        </div>
+
+        {/* Small header text info */}
+        <div className="text-right flex flex-col justify-center">
+          <p className="text-[8px] font-black text-[#d4a919] uppercase tracking-wider leading-none mb-0.5">Buddy says:</p>
+          <p className="text-[10px] sm:text-xs font-bold text-[#4A5358]/85 leading-none">Pick a game to play together!</p>
         </div>
       </motion.div>
 
       {/* Playful Category Switcher */}
-      <div className="col-span-2 sm:col-span-3 md:col-span-4 flex flex-wrap justify-center gap-2.5 my-2 z-10">
+      <div className="col-span-3 flex flex-row items-center justify-start sm:justify-center gap-2 overflow-x-auto whitespace-nowrap scrollbar-none py-1.5 my-1 z-10 w-full">
         {(["all", "phonics", "logic", "creative"] as const).map((cat) => {
           const isActive = activeCategory === cat;
           const labels = {
-            all: "🌈 All Games",
-            phonics: "🔤 Letters & Sounds",
-            logic: "🧩 Word & Logic",
-            creative: "🎨 Story & Draw"
+            all: "🌈 All",
+            phonics: "🔤 Phonics",
+            logic: "🧩 Logic",
+            creative: "🎨 Creative"
           };
           return (
             <ClayButton
               key={cat}
               variant={isActive ? "primary" : "surface"}
               onClick={() => setActiveCategory(cat)}
-              className="py-2.5 px-5 text-xs font-black uppercase rounded-full toddler-target shadow-sm active:scale-95 transition-all"
+              className="py-1.5 px-3.5 text-[10px] sm:text-xs font-black uppercase rounded-full toddler-target shadow-sm active:scale-95 transition-all shrink-0"
             >
               {labels[cat]}
             </ClayButton>
@@ -525,23 +491,19 @@ export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps
       </div>
 
       {filteredActivities.map((act) => {
-        // Layout calculations for responsive grid cells
-        const isTracing = act.id === "tracing";
-        const isDoubleWidth = act.colSpan.includes("col-span-2");
-        
         return (
           <motion.div
             key={act.id}
             layout
             variants={itemVariants}
-            className={`${act.colSpan} ${act.rowSpan || "row-span-1"}`}
-            whileHover={{ scale: 1.02, y: -4 }}
-            whileTap={{ scale: 0.98, y: 2 }}
+            whileHover={{ scale: 1.04, y: -6 }}
+            whileTap={{ scale: 0.96, y: 2 }}
             transition={{ type: "spring" as const, stiffness: 260, damping: 16 }}
+            className="w-full"
           >
             <ClayCard
               variant="glass"
-              hoverEffect={false} // Handle animations using direct parent motion.div for smoother Bento layout response
+              hoverEffect={false}
               onClick={() => {
                 if (act.disabled) return;
                 if (act.id === "scavenger-advanced") {
@@ -550,87 +512,39 @@ export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps
                   onSelectActivity(act.id as "tracing" | "reveal" | "bubbles" | "monster" | "scavenger" | "rhyme" | "match" | "drummer" | "sorting" | "bunny" | "story" | "mark" | "pattern" | "alchemy" | "maze" | "symmetry");
                 }
               }}
-              className={`relative overflow-visible p-5 sm:p-6 flex flex-col justify-between h-full w-full select-none cursor-pointer border-white/40 border-[3px] ${act.glowColor} ${act.disabled ? "opacity-60 saturate-50 cursor-not-allowed" : ""}`}
+              className={`relative overflow-visible p-2.5 sm:p-5 flex flex-col justify-between h-full w-full min-h-[150px] sm:min-h-[220px] select-none cursor-pointer border-white/50 border-[3px] bg-gradient-to-br ${act.gradient} ${act.glowColor} ${act.disabled ? "opacity-60 saturate-50 cursor-not-allowed" : ""}`}
             >
               {/* Gold highlight badge for new/featured "Trace" activity */}
               {!act.disabled && act.id === "tracing" && (
-                <div className="absolute top-3 left-3 z-20 w-8 h-8 rounded-full border-2 border-white/60 bg-[#f2c94c] text-[#544001] flex items-center justify-center text-xs font-black shadow-[inset_1px_1px_2px_rgba(255,255,255,0.8),0px_2px_4px_rgba(212,169,25,0.3)] animate-pulse-bounce">
+                <div className="absolute top-1.5 left-1.5 sm:top-3 sm:left-3 z-20 w-6 h-6 sm:w-8 h-8 rounded-full border-2 border-white/60 bg-[#f2c94c] text-[#544001] flex items-center justify-center text-[10px] sm:text-xs font-black shadow-[inset_1px_1px_2px_rgba(255,255,255,0.8),0px_2px_4px_rgba(212,169,25,0.3)] animate-pulse-bounce">
                   ⭐
                 </div>
               )}
 
-              {/* Bento Inner Content Layouts */}
-              {isTracing ? (
-                // Tracing card (2x2 Featured Hero Card)
-                <div className="flex flex-col justify-between h-full w-full min-h-[300px] relative overflow-visible">
-                  {/* Top Text Details */}
-                  <div className="flex flex-col text-left gap-1 mt-6">
-                    <h2 className={`text-2xl font-black tracking-wide uppercase ${act.textColor} leading-tight`}>
-                      {act.name}
-                    </h2>
-                    <span className={`text-xs font-bold ${act.textColor}/60`}>
-                      {act.subtitle}
-                    </span>
-                  </div>
-
-                  {/* Character Illustration breaking borders (bottom right placement) */}
-                  <div className="absolute bottom-6 -right-6 w-36 h-36 md:w-44 md:h-44 overflow-visible z-10">
-                    {getGameIcon(act.id, act.floatDuration)}
-                  </div>
-
-                  {/* Bottom developmental benefit pill */}
-                  <div className="mt-auto self-start z-10">
-                    <span className={`inline-flex px-3 py-1 bg-white/70 border border-white/50 rounded-full text-[9px] font-black uppercase tracking-wider ${act.textColor}`}>
-                      💡 {act.benefit}
-                    </span>
-                  </div>
+              {/* Standardized Grid Card Layout */}
+              <div className="flex flex-col items-center justify-between text-center h-full w-full gap-2.5 sm:gap-4 relative overflow-visible pt-1">
+                {/* Top-aligned animal/item illustration floating freely */}
+                <div className="w-14 h-14 sm:w-20 sm:h-20 overflow-visible relative flex items-center justify-center z-10">
+                  {getGameIcon(act.id, act.floatDuration)}
                 </div>
-              ) : isDoubleWidth ? (
-                // Horizontal 2x1 Spanning Cards (e.g. advanced search, sequence story, bunny, mark trace)
-                // Using responsive flex layout that wraps on tablet viewports where bunny & mark become 1x1
-                <div className={`flex flex-row ${act.id === 'bunny' || act.id === 'mark' ? 'sm:flex-col sm:justify-between' : ''} md:flex-row items-center justify-between h-full w-full gap-4 relative overflow-visible min-h-[120px]`}>
-                  {/* Left-aligned text info */}
-                  <div className="flex flex-col text-left gap-1 justify-center flex-1">
-                    <h2 className={`text-lg sm:text-xl font-black tracking-wide uppercase ${act.textColor} leading-tight`}>
-                      {act.name}
-                    </h2>
-                    <span className={`text-xs font-bold ${act.textColor}/60 mb-2`}>
-                      {act.subtitle}
-                    </span>
-                    <div className="self-start">
-                      <span className={`inline-flex px-2.5 py-0.5 bg-white/70 border border-white/50 rounded-full text-[9px] font-black uppercase tracking-wider ${act.textColor}`}>
-                        💡 {act.benefit}
-                      </span>
-                    </div>
-                  </div>
 
-                  {/* Right-aligned animal illustration popping out */}
-                  <div className={`relative flex items-center justify-center shrink-0 w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 overflow-visible ${act.id === 'bunny' || act.id === 'mark' ? 'sm:w-20 sm:h-20 sm:mx-auto' : ''}`}>
-                    {getGameIcon(act.id, act.floatDuration)}
-                  </div>
+                {/* Center text info */}
+                <div className="flex flex-col items-center w-full">
+                  <h2 className={`text-xs sm:text-base md:text-lg font-black tracking-wide uppercase ${act.textColor} leading-tight`}>
+                    {act.name}
+                  </h2>
+                  <span className={`text-[9px] sm:text-xs font-bold ${act.textColor}/60 mt-0.5`}>
+                    {act.subtitle}
+                  </span>
                 </div>
-              ) : (
-                // Standard 1x1 Cards
-                <div className="flex flex-col items-center justify-between text-center h-full w-full gap-3 relative overflow-visible min-h-[140px] pt-1">
-                  {/* Top-aligned animal illustration floating freely */}
-                  <div className="w-18 h-18 sm:w-20 sm:h-20 overflow-visible relative flex items-center justify-center z-10">
-                    {getGameIcon(act.id, act.floatDuration)}
-                  </div>
 
-                  {/* Bottom-aligned text info */}
-                  <div className="flex flex-col items-center w-full mt-1">
-                    <h2 className={`text-sm sm:text-base font-black tracking-wide uppercase ${act.textColor} leading-tight`}>
-                      {act.name}
-                    </h2>
-                    <span className={`text-[10px] sm:text-xs font-bold ${act.textColor}/60 mb-1.5`}>
-                      {act.subtitle}
-                    </span>
-                    <span className={`inline-flex px-2 py-0.5 bg-white/75 border border-white/40 rounded-full text-[8px] font-black uppercase tracking-wider ${act.textColor}`}>
-                      {act.benefit}
-                    </span>
-                  </div>
+                {/* Bottom developmental benefit pill */}
+                <div className="w-full flex justify-center mt-auto">
+                  <span className={`inline-flex px-2 py-0.5 sm:px-3 sm:py-1 bg-white/75 border border-white/40 rounded-full text-[8px] sm:text-[9.5px] font-black uppercase tracking-wider ${act.textColor}`}>
+                    💡 {act.benefit}
+                  </span>
                 </div>
-              )}
+              </div>
             </ClayCard>
           </motion.div>
         );

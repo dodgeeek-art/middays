@@ -369,7 +369,7 @@ export default function FeedMonsterEngine({ childId, onBack }: FeedMonsterEngine
       return {
         x: [0, -12, 12, -8, 8, 0],
         y: [0, -10, -10, 0, 0, 0],
-        transition: { duration: 0.6 }
+        transition: { type: "tween" as const, duration: 0.6 }
       };
     }
     
@@ -429,10 +429,10 @@ export default function FeedMonsterEngine({ childId, onBack }: FeedMonsterEngine
             }
             transition={
               gameState === "chewing"
-                ? { duration: 0.6, repeat: 1 }
+                ? { type: "tween" as const, duration: 0.6, repeat: 1 }
                 : gameState === "wrong"
-                ? { duration: 0.5 }
-                : { duration: 4, repeat: Infinity, ease: "easeInOut" }
+                ? { type: "tween" as const, duration: 0.5 }
+                : { type: "tween" as const, duration: 4, repeat: Infinity, ease: "easeInOut" as const }
             }
             className="w-60 h-60 sm:w-76 sm:h-76 md:w-88 md:h-88 relative overflow-visible"
           >
@@ -502,7 +502,7 @@ export default function FeedMonsterEngine({ childId, onBack }: FeedMonsterEngine
                 {/* Stubby arms */}
                 <motion.path 
                   animate={gameState === "success" ? { rotate: [0, 45, 0] } : {}}
-                  transition={{ duration: 0.5, repeat: 3 }}
+                  transition={{ type: "tween" as const, duration: 0.5, repeat: 3 }}
                   d="M 12 60 Q 2 55 5 45 Q 12 50 16 58" 
                   fill="#FDFBF7" 
                   stroke="#3A413A" 
@@ -510,7 +510,7 @@ export default function FeedMonsterEngine({ childId, onBack }: FeedMonsterEngine
                 />
                 <motion.path 
                   animate={gameState === "success" ? { rotate: [0, -45, 0] } : {}}
-                  transition={{ duration: 0.5, repeat: 3 }}
+                  transition={{ type: "tween" as const, duration: 0.5, repeat: 3 }}
                   d="M 88 60 Q 98 55 95 45 Q 88 50 84 58" 
                   fill="#FDFBF7" 
                   stroke="#3A413A" 

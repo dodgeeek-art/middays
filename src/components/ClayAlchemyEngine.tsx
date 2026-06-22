@@ -1,11 +1,108 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { ArrowLeft, Sparkles, Smile } from "@/components/Icons";
+import { ArrowLeft, Sparkles, Smile, Volume2 } from "@/components/Icons";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 import ClayButton from "@/components/ui/ClayButton";
 import { vocabularyList } from "@/lib/svgDictionary";
+
+// 3D Paint Tube component for clay squeeze tubes
+function PaintTube({ color, isSqueezing, onClick }: { color: "red" | "yellow" | "blue"; isSqueezing: boolean; onClick: () => void }) {
+  const currentGradient = {
+    red: { from: "#ff758f", via: "#ff4d6d", to: "#c9183b" },
+    yellow: { from: "#ffe194", via: "#ffd166", to: "#e5a91b" },
+    blue: { from: "#4ea8de", via: "#118ab2", to: "#006494" }
+  }[color];
+
+  const labelMap = { red: "RED", yellow: "YELLOW", blue: "BLUE" };
+
+  return (
+    <div className="flex flex-col items-center gap-0.5 select-none shrink-0">
+      <motion.button
+        animate={isSqueezing ? { scaleY: 0.75, scaleX: 1.15, y: 5 } : { scaleY: 1, scaleX: 1, y: 0 }}
+        transition={{ type: "spring", stiffness: 350, damping: 10 }}
+        onClick={onClick}
+        className="w-20 h-36 xs:w-24 xs:h-44 sm:w-28 sm:h-48 md:w-32 md:h-56 relative flex flex-col justify-between items-center outline-none cursor-pointer"
+        style={{ touchAction: "none" }}
+      >
+        <svg viewBox="0 0 80 140" className="w-full h-full filter drop-shadow-[0_8px_10px_rgba(0,0,0,0.12)]">
+          <defs>
+            <linearGradient id={`tubeGrad-${color}`} x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor={currentGradient.from} />
+              <stop offset="35%" stopColor={currentGradient.via} />
+              <stop offset="100%" stopColor={currentGradient.to} />
+            </linearGradient>
+            <linearGradient id={`silverGrad-${color}`} x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#cbd5e1" />
+              <stop offset="50%" stopColor="#f1f5f9" />
+              <stop offset="100%" stopColor="#94a3b8" />
+            </linearGradient>
+            <linearGradient id={`darkMetal-${color}`} x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#475569" />
+              <stop offset="50%" stopColor="#94a3b8" />
+              <stop offset="100%" stopColor="#334155" />
+            </linearGradient>
+          </defs>
+
+          {/* Tube body */}
+          <path
+            d="M 12 25 
+               C 12 25, 12 110, 12 110 
+               C 12 118, 25 120, 40 120 
+               C 55 120, 68 118, 68 110 
+               C 68 110, 68 25, 68 25 
+               Z"
+            fill={`url(#tubeGrad-${color})`}
+          />
+
+          {/* Glossy vertical reflection strip on tube */}
+          <path
+            d="M 22 25 
+               C 22 25, 22 108, 22 108 
+               C 22 112, 28 114, 30 114 
+               C 28 114, 25 112, 25 108 
+               C 25 108, 25 25, 25 25 
+               Z"
+            fill="#ffffff"
+            opacity="0.3"
+          />
+
+          {/* Metal crimp at top */}
+          <rect x="10" y="10" width="60" height="15" rx="3" fill={`url(#silverGrad-${color})`} />
+          {/* Crimp ridges */}
+          <line x1="14" y1="15" x2="66" y2="15" stroke="#94a3b8" strokeWidth="1.5" />
+          <line x1="14" y1="20" x2="66" y2="20" stroke="#94a3b8" strokeWidth="1.5" />
+
+          {/* White label on tube */}
+          <rect x="20" y="42" width="40" height="42" rx="4" fill="#ffffff" opacity="0.92" stroke="#e2e8f0" strokeWidth="1" />
+          {/* Text inside label */}
+          <text
+            x="40"
+            y="68"
+            fontFamily="system-ui, sans-serif"
+            fontWeight="900"
+            fontSize="9"
+            letterSpacing="0.5"
+            fill={currentGradient.to}
+            textAnchor="middle"
+          >
+            {labelMap[color]}
+          </text>
+
+          {/* Nozzle collar at bottom */}
+          <path d="M 30 120 L 50 120 L 46 128 L 34 128 Z" fill={`url(#darkMetal-${color})`} />
+
+          {/* Cap at bottom */}
+          <rect x="32" y="128" width="16" height="10" rx="2" fill={`url(#silverGrad-${color})`} stroke="#64748b" strokeWidth="0.5" />
+          <line x1="36" y1="128" x2="36" y2="138" stroke="#94a3b8" strokeWidth="1" />
+          <line x1="40" y1="128" x2="40" y2="138" stroke="#94a3b8" strokeWidth="1" />
+          <line x1="44" y1="128" x2="44" y2="138" stroke="#94a3b8" strokeWidth="1" />
+        </svg>
+      </motion.button>
+    </div>
+  );
+}
 
 interface PigmentBlobState {
   id: number;
@@ -68,6 +165,7 @@ export default function ClayAlchemyEngine({ childId, onBack }: { childId: string
   const [squeezingTube, setSqueezingTube] = useState<"red" | "yellow" | "blue" | null>(null);
   const [crankVisualAngle, setCrankVisualAngle] = useState(0);
   const [startTime] = useState<number>(() => Date.now());
+  const [isShaking, setIsShaking] = useState(false);
 
   const isDraggingCrank = useRef(false);
   const crankAngleRef = useRef(0);
@@ -80,9 +178,13 @@ export default function ClayAlchemyEngine({ childId, onBack }: { childId: string
   const speakText = useCallback((text: string) => {
     if (typeof window !== "undefined" && window.speechSynthesis) {
       window.speechSynthesis.cancel();
+      if (window.speechSynthesis.paused) {
+        window.speechSynthesis.resume();
+      }
       const utterance = new SpeechSynthesisUtterance(text);
-      utterance.rate = 0.85;
-      utterance.pitch = 1.25;
+      utterance.rate = 0.9;
+      utterance.pitch = 1.15;
+      utterance.volume = 1.0;
       window.speechSynthesis.speak(utterance);
     }
   }, []);
@@ -156,11 +258,12 @@ export default function ClayAlchemyEngine({ childId, onBack }: { childId: string
     setBlobs([]);
     setCrankVisualAngle(0);
     crankAngleRef.current = 0;
+    setIsShaking(false);
     speakText(activeLevel.mascotSpeech);
   }, [levelIdx, activeLevel, speakText]);
 
   const handleSqueeze = (type: "red" | "yellow" | "blue") => {
-    if (pourState !== "idle") return;
+    if (pourState !== "idle" || isShaking) return;
     setSqueezingTube(type);
     playSynthesizedSound("squeeze");
 
@@ -174,11 +277,11 @@ export default function ClayAlchemyEngine({ childId, onBack }: { childId: string
       id: nextBlobId.current++,
       color: colorMap[type],
       type,
-      x: 40 + Math.random() * 80, // Offset from left lip of jar
+      x: 40 + Math.random() * 80,
       y: -60,
       isDropped: false,
       angle: Math.random() * Math.PI * 2,
-      radius: 20 + Math.random() * 45
+      radius: 20 + Math.random() * 25 // Set within target blending orbit inside jar
     };
 
     setBlobs(prev => [...prev, newBlob]);
@@ -198,7 +301,7 @@ export default function ClayAlchemyEngine({ childId, onBack }: { childId: string
 
   const handleCrankPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
     const total = redAmt + yellowAmt + blueAmt;
-    if (total === 0 || pourState !== "idle") return;
+    if (total === 0 || pourState !== "idle" || isShaking) return;
     isDraggingCrank.current = true;
     e.currentTarget.setPointerCapture(e.pointerId);
 
@@ -216,7 +319,6 @@ export default function ClayAlchemyEngine({ childId, onBack }: { childId: string
 
     const angle = Math.atan2(e.clientY - cy, e.clientX - cx);
     let delta = angle - crankAngleRef.current;
-    // Normalize delta to [-PI, PI] to handle boundary wrap-around
     delta = Math.atan2(Math.sin(delta), Math.cos(delta));
     const absDelta = Math.abs(delta);
 
@@ -225,7 +327,7 @@ export default function ClayAlchemyEngine({ childId, onBack }: { childId: string
       setCrankVisualAngle(angle);
 
       setMixProgress(prev => {
-        const increment = absDelta * 5.0; // Proportional progress
+        const increment = absDelta * 5.5; // Smooth incremental progress multiplier
         const next = Math.min(100, prev + increment);
         if (Math.floor(next) > Math.floor(prev) && Math.floor(next) % 15 === 0) {
           playSynthesizedSound("blend");
@@ -233,7 +335,7 @@ export default function ClayAlchemyEngine({ childId, onBack }: { childId: string
         return next;
       });
 
-      // Rotate/swirl the unblended clay blobs inside the jar
+      // Slowly spiral unblended blobs inward and rotate them
       setBlobs(prev =>
         prev.map(blob => {
           if (!blob.isDropped) return blob;
@@ -241,7 +343,7 @@ export default function ClayAlchemyEngine({ childId, onBack }: { childId: string
           return {
             ...blob,
             angle: newAngle,
-            radius: Math.max(8, blob.radius * (1 - absDelta * 0.015)) // Slowly spiralling inward
+            radius: Math.max(5, blob.radius * (1 - absDelta * 0.015))
           };
         })
       );
@@ -260,7 +362,6 @@ export default function ClayAlchemyEngine({ childId, onBack }: { childId: string
     const y_pct = y / total;
     const b_pct = b / total;
 
-    // Rich pigment base values
     const redColor = { r: 255, g: 77, b: 109 };
     const yellowColor = { r: 255, g: 209, b: 102 };
     const blueColor = { r: 17, g: 138, b: 178 };
@@ -272,20 +373,31 @@ export default function ClayAlchemyEngine({ childId, onBack }: { childId: string
     return `rgb(${Math.round(target_r)}, ${Math.round(target_g)}, ${Math.round(target_b)})`;
   };
 
-  const handlePour = () => {
-    if (mixProgress < 100) return;
-    setPourState("pouring");
-    playSynthesizedSound("squeeze");
+  const handleClear = () => {
+    playSynthesizedSound("click");
+    setRedAmt(0);
+    setYellowAmt(0);
+    setBlueAmt(0);
+    setMixProgress(0);
+    setPourState("idle");
+    setBlobs([]);
+    setIsShaking(false);
+  };
 
-    setTimeout(() => {
+  const totalAdded = redAmt + yellowAmt + blueAmt;
+  const displayColor = getMixedColor(redAmt, yellowAmt, blueAmt);
+
+  // Auto-Success Evaluator effect
+  useEffect(() => {
+    if (mixProgress >= 100 && pourState === "idle" && totalAdded > 0) {
       const match = activeLevel.check(redAmt, yellowAmt, blueAmt);
       if (match) {
         setPourState("fed");
         playSynthesizedSound("correct");
         confetti({
-          particleCount: 60,
+          particleCount: 65,
           spread: 60,
-          origin: { y: 0.7 }
+          origin: { y: 0.65 }
         });
 
         if (childId) {
@@ -304,35 +416,117 @@ export default function ClayAlchemyEngine({ childId, onBack }: { childId: string
 
         setTimeout(() => {
           setLevelIdx(prev => (prev + 1) % levels.length);
-        }, 3000);
+        }, 2500);
       } else {
-        setPourState("idle");
-        speakText("Oops! That mixed a different color. Let's clear the jar and try again!");
+        playSynthesizedSound("click");
+        speakText("Oops! That mixed a different color. Let's tap Clear and try again!");
+        setIsShaking(true);
+        setMixProgress(0); // Reset mix progress immediately to break feedback trigger loops
+        setTimeout(() => {
+          setIsShaking(false);
+        }, 600);
       }
-    }, 2000);
-  };
+    }
+  }, [mixProgress, pourState, totalAdded, redAmt, yellowAmt, blueAmt, activeLevel, childId, startTime, speakText]);
 
-  const handleClear = () => {
-    playSynthesizedSound("click");
-    setRedAmt(0);
-    setYellowAmt(0);
-    setBlueAmt(0);
-    setMixProgress(0);
-    setPourState("idle");
-    setBlobs([]);
-  };
+  // Equation rendering helper
+  const renderFormula = () => {
+    const renderPill = (colorName: string, emoji: string, bgClass: string, textClass: string, borderClass: string) => (
+      <span className={`inline-flex items-center gap-1 px-2 py-0.5 sm:px-3 sm:py-1 rounded-full border-2 ${bgClass} ${textClass} ${borderClass} font-black text-[10px] sm:text-xs shadow-sm select-none shrink-0`}>
+        <span className="text-sm sm:text-base leading-none">{emoji}</span>
+        <span className="uppercase tracking-wider">{colorName}</span>
+      </span>
+    );
 
-  const totalAdded = redAmt + yellowAmt + blueAmt;
-  const displayColor = getMixedColor(redAmt, yellowAmt, blueAmt);
+    const plusSign = (
+      <span className="text-slate-400 font-black text-xs sm:text-sm px-0.5 select-none shrink-0">+</span>
+    );
+
+    const equalSign = (
+      <span className="text-slate-400 font-black text-xs sm:text-sm px-0.5 select-none shrink-0">=</span>
+    );
+
+    switch (activeLevel.targetName) {
+      case "Orange":
+        return (
+          <div className="flex items-center gap-1 sm:gap-1.5 flex-nowrap select-none shrink-0">
+            {renderPill("Red", "🔴", "bg-rose-50/90", "text-rose-500", "border-rose-200")}
+            {plusSign}
+            {renderPill("Yellow", "🟡", "bg-amber-50/90", "text-amber-500", "border-amber-200")}
+            {equalSign}
+            {renderPill("Orange", "🟠", "bg-orange-50/90", "text-orange-500", "border-orange-200")}
+          </div>
+        );
+      case "Green":
+        return (
+          <div className="flex items-center gap-1 sm:gap-1.5 flex-nowrap select-none shrink-0">
+            {renderPill("Yellow", "🟡", "bg-amber-50/90", "text-amber-500", "border-amber-200")}
+            {plusSign}
+            {renderPill("Blue", "🔵", "bg-sky-50/90", "text-sky-500", "border-sky-200")}
+            {equalSign}
+            {renderPill("Green", "🟢", "bg-emerald-50/90", "text-emerald-500", "border-emerald-200")}
+          </div>
+        );
+      case "Purple":
+        return (
+          <div className="flex items-center gap-1 sm:gap-1.5 flex-nowrap select-none shrink-0">
+            {renderPill("Red", "🔴", "bg-rose-50/90", "text-rose-500", "border-rose-200")}
+            {plusSign}
+            {renderPill("Blue", "🔵", "bg-sky-50/90", "text-sky-500", "border-sky-200")}
+            {equalSign}
+            {renderPill("Purple", "🟣", "bg-purple-50/90", "text-purple-500", "border-purple-200")}
+          </div>
+        );
+      case "Brown":
+        return (
+          <div className="flex items-center gap-0.5 sm:gap-1 flex-nowrap select-none shrink-0">
+            {renderPill("Red", "🔴", "bg-rose-50/90", "text-rose-500", "border-rose-200")}
+            {plusSign}
+            {renderPill("Yellow", "🟡", "bg-amber-50/90", "text-amber-500", "border-amber-200")}
+            {plusSign}
+            {renderPill("Blue", "🔵", "bg-sky-50/90", "text-sky-500", "border-sky-200")}
+            {equalSign}
+            {renderPill("Brown", "🟤", "bg-stone-100/90", "text-stone-700", "border-stone-300")}
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
 
   return (
-    <div className="flex flex-col w-full max-w-4xl mx-auto h-full min-h-0 bg-[#fffcf5] p-3 sm:p-5 rounded-[2.5rem] border-[3px] border-white/50 shadow-clay-card relative overflow-hidden select-none">
+    <div className="flex flex-col w-full max-w-4xl mx-auto h-full min-h-0 bg-gradient-to-b from-[#fbf8f3] to-[#f4ebe1] p-3 sm:p-5 rounded-[2.5rem] border-[3px] border-white/50 shadow-clay-card relative overflow-hidden select-none">
       
-      {/* Background Decor */}
+      {/* Grid Table Pattern decor background */}
+      <div 
+        className="absolute inset-0 opacity-[0.06] pointer-events-none" 
+        style={{
+          backgroundImage: "linear-gradient(rgba(0, 0, 0, 0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 0, 0, 0.15) 1px, transparent 1px)",
+          backgroundSize: "28px 28px"
+        }}
+      />
+
+      {/* Global SVG Gradients for Blades */}
+      <svg className="hidden">
+        <defs>
+          <linearGradient id="silverGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#cbd5e1" />
+            <stop offset="50%" stopColor="#f1f5f9" />
+            <stop offset="100%" stopColor="#94a3b8" />
+          </linearGradient>
+          <linearGradient id="darkMetal" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#475569" />
+            <stop offset="50%" stopColor="#94a3b8" />
+            <stop offset="100%" stopColor="#334155" />
+          </linearGradient>
+        </defs>
+      </svg>
+
+      {/* Background ambient glow shapes */}
       <div className="absolute -bottom-20 -right-20 w-80 h-80 rounded-full bg-[#ffd166]/10 blur-3xl pointer-events-none" />
       <div className="absolute -top-20 -left-20 w-80 h-80 rounded-full bg-[#118ab2]/5 blur-3xl pointer-events-none" />
 
-      {/* Header Row */}
+      {/* Top Header Row */}
       <div className="flex items-center justify-between mb-3 sm:mb-4 shrink-0 z-20">
         <ClayButton
           variant="surface"
@@ -352,289 +546,214 @@ export default function ClayAlchemyEngine({ childId, onBack }: { childId: string
         </div>
       </div>
 
-      {/* Recipe / Help banner */}
-      <div className="bg-white/95 p-3 sm:p-4 rounded-3xl border-[3px] border-white/60 shadow-clay-card flex flex-col md:flex-row items-center justify-between gap-3 mb-4 shrink-0 z-20">
-        <div className="flex items-center gap-3">
-          {MascotIcon && (
-            <div className="w-14 h-14 rounded-2xl bg-[#fdfaf2] border-[3px] border-white/80 flex items-center justify-center shadow-inner shrink-0 overflow-visible">
-              <MascotIcon size={44} animClass="anim-sway" />
-            </div>
-          )}
-          <div className="flex flex-col text-left">
-            <span className="text-[10px] font-black text-[#f76ca0] uppercase tracking-wider">Goal Mascot</span>
-            <span className="text-sm font-black text-[#5c6b73]">{activeLevel.mascotSpeech}</span>
+      {/* Mascot Speech Bubble Instruction */}
+      <div 
+        onClick={() => speakText(activeLevel.mascotSpeech)}
+        className="w-full max-w-xl flex items-center gap-4 mb-4 sm:mb-6 z-10 cursor-pointer select-none active:scale-[0.99] transition-all self-center"
+      >
+        {/* Mascot Face Icon */}
+        {MascotIcon && (
+          <div className="w-16 h-16 sm:w-20 sm:h-20 shrink-0 flex items-center justify-center overflow-visible relative">
+            <MascotIcon size="100%" animClass="anim-sway" />
           </div>
-        </div>
-
-        {/* Dynamic Formula Recipe Guide */}
-        <div className="flex items-center gap-2 bg-[#f6f8f7] px-5 py-2.5 rounded-full border-2 border-white/60 shadow-inner shrink-0">
-          <span className="text-xs font-black text-slate-500 uppercase mr-1">Blend:</span>
-          {activeLevel.targetName === "Orange" && (
-            <span className="text-sm font-bold flex items-center gap-1.5">🔴 Red + 🟡 Yellow = 🟠 Orange</span>
-          )}
-          {activeLevel.targetName === "Green" && (
-            <span className="text-sm font-bold flex items-center gap-1.5">🟡 Yellow + 🔵 Blue = 🟢 Green</span>
-          )}
-          {activeLevel.targetName === "Purple" && (
-            <span className="text-sm font-bold flex items-center gap-1.5">🔴 Red + 🔵 Blue = 🟣 Purple</span>
-          )}
-          {activeLevel.targetName === "Brown" && (
-            <span className="text-sm font-bold flex items-center gap-1.5">🔴 Red + 🟡 Yellow + 🔵 Blue = 🟤 Brown</span>
-          )}
+        )}
+        
+        {/* Speech Bubble */}
+        <div className="flex-1 relative bg-white border border-[#4a5358]/10 p-2 sm:p-4 rounded-[2rem] shadow-[4px_4px_12px_rgba(0,0,0,0.03),_inset_2px_2px_4px_rgba(255,255,255,0.9)] text-left flex flex-col justify-center min-h-[64px] sm:min-h-[72px] min-w-0">
+          {/* Arrow */}
+          <div className="absolute top-1/2 -left-3 -translate-y-1/2 w-0 h-0 border-t-[8px] border-t-transparent border-r-[12px] border-r-white border-b-[8px] border-b-transparent filter drop-shadow-[-1px_0_0_rgba(74,83,88,0.06)]"></div>
+          
+          <div className="flex items-center gap-2 w-full min-w-0 justify-between">
+            <div className="min-w-0 overflow-x-visible">
+              {renderFormula()}
+            </div>
+            <Volume2 className="w-5 h-5 text-slate-400 shrink-0 animate-pulse ml-2" />
+          </div>
         </div>
       </div>
 
-      {/* Play Area */}
-      <div className="flex-grow flex flex-col md:flex-row gap-6 min-h-0 relative z-10 items-stretch">
+      {/* Play Workspace */}
+      <div className="flex-grow flex flex-col md:flex-row gap-6 sm:gap-10 min-h-0 relative z-10 items-center justify-center">
         
-        {/* Left Column: 3D Squeeze Clay Tubes */}
-        <div className="flex md:flex-col justify-around items-center gap-4 bg-white/85 p-4 rounded-[2rem] border-[3px] border-white/80 shadow-inner-clay md:w-32 shrink-0">
-          {(["red", "yellow", "blue"] as const).map(color => {
-            const hexMap = { red: "#ff4d6d", yellow: "#ffd166", blue: "#118ab2" };
-            const labelMap = { red: "🔴 RED", yellow: "🟡 YEL", blue: "🔵 BLU" };
-            return (
-              <div key={color} className="flex flex-col items-center gap-1">
-                <motion.button
-                  animate={squeezingTube === color ? { scaleY: 0.7, scaleX: 1.15, y: 12 } : { scaleY: 1, scaleX: 1, y: 0 }}
-                  transition={{ type: "spring", stiffness: 350, damping: 10 }}
-                  onClick={() => handleSqueeze(color)}
-                  className="w-16 h-28 sm:w-20 sm:h-32 rounded-t-3xl rounded-b-xl border-[3px] border-white shadow-clay-btn hover:scale-105 active:scale-95 transition-transform duration-100 flex flex-col justify-between items-center p-2 relative"
-                  style={{
-                    backgroundColor: hexMap[color],
-                    boxShadow: `inset 0 10px 15px rgba(255,255,255,0.4), inset 0 -12px 10px rgba(0,0,0,0.15), 0 8px 16px rgba(0,0,0,0.08)`
-                  }}
-                >
-                  {/* Squeeze Tube Details */}
-                  <div className="w-full border-b border-white/20 pb-1 flex justify-center">
-                    <div className="w-4 h-1.5 rounded bg-black/10" />
-                  </div>
-                  <div className="flex-grow flex items-center justify-center">
-                    <span className="text-[10px] sm:text-xs font-black text-white tracking-widest bg-black/15 px-1.5 py-0.5 rounded-md">
-                      CLAY
-                    </span>
-                  </div>
-                  {/* Nozzle outlet bottom */}
-                  <div className="w-5 h-2 bg-white/90 border border-black/10 rounded-b-md shadow-sm" />
-                </motion.button>
-                <span className="text-[10px] font-black text-slate-500 tracking-wider">
-                  {labelMap[color]}
-                </span>
-              </div>
-            );
-          })}
+        {/* Left Column: Squeeze Clay Tubes (Rendered directly, no background card wrapper) */}
+        <div className="flex md:flex-col justify-center items-center gap-6 sm:gap-8 md:w-36 shrink-0 z-20">
+          {(["red", "yellow", "blue"] as const).map(color => (
+            <PaintTube
+              key={color}
+              color={color}
+              isSqueezing={squeezingTube === color}
+              onClick={() => handleSqueeze(color)}
+            />
+          ))}
         </div>
 
-        {/* Center/Right: Transparent Glass Jar Station */}
-        <div className="flex-grow flex flex-col justify-between bg-[#ecefe9] border-[4px] border-white/80 p-5 rounded-[2.5rem] shadow-inner-clay relative overflow-visible min-h-[360px]">
-          
-          {/* Main jar visualization container */}
-          <div className="flex-grow w-full relative flex justify-center items-center overflow-visible">
-            
-            {/* The Jar Container */}
+        {/* Center/Right: Bird's Eye View Blender Jar (Rendered directly on main background, scaled up significantly!) */}
+        <motion.div
+            animate={isShaking ? { x: [0, -12, 12, -12, 12, 0] } : {}}
+            transition={{ type: "tween", duration: 0.5 }}
+            className="relative w-60 h-60 xs:w-68 xs:h-68 sm:w-84 sm:h-84 md:w-[28rem] md:h-[28rem] rounded-full bg-[#f8f6f2] shadow-[0_12px_28px_rgba(0,0,0,0.06),_inset_0_3px_10px_rgba(0,0,0,0.05),_0_0_0_6px_white] flex items-center justify-center overflow-visible touch-none border border-slate-200/20"
+            onPointerDown={handleCrankPointerDown}
+            onPointerMove={handleCrankPointerMove}
+            onPointerUp={handleCrankPointerUp}
+            style={{ cursor: isDraggingCrank.current ? "grabbing" : "grab" }}
+          >
+            {/* Rotating Jar Assembly */}
             <motion.div
-              animate={
-                pourState === "pouring"
-                  ? { rotate: -60, x: -70, y: 50 }
-                  : pourState === "fed"
-                  ? { scale: [1, 1.05, 1], rotate: [0, -3, 3, 0] }
-                  : { rotate: 0, x: 0, y: 0 }
-              }
-              transition={{ type: "spring", stiffness: 180, damping: 14 }}
-              className="relative w-44 h-56 sm:w-52 sm:h-64 rounded-b-[4.5rem] rounded-t-[2rem] border-[6px] border-white/70 bg-white/10 shadow-[0_15px_30px_rgba(0,0,0,0.06),inset_0_4px_12px_rgba(255,255,255,0.7)] flex items-center justify-center overflow-visible z-20"
+              animate={{ rotate: (crankVisualAngle * 180) / Math.PI }}
+              transition={{ type: "tween", ease: "linear", duration: 0.05 }}
+              className="absolute inset-0 w-full h-full rounded-full flex items-center justify-center overflow-visible pointer-events-none"
             >
-              {/* Highlight Overlay for Glossy Glass Look */}
-              <div className="absolute top-2 left-4 w-4 h-[80%] rounded-full bg-white/20 filter blur-[1px] pointer-events-none" />
-              <div className="absolute top-2 right-4 w-1.5 h-[60%] rounded-full bg-white/10 pointer-events-none" />
+              {/* Left Jar Handle (Soft clay ear) */}
+              <div className="absolute -left-5 sm:-left-6 top-1/2 -translate-y-1/2 w-5 sm:w-6 h-12 sm:h-18 bg-[#94a3b8] rounded-l-[1.25rem] border-2 border-white shadow-[0_3px_6px_rgba(0,0,0,0.06),_inset_1.5px_1.5px_3px_rgba(255,255,255,0.4)] pointer-events-none" />
+              
+              {/* Right Jar Handle (Soft clay ear) */}
+              <div className="absolute -right-5 sm:-right-6 top-1/2 -translate-y-1/2 w-5 sm:w-6 h-12 sm:h-18 bg-[#94a3b8] rounded-r-[1.25rem] border-2 border-white shadow-[0_3px_6px_rgba(0,0,0,0.06),_inset_-1.5px_1.5px_3px_rgba(255,255,255,0.4)] pointer-events-none" />
 
-              {/* Mixed Liquid Background Fill (Inside the Jar) */}
-              <div
-                className="absolute bottom-0 inset-x-0 rounded-b-[3.9rem] rounded-t-[1.5rem] transition-all duration-300 pointer-events-none"
-                style={{
-                  height: totalAdded > 0 ? `${Math.min(95, 30 + totalAdded * 12)}%` : "0%",
-                  backgroundColor: displayColor,
-                  opacity: totalAdded > 0 ? Math.max(0.15, mixProgress / 100) : 0,
-                  boxShadow: "inset 0 4px 6px rgba(255,255,255,0.3), inset 0 -6px 12px rgba(0,0,0,0.1)"
-                }}
-              />
+              {/* Glass Inner Rim reflection highlights */}
+              <div className="absolute inset-0.5 rounded-full border-[6px] sm:border-[8px] border-slate-300/30 pointer-events-none" />
+              <div className="absolute inset-2 rounded-full border-t-2 sm:border-t-4 border-l border-white/35 pointer-events-none" />
 
-              {/* Mixing Beater Shaft & Blades */}
-              <motion.div
-                className="absolute inset-x-0 top-0 bottom-8 flex flex-col items-center pointer-events-none z-10"
-                animate={{ rotate: (crankVisualAngle * 180) / Math.PI }}
-                transition={{ ease: "linear", duration: 0.05 }}
-              >
-                {/* Silver Mixer Shaft */}
-                <div className="w-2.5 h-[70%] bg-gradient-to-r from-slate-300 via-white to-slate-400 border border-slate-500/20" />
-                {/* Propeller Blade */}
-                <div className="w-24 h-4 bg-gradient-to-b from-slate-400 to-slate-600 rounded-full border border-slate-700/20 shadow-md flex justify-between px-2">
-                  <div className="w-2 h-2 rounded-full bg-white/40" />
-                  <div className="w-2 h-2 rounded-full bg-white/40" />
-                </div>
-              </motion.div>
-
-              {/* Rendering Falling Droplets and orbital blobs */}
-              <div className="absolute inset-0 rounded-b-[3.9rem] rounded-t-[1.5rem] overflow-hidden pointer-events-none">
-                <AnimatePresence>
-                  {blobs.map(blob => {
-                    if (!blob.isDropped) {
-                      // Dropping animation
-                      return (
-                        <motion.div
-                          key={blob.id}
-                          initial={{ y: -60, scale: 1.4, opacity: 1 }}
-                          animate={{ y: 140, scale: 1.0 }}
-                          exit={{ opacity: 0 }}
-                          transition={{ type: "spring", stiffness: 160, damping: 9 }}
-                          onAnimationComplete={() => handleBlobLand(blob.id, blob.type)}
-                          className="absolute w-7 h-7 rounded-full shadow-inner z-30"
-                          style={{
-                            backgroundColor: blob.color,
-                            left: `${blob.x}%`,
-                            boxShadow: "inset 2px 2px 4px rgba(255,255,255,0.4), inset -2px -2px 4px rgba(0,0,0,0.2)"
-                          }}
-                        />
-                      );
-                    } else {
-                      // Orbiting blend blobs inside jar
-                      const targetX = 80 + Math.cos(blob.angle) * blob.radius;
-                      const targetY = 130 + Math.sin(blob.angle) * blob.radius;
-                      const scale = 1 - mixProgress / 100;
-
-                      if (scale <= 0.05) return null;
-
-                      return (
-                        <motion.div
-                          key={blob.id}
-                          animate={{
-                            x: targetX,
-                            y: targetY,
-                            scale: scale,
-                            opacity: scale
-                          }}
-                          transition={{ ease: "linear", duration: 0.05 }}
-                          className="absolute w-7 h-7 rounded-full shadow-inner z-20 filter blur-[1px]"
-                          style={{
-                            backgroundColor: blob.color,
-                            left: 0,
-                            top: 0,
-                            boxShadow: "inset 2px 2px 4px rgba(255,255,255,0.4), inset -2px -2px 4px rgba(0,0,0,0.2)"
-                          }}
-                        />
-                      );
-                    }
-                  })}
-                </AnimatePresence>
+              {/* Jar measurements lines */}
+              <div className="absolute left-5 sm:left-7 top-1/2 -translate-y-1/2 flex flex-col gap-1.5 sm:gap-2 opacity-35 select-none pointer-events-none">
+                <div className="w-2.5 sm:w-3.5 h-0.5 bg-slate-400" />
+                <div className="w-1.5 sm:w-2.5 h-0.5 bg-slate-400" />
+                <div className="w-3.5 sm:w-4.5 h-0.5 bg-slate-400" />
+                <div className="w-1.5 sm:w-2.5 h-0.5 bg-slate-400" />
+                <div className="w-2.5 sm:w-3.5 h-0.5 bg-slate-400" />
               </div>
-            </motion.div>
 
-            {/* Pouring Stream animation */}
-            <AnimatePresence>
-              {pourState === "pouring" && (
-                <motion.div
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: 160, opacity: 0.9 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  className="absolute left-[38%] top-[55%] w-5 rounded-full z-10 origin-top shadow-md"
+              {/* Blended Liquid Fill */}
+              {totalAdded > 0 && (
+                <div
+                  className="absolute inset-0 rounded-full transition-all duration-300 pointer-events-none"
                   style={{
                     backgroundColor: displayColor,
-                    boxShadow: "inset 2px 0 4px rgba(255,255,255,0.4)"
+                    opacity: Math.max(0.12, mixProgress / 100),
+                    boxShadow: "inset 0 4px 16px rgba(0,0,0,0.18), inset 0 -4px 16px rgba(255,255,255,0.2)"
                   }}
                 />
               )}
-            </AnimatePresence>
 
-            {/* Feed Bowl / Mascot Cup next to the jar */}
-            <div className="absolute left-[15%] bottom-[10px] w-20 h-10 rounded-b-3xl rounded-a-md bg-rose-200 border-[3px] border-white shadow-md flex items-center justify-center z-10">
-              <div
-                className="w-[85%] rounded-b-2xl transition-all duration-300"
-                style={{
-                  height: pourState === "pouring" || pourState === "fed" ? "80%" : "0%",
-                  backgroundColor: displayColor,
-                  opacity: 0.9
-                }}
-              />
-              <span className="absolute -top-3.5 text-xs">🥛</span>
-            </div>
+              {/* Dropped Blobs (rendered inside the rotating wrapper) */}
+              <div className="absolute inset-0 rounded-full overflow-hidden pointer-events-none z-20">
+                {blobs.filter(b => b.isDropped).map(blob => {
+                  const targetX = 50 + Math.cos(blob.angle) * blob.radius;
+                  const targetY = 50 + Math.sin(blob.angle) * blob.radius;
+                  const scale = Math.max(0, 1 - mixProgress / 100);
+                  if (scale <= 0.05) return null;
 
-            {/* Crank Wheel Controller Block */}
-            <div className="absolute right-[5%] bottom-[30px] flex flex-col items-center gap-2">
-              <div className="relative w-28 h-28 flex items-center justify-center overflow-visible select-none">
-                
-                {/* Visual Dotted Helper Arrow showing spinning direction */}
-                {totalAdded > 0 && mixProgress < 100 && (
-                  <motion.div
-                    animate={{ rotate: 360 }}
-                    transition={{ repeat: Infinity, duration: 4, ease: "linear" }}
-                    className="absolute -inset-4 border-[3px] border-dashed border-[#ff4d6d]/40 rounded-full pointer-events-none"
-                  />
-                )}
-
-                {/* Crank Wheel Body */}
-                <motion.div
-                  onPointerDown={handleCrankPointerDown}
-                  onPointerMove={handleCrankPointerMove}
-                  onPointerUp={handleCrankPointerUp}
-                  style={{ rotate: (crankVisualAngle * 180) / Math.PI }}
-                  className="w-24 h-24 rounded-full bg-[#fdf5f2] border-[4px] border-white shadow-clay-btn hover:scale-103 cursor-grab active:cursor-grabbing flex items-center justify-center z-20 relative select-none touch-none"
-                >
-                  {/* Spokes */}
-                  <div className="absolute w-0.5 h-full bg-slate-300" />
-                  <div className="absolute h-0.5 w-full bg-slate-300" />
-                  <div className="w-8 h-8 rounded-full bg-white border-2 border-slate-200 z-10 shadow-sm" />
-
-                  {/* Red Handle Knob on outer edge */}
-                  <div
-                    className="absolute w-7 h-7 rounded-full bg-[#ff4d6d] border-2 border-white shadow-md z-30"
-                    style={{ left: "calc(50% + 26px)", top: "calc(50% - 14px)" }}
-                  />
-                </motion.div>
+                  return (
+                    <motion.div
+                      key={blob.id}
+                      animate={{
+                        left: `${targetX}%`,
+                        top: `${targetY}%`,
+                        scale: scale,
+                        opacity: scale
+                      }}
+                      transition={{ ease: "linear", duration: 0.05 }}
+                      className="absolute w-8 h-8 sm:w-12 sm:h-12 rounded-full z-20 -translate-x-1/2 -translate-y-1/2 filter blur-[0.5px]"
+                      style={{
+                        backgroundColor: blob.color,
+                        boxShadow: "inset 2px 2px 4px rgba(255,255,255,0.45), inset -2px -2px 4px rgba(0,0,0,0.25)"
+                      }}
+                    />
+                  );
+                })}
               </div>
-              <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest select-none">
-                SPIN WHEEL 🎡
-              </span>
-            </div>
-          </div>
 
-          {/* Bottom Controls */}
-          <div className="flex justify-between items-center gap-4 mt-3 z-30 shrink-0 select-none">
-            <ClayButton
-              variant="surface"
-              size="sm"
-              onClick={handleClear}
-              className="bg-white/95 shadow-md active:scale-95 border-2 border-white/40"
-            >
-              Clear 🔄
-            </ClayButton>
-
-            {/* Blend Progress Pill */}
-            <div className="flex items-center gap-2 bg-white/80 px-3 py-2 rounded-full border border-white shadow-inner">
-              <span className="text-[10px] font-black text-slate-500 uppercase tracking-wider">
-                {totalAdded === 0
-                  ? "Add colors first!"
-                  : mixProgress < 100
-                  ? "Spin Wheel!"
-                  : "Mixed! 🎉"}
-              </span>
-              <div className="w-20 bg-slate-200 h-2.5 rounded-full overflow-hidden border border-black/5">
-                <div
-                  className="bg-emerald-400 h-full transition-all duration-150"
-                  style={{ width: `${mixProgress}%` }}
-                />
+              {/* Center Clay Blade (Scaled up!) */}
+              <div className="absolute pointer-events-none z-30 flex items-center justify-center">
+                <svg viewBox="0 0 100 100" className="w-20 h-20 sm:w-28 sm:h-28 filter drop-shadow-[0_4px_8px_rgba(0,0,0,0.12)]">
+                  <path d="M 50 50 C 65 35, 80 45, 85 50 C 80 55, 65 65, 50 50 Z" fill="#64748b" stroke="white" strokeWidth="1" />
+                  <path d="M 50 50 C 35 65, 20 55, 15 50 C 20 45, 35 35, 50 50 Z" fill="#64748b" stroke="white" strokeWidth="1" />
+                  <path d="M 50 50 C 65 65, 55 80, 50 85 C 45 80, 35 65, 50 50 Z" fill="#64748b" stroke="white" strokeWidth="1" />
+                  <path d="M 50 50 C 35 35, 45 20, 50 15 C 55 20, 65 35, 50 50 Z" fill="#64748b" stroke="white" strokeWidth="1" />
+                  <circle cx="50" cy="50" r="7" fill="#475569" stroke="white" strokeWidth="1" />
+                  <circle cx="50" cy="50" r="2" fill="white" opacity="0.9" />
+                </svg>
               </div>
+            </motion.div>
+
+            {/* Flying Blobs (rendered in static jar coordinate space) */}
+            <div className="absolute inset-0 rounded-full overflow-hidden pointer-events-none z-25">
+              <AnimatePresence>
+                {blobs.filter(b => !b.isDropped).map(blob => {
+                  const targetX = 50 + Math.cos(blob.angle) * blob.radius;
+                  const targetY = 50 + Math.sin(blob.angle) * blob.radius;
+
+                  return (
+                    <motion.div
+                      key={blob.id}
+                      initial={{ left: "-20%", top: "40%", scale: 0.4, opacity: 0.8 }}
+                      animate={{ left: `${targetX}%`, top: `${targetY}%`, scale: 1.1, opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ type: "spring", stiffness: 220, damping: 14 }}
+                      onAnimationComplete={() => handleBlobLand(blob.id, blob.type)}
+                      className="absolute w-8 h-8 sm:w-12 sm:h-12 rounded-full z-30 -translate-x-1/2 -translate-y-1/2"
+                      style={{
+                        backgroundColor: blob.color,
+                        boxShadow: "inset 2px 2px 4px rgba(255,255,255,0.45), inset -2px -2px 4px rgba(0,0,0,0.25)"
+                      }}
+                    />
+                  );
+                })}
+              </AnimatePresence>
             </div>
 
-            <ClayButton
-              variant={mixProgress >= 100 ? "primary" : "surface"}
-              size="sm"
-              isDisabled={mixProgress < 100}
-              onClick={handlePour}
-              className="shadow-md"
-            >
-              {pourState === "fed" ? "Yum! 😋" : "Pour 🫗"}
-            </ClayButton>
-          </div>
+            {/* Spin Helper Arrows Overlay */}
+            {totalAdded > 0 && mixProgress < 100 && (
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ repeat: Infinity, duration: 8, ease: "linear" }}
+                className="absolute inset-4 sm:inset-6 border border-dashed border-white/25 rounded-full pointer-events-none flex items-center justify-center z-15"
+              >
+                <span className="absolute top-1 text-[9px] sm:text-[11px] text-white/45">➔</span>
+                <span className="absolute bottom-1 text-[9px] sm:text-[11px] text-white/45 rotate-180">➔</span>
+                <span className="absolute right-1 text-[9px] sm:text-[11px] text-white/45 rotate-90">➔</span>
+                <span className="absolute left-1 text-[9px] sm:text-[11px] text-white/45 -rotate-90">➔</span>
+              </motion.div>
+            )}
+
+            {/* Success Checkmark overlay (bg-transparent keeps resulted color visible!) */}
+            {pourState === "fed" && (
+              <motion.div
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                className="absolute inset-0 bg-transparent z-40 flex items-center justify-center rounded-full pointer-events-none"
+              >
+                <div className="bg-emerald-500 w-16 h-16 sm:w-24 sm:h-24 rounded-full flex items-center justify-center shadow-[0_6px_15px_rgba(16,185,129,0.35),_inset_0_3px_6px_rgba(255,255,255,0.4)] border-4 sm:border-[6px] border-white animate-bounce">
+                  <span className="text-white text-xl sm:text-4xl font-black">✓</span>
+                </div>
+              </motion.div>
+            )}
+          </motion.div>
+
+      </div>
+
+      {/* Controls Bar (Positioned at the very bottom of the screen!) */}
+      <div className="flex justify-between items-center gap-4 sm:gap-6 mt-4 w-full max-w-md z-30 select-none self-center shrink-0 mb-2">
+        <ClayButton
+          variant="surface"
+          size="sm"
+          onClick={handleClear}
+          className="bg-white border-2 border-slate-200 shadow-md active:scale-95 flex items-center gap-1.5 font-bold px-3 py-1.5 text-xs sm:text-sm sm:px-4 sm:py-2 rounded-2xl shrink-0"
+        >
+          Clear 🔄
+        </ClayButton>
+
+        {/* Instruction Status Info */}
+        <div className="flex-grow flex items-center justify-center bg-white/95 px-3 py-2 sm:px-4 sm:py-2.5 rounded-full border-2 border-white/60 shadow-clay-card max-w-[180px] sm:max-w-[200px]">
+          <span className="text-[9px] sm:text-[10px] font-black text-slate-500 uppercase tracking-widest text-center">
+            {totalAdded === 0
+              ? "Squeeze tubes! 🔴 🟡 🔵"
+              : mixProgress < 100
+              ? "Spin container! 🌀"
+              : "Success! 🎉"}
+          </span>
         </div>
-
+        
+        <div className="w-16 sm:w-20 shrink-0" /> {/* Spacer */}
       </div>
 
     </div>

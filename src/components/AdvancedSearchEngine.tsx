@@ -289,7 +289,7 @@ export default function AdvancedSearchEngine({ childId, onBack }: AdvancedSearch
                       : "bg-[var(--surface-container-lowest)] shadow-[4px_4px_10px_rgba(0,0,0,0.04),_inset_3px_3px_6px_rgba(255,255,255,0.9),_inset_-3px_-3px_6px_rgba(0,0,0,0.04)]"
                 }`}
                 animate={isWrong ? { rotate: [0, -6, 6, -6, 6, 0] } : {}}
-                transition={{ duration: 0.4 }}
+                transition={{ type: "tween", duration: 0.4 }}
               >
                 <div className={`w-14 h-14 sm:w-28 sm:h-28 transition-transform duration-500 ${isSelected ? "scale-110" : ""}`}>
                   {React.createElement(choice.icon, { size: "100%" })}

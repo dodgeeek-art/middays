@@ -14,6 +14,7 @@ export default function MascotSVG({ className = "w-24 h-24" }: MascotSVGProps) {
       className={className}
       animate={{ y: [0, -4, 0] }}
       transition={{
+        type: "tween",
         duration: 3,
         repeat: Infinity,
         ease: "easeInOut"

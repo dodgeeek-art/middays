@@ -254,8 +254,9 @@ export default function RhymeRiverEngine({ childId, onBack }: RhymeRiverEnginePr
                 onClick={() => handleStoneClick(letter)}
                 disabled={gameState !== "playing" || isWrong}
                 animate={isWrong ? { rotate: [0, -8, 8, -8, 8, 0], scale: 0.95 } : { y: [0, -3, 0] }}
-                transition={isWrong ? { duration: 0.4 } : {
+                transition={isWrong ? { type: "tween", duration: 0.4 } : {
                   y: {
+                    type: "tween",
                     duration: 2.2,
                     repeat: Infinity,
                     ease: "easeInOut",

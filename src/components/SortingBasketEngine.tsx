@@ -36,12 +36,12 @@ const cardVariants = {
     scale: [1, 1.15, 0.9, 1],
     rotate: [0, -5, 5, 0],
     opacity: 1,
-    transition: { duration: 0.6 }
+    transition: { type: "tween" as const, duration: 0.6, ease: "easeInOut" as const }
   },
   incorrect: {
     x: [0, -8, 8, -6, 6, -4, 4, 0],
     opacity: 1,
-    transition: { duration: 0.5 }
+    transition: { type: "tween" as const, duration: 0.5, ease: "easeInOut" as const }
   }
 };
 

@@ -327,7 +327,7 @@ export default function PatternExplorerEngine({ childId, onBack }: PatternExplor
                       : "border-slate-300 bg-slate-50/80 shadow-inner"
                   }`}
                   animate={phase === "success" ? { scale: [1, 1.1, 1] } : {}}
-                  transition={{ duration: 0.4 }}
+                  transition={{ type: "tween", duration: 0.4 }}
                 >
                   <AnimatePresence mode="wait">
                     {correctFilled ? (

@@ -77,6 +77,7 @@ export default function MascotTransition({ active, onComplete }: MascotTransitio
               }}
               exit={{ scale: 0.2, y: 120, opacity: 0 }}
               transition={{
+                type: "tween",
                 duration: 0.6,
                 ease: "easeOut"
               }}
@@ -103,6 +104,7 @@ export default function MascotTransition({ active, onComplete }: MascotTransitio
                     rotate: [0, 180]
                   }}
                   transition={{
+                    type: "tween",
                     duration: 1.2,
                     delay: 0.4,
                     ease: "easeOut",

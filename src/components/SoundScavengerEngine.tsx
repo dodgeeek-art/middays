@@ -317,7 +317,7 @@ export default function SoundScavengerEngine({ childId, onBack }: SoundScavenger
               disabled={gameState !== "playing" || isWrong}
               className={`flex-shrink-0 rounded-[2rem] border-[4px] p-4 flex flex-col items-center justify-center transition-all duration-300 relative shadow-clay-card ${bentoStyle} ${cardColor}`}
               animate={isWrong ? { rotate: [0, -6, 6, -6, 6, 0] } : {}}
-              transition={{ duration: 0.4 }}
+              transition={{ type: "tween", duration: 0.4 }}
             >
               {/* SVG Icon */}
               <div className={`w-[70%] h-[70%] flex items-center justify-center transition-transform duration-500 ${isSelected ? "scale-110" : ""}`}>

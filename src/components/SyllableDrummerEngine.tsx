@@ -305,7 +305,7 @@ export default function SyllableDrummerEngine({ childId, onBack }: SyllableDrumm
         {/* Animated Object Image card */}
         <motion.div
           animate={isDrumActive ? { scale: [1, 1.15, 1], rotate: [0, -2, 2, 0] } : {}}
-          transition={{ duration: 0.15 }}
+          transition={{ type: "tween", duration: 0.15, ease: "easeInOut" }}
           className="w-28 h-28 sm:w-40 sm:h-40 bg-white border border-white/20 rounded-full flex items-center justify-center shadow-[6px_6px_12px_rgba(0,0,0,0.05),_inset_-4px_-4px_8px_rgba(0,0,0,0.05),_inset_4px_4px_8px_rgba(255,255,255,0.95)] p-4 relative"
         >
           {React.createElement(obj.icon, { size: "90%" })}
@@ -330,7 +330,7 @@ export default function SyllableDrummerEngine({ childId, onBack }: SyllableDrumm
               <motion.div
                 key={syl + "-" + index}
                 animate={isActive ? { scale: [1, 1.05, 1] } : {}}
-                transition={{ repeat: Infinity, duration: 1.2 }}
+                transition={{ type: "tween", repeat: Infinity, duration: 1.2, ease: "easeInOut" }}
                 className={`px-5 py-2.5 rounded-2xl border border-white/20 font-black text-xl sm:text-2xl transition-colors duration-300 ${
                   isPassed 
                     ? "bg-[#d2f4e6] text-[#0b4a45] shadow-inner" 
@@ -367,7 +367,7 @@ export default function SyllableDrummerEngine({ childId, onBack }: SyllableDrumm
                 onClick={() => handleDrumTap(index)}
                 disabled={isDisabled}
                 animate={isActive ? { scale: [1, 1.05, 1], y: [0, -6, 0] } : {}}
-                transition={isActive ? { repeat: Infinity, duration: 1.5, ease: "easeInOut" } : {}}
+                transition={isActive ? { type: "tween", repeat: Infinity, duration: 1.5, ease: "easeInOut" } : {}}
                 whileTap={isDisabled ? {} : { scale: 0.92, y: 4 }}
                 className={`w-20 sm:w-28 flex flex-col items-center relative transition-all duration-300 ${
                   isDisabled && !isPassed ? "opacity-45" : "opacity-100"
