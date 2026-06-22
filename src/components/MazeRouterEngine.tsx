@@ -464,10 +464,10 @@ export default function MazeRouterEngine({ childId, onBack }: { childId: string;
             </div>
           </div>
 
-          {/* 3x3 Pipe Grid Canvas Container */}
-          <div className="relative bg-[#ebeceb] border-[4px] border-white/80 p-2 rounded-[2.5rem] shadow-inner-clay w-[320px] h-[320px] sm:w-[340px] sm:h-[340px] select-none overflow-visible">
+          {/* 3x3 Pipe Grid Clay Tray Container */}
+          <div className="relative bg-[#ebe6dd] border-[5px] border-white rounded-[2.8rem] shadow-[inset_0_8px_16px_rgba(0,0,0,0.06),_0_12px_24px_rgba(0,0,0,0.1)] w-[320px] h-[320px] sm:w-[350px] sm:h-[350px] p-2.5 select-none overflow-visible">
             {/* Base grid layout */}
-            <div className="grid grid-cols-3 grid-rows-3 gap-1.5 w-full h-full select-none">
+            <div className="grid grid-cols-3 grid-rows-3 gap-2 w-full h-full select-none">
               {grid.map((row, r) =>
                 row.map((cell, c) => {
                   const isWrong = highlightedCell && highlightedCell.r === r && highlightedCell.c === c;
@@ -475,13 +475,13 @@ export default function MazeRouterEngine({ childId, onBack }: { childId: string;
                     <motion.div
                       key={`${r}-${c}`}
                       onClick={() => handleCellTap(r, c)}
-                      className={`relative bg-white border-2 rounded-2xl cursor-pointer select-none shadow-sm flex items-center justify-center p-1.5 ${
-                        isRolling ? "pointer-events-none" : "hover:border-[#bde8ca] active:scale-95"
+                      className={`relative bg-white border-[3px] border-white rounded-[1.25rem] cursor-pointer select-none shadow-[0_6px_12px_rgba(0,0,0,0.05),_inset_0_-4px_0_rgba(0,0,0,0.08),_inset_0_4px_0_rgba(255,255,255,0.7)] flex items-center justify-center p-1 ${
+                        isRolling ? "pointer-events-none" : "hover:scale-[1.03] hover:border-emerald-300 active:scale-95"
                       }`}
                       animate={
                         isWrong
-                          ? { x: [-4, 4, -4, 4, 0], border: "3px solid #ff4d6d" }
-                          : { border: "2px solid rgba(255, 255, 255, 0.5)" }
+                          ? { x: [-4, 4, -4, 4, 0], border: "3px solid #ff3366" }
+                          : { border: "3px solid rgba(255, 255, 255, 0.8)" }
                       }
                       transition={{ duration: isWrong ? 0.4 : 0.2 }}
                     >
@@ -489,37 +489,37 @@ export default function MazeRouterEngine({ childId, onBack }: { childId: string;
                       <motion.div
                         className="w-full h-full select-none"
                         animate={{ rotate: cell.rotation }}
-                        transition={{ type: "spring", stiffness: 200, damping: 14 }}
+                        transition={{ type: "spring", stiffness: 220, damping: 14 }}
                       >
                         <svg viewBox="0 0 100 100" className="w-full h-full select-none pointer-events-none">
                           {cell.type === "straight" && (
                             <g>
                               {/* Outer pipe shadow */}
-                              <rect x={0} y={34} width={100} height={32} rx={16} fill="#cfd2cd" />
-                              <rect x={0} y={38} width={100} height={24} rx={12} fill="#9e7bf5" />
+                              <rect x={0} y={33} width={100} height={34} rx={17} fill="#cfd2cd" />
+                              <rect x={0} y={37} width={100} height={26} rx={13} fill="#5a7df5" />
                               {/* Inner highlight */}
-                              <rect x={0} y={42} width={100} height={6} fill="#ffffff" opacity={0.4} />
+                              <rect x={0} y={40} width={100} height={6} fill="#ffffff" opacity={0.45} />
                             </g>
                           )}
                           {cell.type === "curved" && (
                             <g>
                               {/* Outer pipe shadow */}
-                              <path d="M 50 100 A 50 50 0 0 1 100 50" fill="none" stroke="#cfd2cd" strokeWidth={32} strokeLinecap="round" />
-                              <path d="M 50 100 A 50 50 0 0 1 100 50" fill="none" stroke="#9e7bf5" strokeWidth={24} strokeLinecap="round" />
+                              <path d="M 50 100 A 50 50 0 0 1 100 50" fill="none" stroke="#cfd2cd" strokeWidth={34} strokeLinecap="round" />
+                              <path d="M 50 100 A 50 50 0 0 1 100 50" fill="none" stroke="#5a7df5" strokeWidth={26} strokeLinecap="round" />
                               {/* Inner highlight */}
-                              <path d="M 50 100 A 50 50 0 0 1 100 50" fill="none" stroke="#ffffff" strokeWidth={6} strokeLinecap="round" opacity={0.4} />
+                              <path d="M 50 100 A 50 50 0 0 1 100 50" fill="none" stroke="#ffffff" strokeWidth={6} strokeLinecap="round" opacity={0.45} />
                             </g>
                           )}
                           {cell.type === "cross" && (
                             <g>
                               {/* Outer pipe shadow */}
-                              <rect x={0} y={34} width={100} height={32} rx={16} fill="#cfd2cd" />
-                              <rect x={34} y={0} width={32} height={100} rx={16} fill="#cfd2cd" />
-                              <rect x={0} y={38} width={100} height={24} rx={12} fill="#9e7bf5" />
-                              <rect x={38} y={0} width={24} height={100} rx={12} fill="#9e7bf5" />
+                              <rect x={0} y={33} width={100} height={34} rx={17} fill="#cfd2cd" />
+                              <rect x={33} y={0} width={34} height={100} rx={17} fill="#cfd2cd" />
+                              <rect x={0} y={37} width={100} height={26} rx={13} fill="#5a7df5" />
+                              <rect x={37} y={0} width={26} height={100} rx={13} fill="#5a7df5" />
                               {/* Inner highlights */}
-                              <rect x={0} y={42} width={100} height={6} fill="#ffffff" opacity={0.4} />
-                              <rect x={42} y={0} width={6} height={100} fill="#ffffff" opacity={0.4} />
+                              <rect x={0} y={40} width={100} height={6} fill="#ffffff" opacity={0.45} />
+                              <rect x={40} y={0} width={6} height={100} fill="#ffffff" opacity={0.45} />
                             </g>
                           )}
                         </svg>
@@ -532,7 +532,7 @@ export default function MazeRouterEngine({ childId, onBack }: { childId: string;
 
             {/* Overlaid SVG Canvas for Marble Path Animation */}
             <svg
-              className="absolute inset-2 w-[calc(100%-1rem)] h-[calc(100%-1rem)] pointer-events-none select-none overflow-visible"
+              className="absolute inset-3.5 w-[calc(100%-1.75rem)] h-[calc(100%-1.75rem)] pointer-events-none select-none overflow-visible"
               viewBox="0 0 300 300"
             >
               {/* Marble Rendering */}
@@ -563,33 +563,33 @@ export default function MazeRouterEngine({ childId, onBack }: { childId: string;
             </svg>
           </div>
 
-          {/* Bottom Target Baskets */}
-          <div className="w-full flex justify-between px-4 mt-2 shrink-0 overflow-visible z-10">
+          {/* Bottom Saturated Color Baskets */}
+          <div className="w-full flex justify-between px-3 mt-4 shrink-0 overflow-visible z-10">
             {/* Basket Col 0 */}
-            <div className="flex flex-col items-center w-16 relative">
-              <div className="w-16 h-12 rounded-t-xl bg-[#ffccd5] border-[3px] border-white shadow-md flex items-center justify-center relative overflow-visible">
-                <span className="absolute -top-3 text-lg">🐷</span>
-                <div className="absolute bottom-1 w-10 h-3 rounded-full bg-black/10" />
+            <div className="flex flex-col items-center w-20 relative">
+              <div className="w-20 h-14 rounded-b-2xl rounded-t-lg bg-[#ff1a4a] border-[3px] border-white shadow-clay-card flex items-center justify-center relative overflow-visible">
+                <span className="absolute -top-4 text-2xl animate-float" style={{ animationDelay: "0s" }}>🐷</span>
+                <div className="absolute bottom-1 w-12 h-3.5 rounded-full bg-black/15 shadow-inner" />
               </div>
-              <span className="text-[10px] font-black uppercase text-[#ff5a79] mt-0.5">Pink</span>
+              <span className="text-[11px] font-black uppercase text-[#ff1a4a] mt-1.5">Pink</span>
             </div>
 
             {/* Basket Col 1 */}
-            <div className="flex flex-col items-center w-16 relative">
-              <div className="w-16 h-12 rounded-t-xl bg-[#c3e6dc] border-[3px] border-white shadow-md flex items-center justify-center relative overflow-visible">
-                <span className="absolute -top-3 text-lg">🐊</span>
-                <div className="absolute bottom-1 w-10 h-3 rounded-full bg-black/10" />
+            <div className="flex flex-col items-center w-20 relative">
+              <div className="w-20 h-14 rounded-b-2xl rounded-t-lg bg-[#00c853] border-[3px] border-white shadow-clay-card flex items-center justify-center relative overflow-visible">
+                <span className="absolute -top-4 text-2xl animate-float" style={{ animationDelay: "0.5s" }}>🐊</span>
+                <div className="absolute bottom-1 w-12 h-3.5 rounded-full bg-black/15 shadow-inner" />
               </div>
-              <span className="text-[10px] font-black uppercase text-[#00a87a] mt-0.5">Green</span>
+              <span className="text-[11px] font-black uppercase text-[#00c853] mt-1.5">Green</span>
             </div>
 
             {/* Basket Col 2 */}
-            <div className="flex flex-col items-center w-16 relative">
-              <div className="w-16 h-12 rounded-t-xl bg-[#fcd5ce] border-[3px] border-white shadow-md flex items-center justify-center relative overflow-visible">
-                <span className="absolute -top-3 text-lg">🐻</span>
-                <div className="absolute bottom-1 w-10 h-3 rounded-full bg-black/10" />
+            <div className="flex flex-col items-center w-20 relative">
+              <div className="w-20 h-14 rounded-b-2xl rounded-t-lg bg-[#8d6e63] border-[3px] border-white shadow-clay-card flex items-center justify-center relative overflow-visible">
+                <span className="absolute -top-4 text-2xl animate-float" style={{ animationDelay: "1s" }}>🐻</span>
+                <div className="absolute bottom-1 w-12 h-3.5 rounded-full bg-black/15 shadow-inner" />
               </div>
-              <span className="text-[10px] font-black uppercase text-[#a06040] mt-0.5">Brown</span>
+              <span className="text-[11px] font-black uppercase text-[#8d6e63] mt-1.5">Brown</span>
             </div>
           </div>
         </div>
