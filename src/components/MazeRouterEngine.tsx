@@ -210,7 +210,7 @@ export default function MazeRouterEngine({ childId, onBack }: { childId: string;
     playSynthesizedSound("click");
     setGrid(prevGrid => {
       const newGrid = prevGrid.map(row => row.map(cell => ({ ...cell })));
-      newGrid[r][c].rotation = (newGrid[r][c].rotation + 90) % 360;
+      newGrid[r][c].rotation = newGrid[r][c].rotation + 90;
       return newGrid;
     });
   };
