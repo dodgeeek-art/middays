@@ -9,10 +9,10 @@ html, body {
 
 body.game-active {
   overflow: hidden !important;
-  height: 100dvh !important;
+  min-height: 100svh !important;
   width: 100vw !important;
-  position: fixed !important;
-  touch-action: none !important;
+  position: static !important;
+  touch-action: manipulation !important;
   overscroll-behavior: none !important;
 }
 
@@ -577,6 +577,5 @@ body::before {
     transition-duration: 0.01ms !important;
   }
 }
-
 
 

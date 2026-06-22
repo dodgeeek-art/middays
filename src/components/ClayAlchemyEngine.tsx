@@ -585,7 +585,7 @@ export default function ClayAlchemyEngine({ childId, onBack }: { childId: string
 
   return (
     <section
-      className="relative mx-auto flex h-full min-h-0 w-full max-w-4xl select-none flex-col overflow-hidden rounded-[1.5rem] border-[3px] border-white/60 bg-[#fbf8f3] p-2 text-[#2f3e46] shadow-clay-card sm:rounded-[2.35rem] sm:p-4"
+      className="relative mx-auto flex h-full min-h-0 w-full max-w-4xl select-none flex-col overflow-y-auto overflow-x-hidden rounded-[1.5rem] border-[3px] border-white/60 bg-[#fbf8f3] p-2 text-[#2f3e46] shadow-clay-card sm:overflow-hidden sm:rounded-[2.35rem] sm:p-4"
       aria-label="Clay Alchemy color mixing game"
     >
       <div

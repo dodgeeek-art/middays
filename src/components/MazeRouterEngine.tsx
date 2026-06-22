@@ -528,7 +528,7 @@ export default function MazeRouterEngine({ childId, onBack }: { childId: string;
   };
 
   return (
-    <div className="relative flex flex-col items-center justify-start w-full h-full min-h-0 bg-gradient-to-b from-[#f3f8f6] to-[#e6edea] overflow-hidden p-2 sm:p-4 select-none">
+    <div className="relative flex flex-col items-center justify-start w-full h-full min-h-0 bg-gradient-to-b from-[#f3f8f6] to-[#e6edea] overflow-y-auto overflow-x-hidden p-2 sm:overflow-hidden sm:p-4 select-none">
       
       {/* Grid Table Pattern decor background */}
       <div 
