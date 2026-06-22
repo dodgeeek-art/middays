@@ -528,7 +528,7 @@ export default function MazeRouterEngine({ childId, onBack }: { childId: string;
   };
 
   return (
-    <div className="relative flex flex-col items-center justify-start w-full h-full min-h-0 bg-gradient-to-b from-[#f3f8f6] to-[#e6edea] overflow-y-auto overflow-x-hidden p-2 sm:overflow-hidden sm:p-4 select-none">
+    <div className="relative flex flex-col items-center justify-start w-full h-full min-h-0 bg-gradient-to-b from-[#f3f8f6] to-[#e6edea] overflow-y-auto overflow-x-hidden p-1.5 sm:overflow-hidden sm:p-4 select-none">
       
       {/* Grid Table Pattern decor background */}
       <div 
@@ -559,23 +559,23 @@ export default function MazeRouterEngine({ childId, onBack }: { childId: string;
       <div className="absolute -top-20 -left-20 w-80 h-80 rounded-full bg-sky-500/5 blur-3xl pointer-events-none" />
 
       {/* Top Header */}
-      <div className="flex items-center justify-between w-full max-w-3xl mb-1.5 sm:mb-3 shrink-0 z-20">
+      <div className="flex items-center justify-between w-full max-w-3xl mb-1 sm:mb-3 shrink-0 z-20">
         <ClayButton
           onClick={onBack}
           variant="surface"
-          className="min-w-[48px] min-h-[48px] sm:min-w-[64px] sm:min-h-[64px] rounded-full flex items-center justify-center border-2 border-white/50 active:scale-95 shadow-md"
+          className="min-w-[42px] min-h-[42px] sm:min-w-[64px] sm:min-h-[64px] rounded-full flex items-center justify-center border-2 border-white/50 active:scale-95 shadow-md"
         >
           <ArrowLeft className="w-6 h-6 text-[#5c6b73]" strokeWidth={3.5} />
         </ClayButton>
         <div className="flex flex-col items-center">
-          <h2 className="text-base sm:text-2xl font-black text-[#2f3e46] uppercase tracking-wide">
+          <h2 className="text-sm sm:text-2xl font-black text-[#2f3e46] uppercase tracking-wide">
             Maze Router
           </h2>
           <span className="text-xs font-bold text-[#5c6b73]/80">
             Puzzle {levelIdx + 1} of {levels.length}
           </span>
         </div>
-        <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-[#ddcbf5] border-2 border-white flex items-center justify-center shadow-md">
+        <div className="w-11 h-11 sm:w-16 sm:h-16 rounded-full bg-[#ddcbf5] border-2 border-white flex items-center justify-center shadow-md">
           <span className="text-lg font-black text-[#5c3e7f]">🧩</span>
         </div>
       </div>
@@ -584,15 +584,15 @@ export default function MazeRouterEngine({ childId, onBack }: { childId: string;
       <button
         type="button"
         onClick={() => speakText(instructionText)}
-        className="z-10 mb-2 flex w-full max-w-xl cursor-pointer items-center gap-2.5 self-center rounded-[1.35rem] border-2 border-white/70 bg-white/90 p-2.5 text-left shadow-sm outline-none transition-all active:scale-[0.99] focus-visible:ring-4 focus-visible:ring-[#118ab2]/25 sm:mb-4 sm:gap-3 sm:rounded-[1.7rem] sm:p-4"
+        className="z-10 mb-1.5 flex w-full max-w-xl cursor-pointer items-center gap-2 self-center rounded-[1.1rem] border-2 border-white/70 bg-white/90 p-2 text-left shadow-sm outline-none transition-all active:scale-[0.99] focus-visible:ring-4 focus-visible:ring-[#118ab2]/25 sm:mb-4 sm:gap-3 sm:rounded-[1.7rem] sm:p-4"
         aria-label={`Hear instructions: ${instructionText}`}
       >
-        <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[#fff4ca] text-base shadow-inner sm:h-10 sm:w-10 sm:text-lg" aria-hidden="true">
+        <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-[#fff4ca] text-sm shadow-inner sm:h-10 sm:w-10 sm:text-lg" aria-hidden="true">
           →
         </span>
         <span className="min-w-0 flex-1">
-          <span className="block text-[10px] font-black uppercase tracking-[0.22em] text-slate-500">Instruction</span>
-          <span className="block text-[13px] font-bold leading-snug text-[#4A5358] sm:text-base">
+          <span className="block text-[9px] font-black uppercase tracking-[0.2em] text-slate-500 sm:text-[10px]">Instruction</span>
+          <span className="block text-xs font-bold leading-tight text-[#4A5358] sm:text-base">
             {instructionText}
           </span>
         </span>
@@ -600,24 +600,24 @@ export default function MazeRouterEngine({ childId, onBack }: { childId: string;
       </button>
 
       {/* Main Layout Grid */}
-      <div className="flex flex-col md:flex-row items-center justify-center gap-2.5 sm:gap-4 w-full max-w-4xl min-h-0 flex-1 relative overflow-visible px-1">
+      <div className="flex flex-col md:flex-row items-center justify-center gap-1.5 sm:gap-4 w-full max-w-4xl min-h-0 flex-1 relative overflow-visible px-1">
         
         {/* Center: Puzzle Arena */}
         <div className="relative flex flex-col items-center min-h-0 w-full max-w-[300px] sm:max-w-[340px] overflow-visible">
           {/* Top Entrance Dispenser */}
-          <div className="w-full flex justify-center mb-0.5 overflow-visible h-8 sm:h-10 relative">
-            <div className="absolute top-0 z-10 flex h-10 w-16 items-center justify-center rounded-b-[1.25rem] border-[3px] border-white bg-[#e07383] shadow-md sm:h-12 sm:w-20 sm:rounded-b-[1.5rem]">
-              <span className="absolute -top-7 grid h-10 w-10 place-items-center sm:-top-8 sm:h-12 sm:w-12" aria-hidden="true">
+          <div className="w-full flex justify-center mb-0 overflow-visible h-6 sm:h-10 relative">
+            <div className="absolute top-0 z-10 flex h-8 w-14 items-center justify-center rounded-b-[1rem] border-[3px] border-white bg-[#e07383] shadow-md sm:h-12 sm:w-20 sm:rounded-b-[1.5rem]">
+              <span className="absolute -top-6 grid h-9 w-9 place-items-center sm:-top-8 sm:h-12 sm:w-12" aria-hidden="true">
                 <FluentAnimalIcon name={targetGoal.animal} size="100%" animClass="anim-sway" />
               </span>
-              <div className="mt-2 h-4 w-4 rounded-full border-2 border-dashed border-white/55 bg-black/10 sm:h-5 sm:w-5" />
+              <div className="mt-2 h-3.5 w-3.5 rounded-full border-2 border-dashed border-white/55 bg-black/10 sm:h-5 sm:w-5" />
             </div>
           </div>
 
           {/* 3x3 Pipe Grid Clay Tray Container */}
-          <div className="relative aspect-square bg-[#ebe6dd] border-[5px] border-white rounded-[2rem] sm:rounded-[2.6rem] shadow-[inset_0_8px_16px_rgba(0,0,0,0.06),_0_12px_24px_rgba(0,0,0,0.1)] w-[min(76vw,34dvh,290px)] sm:w-[340px] p-2 select-none overflow-visible">
+          <div className="relative aspect-square bg-[#ebe6dd] border-[4px] border-white rounded-[1.7rem] sm:rounded-[2.6rem] sm:border-[5px] shadow-[inset_0_8px_16px_rgba(0,0,0,0.06),_0_12px_24px_rgba(0,0,0,0.1)] w-[min(72vw,29svh,248px)] sm:w-[340px] p-1.5 sm:p-2 select-none overflow-visible">
             {/* Base grid layout */}
-            <div className="grid grid-cols-3 grid-rows-3 gap-2 w-full h-full select-none">
+            <div className="grid grid-cols-3 grid-rows-3 gap-1.5 sm:gap-2 w-full h-full select-none">
               {grid.map((row, r) =>
                 row.map((cell, c) => {
                   const isWrong = highlightedCell && highlightedCell.r === r && highlightedCell.c === c;
@@ -625,7 +625,7 @@ export default function MazeRouterEngine({ childId, onBack }: { childId: string;
                     <motion.div
                       key={`${r}-${c}`}
                       onClick={() => handleCellTap(r, c)}
-                      className={`relative bg-[#fdfdfb] border-[3px] border-white rounded-[1.1rem] sm:rounded-[1.25rem] cursor-pointer select-none shadow-[0_6px_12px_rgba(0,0,0,0.05),_inset_0_-4px_0_rgba(0,0,0,0.08),_inset_0_4px_0_rgba(255,255,255,0.7)] flex items-center justify-center p-1 ${
+                      className={`relative bg-[#fdfdfb] border-2 sm:border-[3px] border-white rounded-[0.9rem] sm:rounded-[1.25rem] cursor-pointer select-none shadow-[0_6px_12px_rgba(0,0,0,0.05),_inset_0_-4px_0_rgba(0,0,0,0.08),_inset_0_4px_0_rgba(255,255,255,0.7)] flex items-center justify-center p-1 ${
                         isRolling ? "pointer-events-none" : "hover:scale-[1.03] hover:border-emerald-300 active:scale-95"
                       }`}
                       animate={
@@ -714,36 +714,36 @@ export default function MazeRouterEngine({ childId, onBack }: { childId: string;
           </div>
 
           {/* Bottom Color Goals */}
-          <p className="mt-2 rounded-full bg-white/80 px-4 py-1.5 text-center text-[10px] font-black uppercase tracking-wider text-[#5c6b73] shadow-sm sm:mt-3 sm:text-[11px]">
+          <p className="mt-1.5 rounded-full bg-white/80 px-3 py-1 text-center text-[9px] font-black uppercase tracking-wider text-[#5c6b73] shadow-sm sm:mt-3 sm:px-4 sm:py-1.5 sm:text-[11px]">
             Tap pipes to rotate, then roll.
           </p>
 
-          <div className="mt-2 grid w-full grid-cols-3 gap-1.5 overflow-visible z-10 sm:mt-3 sm:gap-2">
+          <div className="mt-1.5 grid w-full grid-cols-3 gap-1 overflow-visible z-10 sm:mt-3 sm:gap-2">
             {goalItems.map((goal) => {
               const isTarget = goal.animal === targetGoal.animal && goal.label === targetGoal.label;
               return (
                 <div
                   key={`${goal.label}-${goal.animal}`}
-                  className={`relative flex min-h-[58px] flex-col items-center justify-center rounded-[1rem] border-[3px] bg-white px-1.5 py-1.5 shadow-sm sm:min-h-[72px] sm:rounded-[1.25rem] sm:px-2 sm:py-2 ${
+                  className={`relative flex min-h-[42px] flex-col items-center justify-center rounded-[0.8rem] border-2 bg-white px-1 py-1 shadow-sm sm:min-h-[72px] sm:rounded-[1.25rem] sm:border-[3px] sm:px-2 sm:py-2 ${
                     isTarget ? "border-white ring-4 ring-[#ffd166]/55" : "border-white/70 opacity-80"
                   }`}
                 >
                   {isTarget && (
-                    <span className="absolute -top-3 rounded-full bg-[#2f3e46] px-2 py-0.5 text-[8px] font-black uppercase tracking-wider text-white shadow-md">
+                    <span className="absolute -top-2.5 rounded-full bg-[#2f3e46] px-1.5 py-0.5 text-[7px] font-black uppercase tracking-wider text-white shadow-md sm:-top-3 sm:px-2 sm:text-[8px]">
                       Goal
                     </span>
                   )}
                   <span
-                    className="mb-0.5 grid h-6 w-10 place-items-center rounded-full border-2 border-white shadow-inner sm:mb-1 sm:h-8 sm:w-12"
+                    className="mb-0 grid h-4 w-8 place-items-center rounded-full border-2 border-white shadow-inner sm:mb-1 sm:h-8 sm:w-12"
                     style={{ backgroundColor: goal.color }}
                     aria-hidden="true"
                   >
-                    <span className="h-2.5 w-7 rounded-full bg-black/16 sm:h-3 sm:w-8" />
+                    <span className="h-2 w-5 rounded-full bg-black/16 sm:h-3 sm:w-8" />
                   </span>
-                  <span className="text-[9px] font-black uppercase tracking-wider sm:text-[10px]" style={{ color: goal.color }}>
+                  <span className="text-[8px] font-black uppercase tracking-wider sm:text-[10px]" style={{ color: goal.color }}>
                     {goal.label}
                   </span>
-                  <span className="mt-0.5 h-4 w-4 sm:h-5 sm:w-5" aria-hidden="true">
+                  <span className="hidden mt-0.5 h-4 w-4 sm:block sm:h-5 sm:w-5" aria-hidden="true">
                     <FluentAnimalIcon name={goal.animal} size="100%" />
                   </span>
                 </div>
@@ -753,15 +753,15 @@ export default function MazeRouterEngine({ childId, onBack }: { childId: string;
         </div>
 
         {/* Right Panel: Roll controls */}
-        <div className="flex flex-col gap-2 justify-center items-center w-full max-w-[300px] md:w-36 shrink-0 z-10">
+        <div className="flex flex-col gap-1.5 justify-center items-center w-full max-w-[300px] md:w-36 shrink-0 z-10">
           <ClayButton
             onClick={handleRoll}
             isDisabled={isRolling}
             variant="primary"
-            className="w-full py-3 md:py-5 rounded-[1.5rem] md:rounded-[2rem] text-base md:text-xl font-black uppercase tracking-wider flex flex-col items-center gap-0.5 active:scale-95 shadow-lg select-none disabled:opacity-60 disabled:cursor-not-allowed"
+            className="w-full py-2.5 md:py-5 rounded-[1.25rem] md:rounded-[2rem] text-sm md:text-xl font-black uppercase tracking-wider flex flex-col items-center gap-0 active:scale-95 shadow-lg select-none disabled:opacity-60 disabled:cursor-not-allowed"
           >
             <span>Roll!</span>
-            <span className="text-xs font-normal lowercase select-none">tap to drop</span>
+            <span className="text-[10px] font-normal lowercase select-none md:text-xs">tap to drop</span>
           </ClayButton>
 
           {/* Reset button if got stuck */}
@@ -772,7 +772,7 @@ export default function MazeRouterEngine({ childId, onBack }: { childId: string;
               setMarblePos({ x: 150, y: -40 });
             }}
             variant="surface"
-            className="w-full py-2.5 text-xs font-bold rounded-2xl"
+            className="w-full py-2 text-[11px] font-bold rounded-2xl sm:py-2.5 sm:text-xs"
           >
             Reset Marble
           </ClayButton>
