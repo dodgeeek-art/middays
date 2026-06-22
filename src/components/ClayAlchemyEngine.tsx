@@ -172,7 +172,7 @@ function PaintPod({
       whileHover={isDisabled ? {} : { y: -3, scale: 1.02 }}
       whileTap={isDisabled ? {} : { y: 4, scale: 0.96 }}
       transition={{ type: "spring", stiffness: 380, damping: 20 }}
-      className={`group relative flex min-h-[70px] w-full min-w-[72px] flex-col items-center justify-end rounded-[1.05rem] border-2 px-1.5 pb-1 pt-2 text-center shadow-clay-card outline-none transition-all focus-visible:ring-4 focus-visible:ring-[#118ab2]/35 sm:min-h-[132px] sm:min-w-[98px] sm:rounded-[1.65rem] sm:border-[3px] sm:px-2 sm:pb-2 sm:pt-4 md:min-h-[150px] ${
+      className={`group relative flex min-h-[64px] w-full min-w-[72px] flex-col items-center justify-end rounded-[1.05rem] border-2 px-1.5 pb-1 pt-1.5 text-center shadow-clay-card outline-none transition-all focus-visible:ring-4 focus-visible:ring-[#118ab2]/35 sm:min-h-[132px] sm:min-w-[98px] sm:rounded-[1.65rem] sm:border-[3px] sm:px-2 sm:pb-2 sm:pt-4 md:min-h-[150px] ${
         isRecommended
           ? "border-white bg-white"
           : "border-slate-200/70 bg-white/70 opacity-80"
@@ -185,13 +185,13 @@ function PaintPod({
         }}
       />
       <div className="relative z-10 flex w-full flex-col items-center">
-        <div className="relative h-10 w-8 sm:h-24 sm:w-14 md:h-28 md:w-16">
+        <div className="relative h-9 w-7 sm:h-24 sm:w-14 md:h-28 md:w-16">
           <div className="absolute left-1/2 top-0 h-2.5 w-7 -translate-x-1/2 rounded-md border border-slate-300 bg-gradient-to-r from-slate-300 via-white to-slate-400 shadow-inner sm:h-4 sm:w-12" />
           <div
             className="absolute bottom-1.5 left-1/2 h-[78%] w-full -translate-x-1/2 rounded-[0.75rem_0.75rem_1rem_1rem] border-2 border-white shadow-[inset_5px_0_10px_rgba(255,255,255,0.38),_inset_-5px_0_10px_rgba(0,0,0,0.14),_0_10px_18px_rgba(0,0,0,0.12)] sm:bottom-2 sm:rounded-[1rem_1rem_1.45rem_1.45rem] sm:border-[3px]"
             style={{ background: `linear-gradient(90deg, ${meta.ring}, ${meta.hex} 52%, ${meta.ink})` }}
           />
-          <div className="absolute bottom-4 left-1/2 grid h-5 w-6 -translate-x-1/2 place-items-center rounded-md bg-white/92 text-[10px] font-black shadow-inner sm:bottom-8 sm:h-9 sm:w-11 sm:rounded-lg sm:text-sm" style={{ color: meta.ink }}>
+          <div className="absolute bottom-3.5 left-1/2 grid h-5 w-6 -translate-x-1/2 place-items-center rounded-md bg-white/92 text-[10px] font-black shadow-inner sm:bottom-8 sm:h-9 sm:w-11 sm:rounded-lg sm:text-sm" style={{ color: meta.ink }}>
             {meta.shortLabel}
           </div>
           <div className="absolute bottom-0 left-1/2 h-2.5 w-3.5 -translate-x-1/2 rounded-b-md border border-slate-400 bg-gradient-to-r from-slate-400 via-white to-slate-500 sm:h-4 sm:w-5" />
@@ -603,11 +603,11 @@ export default function ClayAlchemyEngine({ childId, onBack }: { childId: string
         <ClayButton
           variant="surface"
           size="icon"
-          className="min-h-[42px] min-w-[42px] border-2 border-white/60 shadow-md sm:min-h-[60px] sm:min-w-[60px]"
+          className="min-h-[38px] min-w-[38px] p-2 border-2 border-white/60 shadow-md sm:min-h-[60px] sm:min-w-[60px] sm:p-3.5"
           onClick={onBack}
           aria-label="Back to activities"
         >
-          <ArrowLeft size={26} strokeWidth={3.5} className="text-[#5c6b73]" />
+          <ArrowLeft size={22} strokeWidth={3.5} className="text-[#5c6b73] sm:h-[26px] sm:w-[26px]" />
         </ClayButton>
 
         <div className="min-w-0 text-center">
@@ -673,7 +673,7 @@ export default function ClayAlchemyEngine({ childId, onBack }: { childId: string
           <motion.div
             animate={isShaking ? { x: [0, -12, 12, -10, 10, 0] } : {}}
             transition={{ type: "tween", duration: 0.5 }}
-            className={`relative aspect-square w-[min(66vw,24svh,15.5rem)] rounded-full border border-slate-200/30 bg-[#f8f6f2] shadow-[0_14px_32px_rgba(47,62,70,0.12),_inset_0_3px_12px_rgba(0,0,0,0.07),_0_0_0_5px_white] touch-none sm:w-[min(62vw,42vh,25rem)] sm:shadow-[0_14px_32px_rgba(47,62,70,0.12),_inset_0_3px_12px_rgba(0,0,0,0.07),_0_0_0_7px_white] ${
+            className={`relative aspect-square w-[180px] rounded-full border border-slate-200/30 bg-[#f8f6f2] shadow-[0_14px_32px_rgba(47,62,70,0.12),_inset_0_3px_12px_rgba(0,0,0,0.07),_0_0_0_5px_white] touch-none sm:w-[min(62vw,42vh,25rem)] sm:shadow-[0_14px_32px_rgba(47,62,70,0.12),_inset_0_3px_12px_rgba(0,0,0,0.07),_0_0_0_7px_white] ${
               totalAdded > 0 && pourState === "idle" ? "cursor-grab" : "cursor-default"
             }`}
             onPointerDown={handleCrankPointerDown}
