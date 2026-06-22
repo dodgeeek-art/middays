@@ -172,7 +172,7 @@ function PaintPod({
       whileHover={isDisabled ? {} : { y: -3, scale: 1.02 }}
       whileTap={isDisabled ? {} : { y: 4, scale: 0.96 }}
       transition={{ type: "spring", stiffness: 380, damping: 20 }}
-      className={`group relative flex min-h-[116px] w-full min-w-[84px] flex-col items-center justify-end rounded-[1.65rem] border-[3px] px-2 pb-2 pt-4 text-center shadow-clay-card outline-none transition-all focus-visible:ring-4 focus-visible:ring-[#118ab2]/35 sm:min-h-[132px] sm:min-w-[98px] md:min-h-[150px] ${
+      className={`group relative flex min-h-[92px] w-full min-w-[78px] flex-col items-center justify-end rounded-[1.35rem] border-[3px] px-2 pb-1.5 pt-3 text-center shadow-clay-card outline-none transition-all focus-visible:ring-4 focus-visible:ring-[#118ab2]/35 sm:min-h-[132px] sm:min-w-[98px] sm:rounded-[1.65rem] sm:pb-2 sm:pt-4 md:min-h-[150px] ${
         isRecommended
           ? "border-white bg-white"
           : "border-slate-200/70 bg-white/70 opacity-80"
@@ -185,35 +185,35 @@ function PaintPod({
         }}
       />
       <div className="relative z-10 flex w-full flex-col items-center">
-        <div className="relative h-20 w-12 sm:h-24 sm:w-14 md:h-28 md:w-16">
-          <div className="absolute left-1/2 top-0 h-4 w-11 -translate-x-1/2 rounded-md border border-slate-300 bg-gradient-to-r from-slate-300 via-white to-slate-400 shadow-inner sm:w-12" />
+        <div className="relative h-14 w-10 sm:h-24 sm:w-14 md:h-28 md:w-16">
+          <div className="absolute left-1/2 top-0 h-3 w-9 -translate-x-1/2 rounded-md border border-slate-300 bg-gradient-to-r from-slate-300 via-white to-slate-400 shadow-inner sm:h-4 sm:w-12" />
           <div
             className="absolute bottom-2 left-1/2 h-[78%] w-full -translate-x-1/2 rounded-[1rem_1rem_1.45rem_1.45rem] border-[3px] border-white shadow-[inset_5px_0_10px_rgba(255,255,255,0.38),_inset_-5px_0_10px_rgba(0,0,0,0.14),_0_10px_18px_rgba(0,0,0,0.12)]"
             style={{ background: `linear-gradient(90deg, ${meta.ring}, ${meta.hex} 52%, ${meta.ink})` }}
           />
-          <div className="absolute bottom-8 left-1/2 grid h-8 w-10 -translate-x-1/2 place-items-center rounded-lg bg-white/92 text-sm font-black shadow-inner sm:h-9 sm:w-11" style={{ color: meta.ink }}>
+          <div className="absolute bottom-6 left-1/2 grid h-7 w-8 -translate-x-1/2 place-items-center rounded-lg bg-white/92 text-xs font-black shadow-inner sm:bottom-8 sm:h-9 sm:w-11 sm:text-sm" style={{ color: meta.ink }}>
             {meta.shortLabel}
           </div>
-          <div className="absolute bottom-0 left-1/2 h-4 w-5 -translate-x-1/2 rounded-b-md border border-slate-400 bg-gradient-to-r from-slate-400 via-white to-slate-500" />
+          <div className="absolute bottom-0 left-1/2 h-3 w-4 -translate-x-1/2 rounded-b-md border border-slate-400 bg-gradient-to-r from-slate-400 via-white to-slate-500 sm:h-4 sm:w-5" />
         </div>
 
-        <span className="mt-1 block text-xs font-black uppercase tracking-wider sm:text-sm" style={{ color: meta.ink }}>
+        <span className="mt-0.5 block text-[10px] font-black uppercase tracking-wider sm:mt-1 sm:text-sm" style={{ color: meta.ink }}>
           {meta.label}
         </span>
 
-        <div className="mt-1 flex items-center justify-center gap-1">
+        <div className="mt-0.5 flex items-center justify-center gap-1 sm:mt-1">
           {[0, 1, 2].map((dot) => (
             <span
               key={dot}
               aria-hidden="true"
-              className="h-2 w-2 rounded-full border border-white shadow-sm"
+              className="h-1.5 w-1.5 rounded-full border border-white shadow-sm sm:h-2 sm:w-2"
               style={{ backgroundColor: dot < Math.min(amount, 3) ? meta.hex : "rgba(148,163,184,0.25)" }}
             />
           ))}
         </div>
       </div>
       {isRecommended && (
-        <span className="absolute -right-1.5 -top-2 rounded-full bg-[#2f3e46] px-2 py-1 text-[8px] font-black uppercase tracking-wider text-white shadow-md">
+        <span className="absolute -right-1 -top-2 rounded-full bg-[#2f3e46] px-2 py-0.5 text-[8px] font-black uppercase tracking-wider text-white shadow-md sm:-right-1.5 sm:py-1">
           Needed
         </span>
       )}
@@ -585,7 +585,7 @@ export default function ClayAlchemyEngine({ childId, onBack }: { childId: string
 
   return (
     <section
-      className="relative mx-auto flex h-full min-h-0 w-full max-w-4xl select-none flex-col overflow-hidden rounded-[2rem] border-[3px] border-white/60 bg-[#fbf8f3] p-2.5 text-[#2f3e46] shadow-clay-card sm:rounded-[2.35rem] sm:p-4"
+      className="relative mx-auto flex h-full min-h-0 w-full max-w-4xl select-none flex-col overflow-hidden rounded-[1.5rem] border-[3px] border-white/60 bg-[#fbf8f3] p-2 text-[#2f3e46] shadow-clay-card sm:rounded-[2.35rem] sm:p-4"
       aria-label="Clay Alchemy color mixing game"
     >
       <div
@@ -603,7 +603,7 @@ export default function ClayAlchemyEngine({ childId, onBack }: { childId: string
         <ClayButton
           variant="surface"
           size="icon"
-          className="min-h-[52px] min-w-[52px] border-2 border-white/60 shadow-md sm:min-h-[60px] sm:min-w-[60px]"
+          className="min-h-[46px] min-w-[46px] border-2 border-white/60 shadow-md sm:min-h-[60px] sm:min-w-[60px]"
           onClick={onBack}
           aria-label="Back to activities"
         >
@@ -611,39 +611,39 @@ export default function ClayAlchemyEngine({ childId, onBack }: { childId: string
         </ClayButton>
 
         <div className="min-w-0 text-center">
-          <p className="text-[10px] font-black uppercase tracking-[0.28em] text-slate-500">Color Mixing Lab</p>
-          <h1 className="truncate text-lg font-black uppercase tracking-wide text-[#2f3e46] sm:text-2xl">
+          <p className="text-[9px] font-black uppercase tracking-[0.26em] text-slate-500 sm:text-[10px]">Color Mixing Lab</p>
+          <h1 className="truncate text-base font-black uppercase tracking-wide text-[#2f3e46] sm:text-2xl">
             Clay Alchemy
           </h1>
         </div>
 
-        <div className="rounded-full border-2 border-white bg-[#ffd166] px-3 py-2 text-center text-[10px] font-black uppercase tracking-wider text-[#604500] shadow-inner sm:px-4 sm:text-xs">
+        <div className="rounded-full border-2 border-white bg-[#ffd166] px-2.5 py-1.5 text-center text-[9px] font-black uppercase tracking-wider text-[#604500] shadow-inner sm:px-4 sm:py-2 sm:text-xs">
           Mix {levelIdx + 1}/{levels.length}
         </div>
       </header>
 
-      <div className="relative z-10 mt-2 grid shrink-0 gap-2 sm:mt-3 lg:grid-cols-[1fr_auto] lg:items-center">
+      <div className="relative z-10 mt-1.5 grid shrink-0 gap-1.5 sm:mt-3 sm:gap-2 lg:grid-cols-[1fr_auto] lg:items-center">
         <button
           type="button"
           onClick={() => speakText(activeLevel.mascotSpeech)}
-          className="flex min-w-0 items-center gap-3 rounded-[1.5rem] border-2 border-white/70 bg-white/88 p-2.5 text-left shadow-sm outline-none transition-transform active:scale-[0.99] focus-visible:ring-4 focus-visible:ring-[#118ab2]/25 sm:p-3"
+          className="flex min-w-0 items-center gap-2.5 rounded-[1.25rem] border-2 border-white/70 bg-white/88 p-2 text-left shadow-sm outline-none transition-transform active:scale-[0.99] focus-visible:ring-4 focus-visible:ring-[#118ab2]/25 sm:gap-3 sm:rounded-[1.5rem] sm:p-3"
           aria-label={`Hear instructions: ${activeLevel.mascotSpeech}`}
         >
           {MascotIcon && (
-            <span className="grid h-14 w-14 shrink-0 place-items-center overflow-visible sm:h-16 sm:w-16" aria-hidden="true">
+            <span className="grid h-11 w-11 shrink-0 place-items-center overflow-visible sm:h-16 sm:w-16" aria-hidden="true">
               <MascotIcon size="100%" animClass="anim-sway" />
             </span>
           )}
           <span className="min-w-0">
             <span className="block text-[10px] font-black uppercase tracking-[0.22em] text-slate-500">Goal</span>
-            <span className="block text-sm font-black leading-tight text-[#2f3e46] sm:text-base">
+            <span className="block text-[13px] font-black leading-tight text-[#2f3e46] sm:text-base">
               Mix {activeLevel.targetName} for the {activeLevel.vocabName}
             </span>
           </span>
           <Volume2 className="ml-auto h-5 w-5 shrink-0 text-slate-400" aria-hidden="true" />
         </button>
 
-        <div className="rounded-[1.5rem] border-2 border-white/70 bg-white/70 px-3 py-2 shadow-sm">
+        <div className="rounded-[1.25rem] border-2 border-white/70 bg-white/70 px-2 py-1.5 shadow-sm sm:rounded-[1.5rem] sm:px-3 sm:py-2">
           <IngredientRail activeLevel={activeLevel} counts={counts} />
         </div>
 
@@ -654,8 +654,8 @@ export default function ClayAlchemyEngine({ childId, onBack }: { childId: string
         </div>
       </div>
 
-      <div className="relative z-10 grid min-h-0 flex-1 grid-rows-[auto_1fr] gap-3 pt-3 md:grid-cols-[minmax(92px,120px)_1fr] md:grid-rows-1 md:items-center md:gap-4 md:pt-3">
-        <div className="grid grid-cols-3 gap-2 md:grid-cols-1 md:gap-2">
+      <div className="relative z-10 grid min-h-0 flex-1 grid-rows-[auto_1fr] gap-2 pt-2 md:grid-cols-[minmax(92px,120px)_1fr] md:grid-rows-1 md:items-center md:gap-4 md:pt-3">
+        <div className="grid grid-cols-3 gap-1.5 md:grid-cols-1 md:gap-2">
           {(["red", "yellow", "blue"] as const).map((color) => (
             <PaintPod
               key={color}
@@ -669,11 +669,11 @@ export default function ClayAlchemyEngine({ childId, onBack }: { childId: string
           ))}
         </div>
 
-        <div className="flex min-h-0 flex-col items-center justify-center gap-3">
+        <div className="flex min-h-0 flex-col items-center justify-center gap-2 sm:gap-3">
           <motion.div
             animate={isShaking ? { x: [0, -12, 12, -10, 10, 0] } : {}}
             transition={{ type: "tween", duration: 0.5 }}
-            className={`relative aspect-square w-[min(72vw,38vh,23rem)] rounded-full border border-slate-200/30 bg-[#f8f6f2] shadow-[0_14px_32px_rgba(47,62,70,0.12),_inset_0_3px_12px_rgba(0,0,0,0.07),_0_0_0_7px_white] touch-none sm:w-[min(62vw,42vh,25rem)] ${
+            className={`relative aspect-square w-[min(70vw,31dvh,19rem)] rounded-full border border-slate-200/30 bg-[#f8f6f2] shadow-[0_14px_32px_rgba(47,62,70,0.12),_inset_0_3px_12px_rgba(0,0,0,0.07),_0_0_0_7px_white] touch-none sm:w-[min(62vw,42vh,25rem)] ${
               totalAdded > 0 && pourState === "idle" ? "cursor-grab" : "cursor-default"
             }`}
             onPointerDown={handleCrankPointerDown}
@@ -693,8 +693,8 @@ export default function ClayAlchemyEngine({ childId, onBack }: { childId: string
               transition={{ type: "tween", ease: "linear", duration: 0.05 }}
               className="pointer-events-none absolute inset-0 flex items-center justify-center overflow-visible rounded-full"
             >
-              <div className="absolute -left-4 top-1/2 h-14 w-5 -translate-y-1/2 rounded-l-[1.25rem] border-2 border-white bg-[#94a3b8] shadow-[0_3px_6px_rgba(0,0,0,0.08),_inset_1.5px_1.5px_3px_rgba(255,255,255,0.4)] sm:-left-6 sm:h-20 sm:w-7" />
-              <div className="absolute -right-4 top-1/2 h-14 w-5 -translate-y-1/2 rounded-r-[1.25rem] border-2 border-white bg-[#94a3b8] shadow-[0_3px_6px_rgba(0,0,0,0.08),_inset_-1.5px_1.5px_3px_rgba(255,255,255,0.4)] sm:-right-6 sm:h-20 sm:w-7" />
+              <div className="absolute -left-3 top-1/2 h-12 w-4 -translate-y-1/2 rounded-l-[1.25rem] border-2 border-white bg-[#94a3b8] shadow-[0_3px_6px_rgba(0,0,0,0.08),_inset_1.5px_1.5px_3px_rgba(255,255,255,0.4)] sm:-left-6 sm:h-20 sm:w-7" />
+              <div className="absolute -right-3 top-1/2 h-12 w-4 -translate-y-1/2 rounded-r-[1.25rem] border-2 border-white bg-[#94a3b8] shadow-[0_3px_6px_rgba(0,0,0,0.08),_inset_-1.5px_1.5px_3px_rgba(255,255,255,0.4)] sm:-right-6 sm:h-20 sm:w-7" />
 
               <div className="absolute inset-1 rounded-full border-[7px] border-slate-300/28" />
               <div className="absolute inset-4 rounded-full border-t-4 border-l border-white/40" />
@@ -741,7 +741,7 @@ export default function ClayAlchemyEngine({ childId, onBack }: { childId: string
                 })}
               </div>
 
-              <div className="pointer-events-none absolute z-30 flex h-20 w-20 items-center justify-center rounded-full bg-slate-500/10 sm:h-28 sm:w-28">
+              <div className="pointer-events-none absolute z-30 flex h-16 w-16 items-center justify-center rounded-full bg-slate-500/10 sm:h-28 sm:w-28">
                 <motion.div
                   animate={totalAdded > 0 && mixProgress < 100 ? { rotate: 360 } : { rotate: 0 }}
                   transition={{ repeat: totalAdded > 0 && mixProgress < 100 ? Infinity : 0, duration: 1.2, ease: "linear" }}
@@ -750,11 +750,11 @@ export default function ClayAlchemyEngine({ childId, onBack }: { childId: string
                   {[0, 90, 180, 270].map((rotation) => (
                     <span
                       key={rotation}
-                      className="absolute left-1/2 top-1/2 h-4 w-11 origin-left -translate-y-1/2 rounded-full border border-white/75 bg-[#64748b] shadow-sm"
+                      className="absolute left-1/2 top-1/2 h-3.5 w-9 origin-left -translate-y-1/2 rounded-full border border-white/75 bg-[#64748b] shadow-sm sm:h-4 sm:w-11"
                       style={{ transform: `rotate(${rotation}deg)` }}
                     />
                   ))}
-                  <span className="absolute left-1/2 top-1/2 h-5 w-5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-[#475569]" />
+                  <span className="absolute left-1/2 top-1/2 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-[#475569] sm:h-5 sm:w-5" />
                 </motion.div>
               </div>
             </motion.div>
