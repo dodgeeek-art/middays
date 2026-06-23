@@ -578,4 +578,153 @@ body::before {
   }
 }
 
+@media (pointer: coarse) and (max-device-width: 480px) {
+  .mobile-maze-game {
+    padding: 4px !important;
+    justify-content: flex-start !important;
+    overflow-y: auto !important;
+  }
 
+  .mobile-maze-header {
+    margin-bottom: 2px !important;
+    transform: scale(0.88);
+    transform-origin: center top;
+  }
+
+  .mobile-maze-instruction {
+    margin-bottom: 4px !important;
+    padding: 6px 8px !important;
+    border-radius: 16px !important;
+    max-width: 94vw !important;
+  }
+
+  .mobile-maze-instruction > span:first-child {
+    width: 28px !important;
+    height: 28px !important;
+  }
+
+  .mobile-maze-main {
+    gap: 4px !important;
+    justify-content: flex-start !important;
+    flex: 0 0 auto !important;
+  }
+
+  .mobile-maze-arena {
+    max-width: 240px !important;
+  }
+
+  .mobile-maze-dispenser {
+    height: 16px !important;
+  }
+
+  .mobile-maze-board {
+    width: 190px !important;
+    border-width: 3px !important;
+    border-radius: 22px !important;
+    padding: 5px !important;
+  }
+
+  .mobile-maze-board > div {
+    gap: 5px !important;
+  }
+
+  .mobile-maze-board [class*="rounded-"] {
+    border-radius: 12px !important;
+  }
+
+  .mobile-maze-hint {
+    margin-top: 4px !important;
+    padding: 2px 10px !important;
+    font-size: 8px !important;
+  }
+
+  .mobile-maze-goals {
+    margin-top: 4px !important;
+    gap: 4px !important;
+  }
+
+  .mobile-maze-goal-card {
+    min-height: 28px !important;
+    border-width: 2px !important;
+    border-radius: 10px !important;
+    padding: 2px !important;
+  }
+
+  .mobile-maze-goal-card span[aria-hidden="true"] {
+    display: none !important;
+  }
+
+  .mobile-maze-controls {
+    gap: 4px !important;
+    max-width: 240px !important;
+  }
+
+  .mobile-maze-controls button {
+    min-height: 34px !important;
+    padding-top: 6px !important;
+    padding-bottom: 6px !important;
+    border-radius: 16px !important;
+  }
+
+  .mobile-alchemy-game {
+    padding: 4px !important;
+    border-radius: 18px !important;
+    overflow-y: auto !important;
+  }
+
+  .mobile-alchemy-header {
+    transform: scale(0.9);
+    transform-origin: center top;
+    margin-bottom: -2px !important;
+  }
+
+  .mobile-alchemy-top {
+    gap: 4px !important;
+    margin-top: 0 !important;
+  }
+
+  .mobile-alchemy-goal {
+    padding: 5px 8px !important;
+    border-radius: 16px !important;
+  }
+
+  .mobile-alchemy-goal > span:first-of-type {
+    width: 32px !important;
+    height: 32px !important;
+  }
+
+  .mobile-alchemy-recipe {
+    padding: 3px 6px !important;
+    border-radius: 14px !important;
+  }
+
+  .mobile-alchemy-main {
+    gap: 4px !important;
+    padding-top: 4px !important;
+  }
+
+  .mobile-alchemy-pods {
+    gap: 4px !important;
+  }
+
+  .mobile-alchemy-pods button {
+    min-height: 54px !important;
+    border-radius: 14px !important;
+    padding-top: 4px !important;
+    padding-bottom: 3px !important;
+  }
+
+  .mobile-alchemy-pods button > div:last-of-type > div:first-child {
+    width: 24px !important;
+    height: 30px !important;
+  }
+
+  .mobile-alchemy-pods button > div:last-of-type > span {
+    font-size: 8px !important;
+  }
+
+  .mobile-alchemy-blender {
+    width: 150px !important;
+    box-shadow: 0 10px 22px rgba(47, 62, 70, 0.12), inset 0 3px 10px rgba(0, 0, 0, 0.07), 0 0 0 4px white !important;
+  }
+}

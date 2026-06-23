@@ -585,7 +585,7 @@ export default function ClayAlchemyEngine({ childId, onBack }: { childId: string
 
   return (
     <section
-      className="relative mx-auto flex h-full min-h-0 w-full max-w-4xl select-none flex-col overflow-y-auto overflow-x-hidden rounded-[1.25rem] border-2 border-white/60 bg-[#fbf8f3] p-1.5 text-[#2f3e46] shadow-clay-card sm:overflow-hidden sm:rounded-[2.35rem] sm:border-[3px] sm:p-4"
+      className="mobile-alchemy-game relative mx-auto flex h-full min-h-0 w-full max-w-4xl select-none flex-col overflow-y-auto overflow-x-hidden rounded-[1.25rem] border-2 border-white/60 bg-[#fbf8f3] p-1.5 text-[#2f3e46] shadow-clay-card sm:overflow-hidden sm:rounded-[2.35rem] sm:border-[3px] sm:p-4"
       aria-label="Clay Alchemy color mixing game"
     >
       <div
@@ -599,7 +599,7 @@ export default function ClayAlchemyEngine({ childId, onBack }: { childId: string
       <div className="pointer-events-none absolute -right-24 -top-28 h-72 w-72 rounded-full bg-[#ffd166]/25 blur-3xl" />
       <div className="pointer-events-none absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-[#118ab2]/15 blur-3xl" />
 
-      <header className="relative z-20 flex shrink-0 items-center justify-between gap-2">
+      <header className="mobile-alchemy-header relative z-20 flex shrink-0 items-center justify-between gap-2">
         <ClayButton
           variant="surface"
           size="icon"
@@ -622,11 +622,11 @@ export default function ClayAlchemyEngine({ childId, onBack }: { childId: string
         </div>
       </header>
 
-      <div className="relative z-10 mt-1 grid shrink-0 gap-1 sm:mt-3 sm:gap-2 lg:grid-cols-[1fr_auto] lg:items-center">
+      <div className="mobile-alchemy-top relative z-10 mt-1 grid shrink-0 gap-1 sm:mt-3 sm:gap-2 lg:grid-cols-[1fr_auto] lg:items-center">
         <button
           type="button"
           onClick={() => speakText(activeLevel.mascotSpeech)}
-          className="flex min-w-0 items-center gap-2 rounded-[1rem] border-2 border-white/70 bg-white/88 p-1.5 text-left shadow-sm outline-none transition-transform active:scale-[0.99] focus-visible:ring-4 focus-visible:ring-[#118ab2]/25 sm:gap-3 sm:rounded-[1.5rem] sm:p-3"
+          className="mobile-alchemy-goal flex min-w-0 items-center gap-2 rounded-[1rem] border-2 border-white/70 bg-white/88 p-1.5 text-left shadow-sm outline-none transition-transform active:scale-[0.99] focus-visible:ring-4 focus-visible:ring-[#118ab2]/25 sm:gap-3 sm:rounded-[1.5rem] sm:p-3"
           aria-label={`Hear instructions: ${activeLevel.mascotSpeech}`}
         >
           {MascotIcon && (
@@ -643,7 +643,7 @@ export default function ClayAlchemyEngine({ childId, onBack }: { childId: string
           <Volume2 className="ml-auto h-5 w-5 shrink-0 text-slate-400" aria-hidden="true" />
         </button>
 
-        <div className="rounded-[1rem] border-2 border-white/70 bg-white/70 px-1.5 py-1 shadow-sm sm:rounded-[1.5rem] sm:px-3 sm:py-2">
+        <div className="mobile-alchemy-recipe rounded-[1rem] border-2 border-white/70 bg-white/70 px-1.5 py-1 shadow-sm sm:rounded-[1.5rem] sm:px-3 sm:py-2">
           <IngredientRail activeLevel={activeLevel} counts={counts} />
         </div>
 
@@ -654,8 +654,8 @@ export default function ClayAlchemyEngine({ childId, onBack }: { childId: string
         </div>
       </div>
 
-      <div className="relative z-10 grid min-h-0 flex-1 grid-rows-[auto_1fr] gap-1.5 pt-1.5 md:grid-cols-[minmax(92px,120px)_1fr] md:grid-rows-1 md:items-center md:gap-4 md:pt-3">
-        <div className="grid grid-cols-3 gap-1 md:grid-cols-1 md:gap-2">
+      <div className="mobile-alchemy-main relative z-10 grid min-h-0 flex-1 grid-rows-[auto_1fr] gap-1.5 pt-1.5 md:grid-cols-[minmax(92px,120px)_1fr] md:grid-rows-1 md:items-center md:gap-4 md:pt-3">
+        <div className="mobile-alchemy-pods grid grid-cols-3 gap-1 md:grid-cols-1 md:gap-2">
           {(["red", "yellow", "blue"] as const).map((color) => (
             <PaintPod
               key={color}
@@ -673,7 +673,7 @@ export default function ClayAlchemyEngine({ childId, onBack }: { childId: string
           <motion.div
             animate={isShaking ? { x: [0, -12, 12, -10, 10, 0] } : {}}
             transition={{ type: "tween", duration: 0.5 }}
-            className={`relative aspect-square w-[180px] rounded-full border border-slate-200/30 bg-[#f8f6f2] shadow-[0_14px_32px_rgba(47,62,70,0.12),_inset_0_3px_12px_rgba(0,0,0,0.07),_0_0_0_5px_white] touch-none sm:w-[min(62vw,42vh,25rem)] sm:shadow-[0_14px_32px_rgba(47,62,70,0.12),_inset_0_3px_12px_rgba(0,0,0,0.07),_0_0_0_7px_white] ${
+            className={`mobile-alchemy-blender relative aspect-square w-[180px] rounded-full border border-slate-200/30 bg-[#f8f6f2] shadow-[0_14px_32px_rgba(47,62,70,0.12),_inset_0_3px_12px_rgba(0,0,0,0.07),_0_0_0_5px_white] touch-none sm:w-[min(62vw,42vh,25rem)] sm:shadow-[0_14px_32px_rgba(47,62,70,0.12),_inset_0_3px_12px_rgba(0,0,0,0.07),_0_0_0_7px_white] ${
               totalAdded > 0 && pourState === "idle" ? "cursor-grab" : "cursor-default"
             }`}
             onPointerDown={handleCrankPointerDown}

@@ -528,7 +528,7 @@ export default function MazeRouterEngine({ childId, onBack }: { childId: string;
   };
 
   return (
-    <div className="relative flex flex-col items-center justify-start w-full h-full min-h-0 bg-gradient-to-b from-[#f3f8f6] to-[#e6edea] overflow-y-auto overflow-x-hidden p-1.5 sm:overflow-hidden sm:p-4 select-none">
+    <div className="mobile-maze-game relative flex flex-col items-center justify-start w-full h-full min-h-0 bg-gradient-to-b from-[#f3f8f6] to-[#e6edea] overflow-y-auto overflow-x-hidden p-1.5 sm:overflow-hidden sm:p-4 select-none">
       
       {/* Grid Table Pattern decor background */}
       <div 
@@ -559,7 +559,7 @@ export default function MazeRouterEngine({ childId, onBack }: { childId: string;
       <div className="absolute -top-20 -left-20 w-80 h-80 rounded-full bg-sky-500/5 blur-3xl pointer-events-none" />
 
       {/* Top Header */}
-      <div className="flex items-center justify-between w-full max-w-3xl mb-0.5 sm:mb-3 shrink-0 z-20">
+      <div className="mobile-maze-header flex items-center justify-between w-full max-w-3xl mb-0.5 sm:mb-3 shrink-0 z-20">
         <ClayButton
           onClick={onBack}
           variant="surface"
@@ -584,7 +584,7 @@ export default function MazeRouterEngine({ childId, onBack }: { childId: string;
       <button
         type="button"
         onClick={() => speakText(instructionText)}
-        className="z-10 mb-1 flex w-full max-w-xl cursor-pointer items-center gap-2 self-center rounded-[1rem] border-2 border-white/70 bg-white/90 p-1.5 text-left shadow-sm outline-none transition-all active:scale-[0.99] focus-visible:ring-4 focus-visible:ring-[#118ab2]/25 sm:mb-4 sm:gap-3 sm:rounded-[1.7rem] sm:p-4"
+        className="mobile-maze-instruction z-10 mb-1 flex w-full max-w-xl cursor-pointer items-center gap-2 self-center rounded-[1rem] border-2 border-white/70 bg-white/90 p-1.5 text-left shadow-sm outline-none transition-all active:scale-[0.99] focus-visible:ring-4 focus-visible:ring-[#118ab2]/25 sm:mb-4 sm:gap-3 sm:rounded-[1.7rem] sm:p-4"
         aria-label={`Hear instructions: ${instructionText}`}
       >
         <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-[#fff4ca] text-sm shadow-inner sm:h-10 sm:w-10 sm:text-lg" aria-hidden="true">
@@ -600,12 +600,12 @@ export default function MazeRouterEngine({ childId, onBack }: { childId: string;
       </button>
 
       {/* Main Layout Grid */}
-      <div className="flex flex-col md:flex-row items-center justify-center gap-1 sm:gap-4 w-full max-w-4xl min-h-0 flex-1 relative overflow-visible px-1">
+      <div className="mobile-maze-main flex flex-col md:flex-row items-center justify-center gap-1 sm:gap-4 w-full max-w-4xl min-h-0 flex-1 relative overflow-visible px-1">
         
         {/* Center: Puzzle Arena */}
-        <div className="relative flex flex-col items-center min-h-0 w-full max-w-[300px] sm:max-w-[340px] overflow-visible">
+        <div className="mobile-maze-arena relative flex flex-col items-center min-h-0 w-full max-w-[300px] sm:max-w-[340px] overflow-visible">
           {/* Top Entrance Dispenser */}
-          <div className="w-full flex justify-center mb-0 overflow-visible h-5 sm:h-10 relative">
+          <div className="mobile-maze-dispenser w-full flex justify-center mb-0 overflow-visible h-5 sm:h-10 relative">
             <div className="absolute top-0 z-10 flex h-8 w-14 items-center justify-center rounded-b-[1rem] border-[3px] border-white bg-[#e07383] shadow-md sm:h-12 sm:w-20 sm:rounded-b-[1.5rem]">
               <span className="absolute -top-6 grid h-9 w-9 place-items-center sm:-top-8 sm:h-12 sm:w-12" aria-hidden="true">
                 <FluentAnimalIcon name={targetGoal.animal} size="100%" animClass="anim-sway" />
@@ -615,7 +615,7 @@ export default function MazeRouterEngine({ childId, onBack }: { childId: string;
           </div>
 
           {/* 3x3 Pipe Grid Clay Tray Container */}
-          <div className="relative aspect-square bg-[#ebe6dd] border-[4px] border-white rounded-[1.7rem] sm:rounded-[2.6rem] sm:border-[5px] shadow-[inset_0_8px_16px_rgba(0,0,0,0.06),_0_12px_24px_rgba(0,0,0,0.1)] w-[220px] sm:w-[340px] p-1.5 sm:p-2 select-none overflow-visible">
+          <div className="mobile-maze-board relative aspect-square bg-[#ebe6dd] border-[4px] border-white rounded-[1.7rem] sm:rounded-[2.6rem] sm:border-[5px] shadow-[inset_0_8px_16px_rgba(0,0,0,0.06),_0_12px_24px_rgba(0,0,0,0.1)] w-[220px] sm:w-[340px] p-1.5 sm:p-2 select-none overflow-visible">
             {/* Base grid layout */}
             <div className="grid grid-cols-3 grid-rows-3 gap-1.5 sm:gap-2 w-full h-full select-none">
               {grid.map((row, r) =>
@@ -714,17 +714,17 @@ export default function MazeRouterEngine({ childId, onBack }: { childId: string;
           </div>
 
           {/* Bottom Color Goals */}
-          <p className="mt-1 rounded-full bg-white/80 px-3 py-0.5 text-center text-[9px] font-black uppercase tracking-wider text-[#5c6b73] shadow-sm sm:mt-3 sm:px-4 sm:py-1.5 sm:text-[11px]">
+          <p className="mobile-maze-hint mt-1 rounded-full bg-white/80 px-3 py-0.5 text-center text-[9px] font-black uppercase tracking-wider text-[#5c6b73] shadow-sm sm:mt-3 sm:px-4 sm:py-1.5 sm:text-[11px]">
             Tap pipes to rotate, then roll.
           </p>
 
-          <div className="mt-1 grid w-full grid-cols-3 gap-1 overflow-visible z-10 sm:mt-3 sm:gap-2">
+          <div className="mobile-maze-goals mt-1 grid w-full grid-cols-3 gap-1 overflow-visible z-10 sm:mt-3 sm:gap-2">
             {goalItems.map((goal) => {
               const isTarget = goal.animal === targetGoal.animal && goal.label === targetGoal.label;
               return (
                 <div
                   key={`${goal.label}-${goal.animal}`}
-                  className={`relative flex min-h-[36px] flex-col items-center justify-center rounded-[0.75rem] border-2 bg-white px-1 py-0.5 shadow-sm sm:min-h-[72px] sm:rounded-[1.25rem] sm:border-[3px] sm:px-2 sm:py-2 ${
+                  className={`mobile-maze-goal-card relative flex min-h-[36px] flex-col items-center justify-center rounded-[0.75rem] border-2 bg-white px-1 py-0.5 shadow-sm sm:min-h-[72px] sm:rounded-[1.25rem] sm:border-[3px] sm:px-2 sm:py-2 ${
                     isTarget ? "border-white ring-4 ring-[#ffd166]/55" : "border-white/70 opacity-80"
                   }`}
                 >
@@ -753,7 +753,7 @@ export default function MazeRouterEngine({ childId, onBack }: { childId: string;
         </div>
 
         {/* Right Panel: Roll controls */}
-        <div className="flex flex-col gap-1.5 justify-center items-center w-full max-w-[300px] md:w-36 shrink-0 z-10">
+        <div className="mobile-maze-controls flex flex-col gap-1.5 justify-center items-center w-full max-w-[300px] md:w-36 shrink-0 z-10">
           <ClayButton
             onClick={handleRoll}
             isDisabled={isRolling}
