@@ -150,6 +150,7 @@ function PaintPod({
   isSqueezing,
   isRecommended,
   isDisabled,
+  isCompactPhone,
   onClick,
 }: {
   color: PrimaryColor;
@@ -157,6 +158,7 @@ function PaintPod({
   isSqueezing: boolean;
   isRecommended: boolean;
   isDisabled: boolean;
+  isCompactPhone: boolean;
   onClick: () => void;
 }) {
   const meta = PRIMARY_COLORS[color];
@@ -177,6 +179,7 @@ function PaintPod({
           ? "border-white bg-white"
           : "border-slate-200/70 bg-white/70 opacity-80"
       } ${isDisabled ? "cursor-not-allowed opacity-45" : "cursor-pointer"}`}
+      style={isCompactPhone ? { minHeight: 50, borderRadius: 12, paddingTop: 3, paddingBottom: 3 } : undefined}
     >
       <div
         className="absolute inset-1.5 rounded-[0.85rem] opacity-75 sm:inset-2 sm:rounded-[1.25rem]"
@@ -185,7 +188,10 @@ function PaintPod({
         }}
       />
       <div className="relative z-10 flex w-full flex-col items-center">
-        <div className="relative h-9 w-7 sm:h-24 sm:w-14 md:h-28 md:w-16">
+        <div
+          className="relative h-9 w-7 sm:h-24 sm:w-14 md:h-28 md:w-16"
+          style={isCompactPhone ? { width: 22, height: 28 } : undefined}
+        >
           <div className="absolute left-1/2 top-0 h-2.5 w-7 -translate-x-1/2 rounded-md border border-slate-300 bg-gradient-to-r from-slate-300 via-white to-slate-400 shadow-inner sm:h-4 sm:w-12" />
           <div
             className="absolute bottom-1.5 left-1/2 h-[78%] w-full -translate-x-1/2 rounded-[0.75rem_0.75rem_1rem_1rem] border-2 border-white shadow-[inset_5px_0_10px_rgba(255,255,255,0.38),_inset_-5px_0_10px_rgba(0,0,0,0.14),_0_10px_18px_rgba(0,0,0,0.12)] sm:bottom-2 sm:rounded-[1rem_1rem_1.45rem_1.45rem] sm:border-[3px]"
@@ -197,7 +203,7 @@ function PaintPod({
           <div className="absolute bottom-0 left-1/2 h-2.5 w-3.5 -translate-x-1/2 rounded-b-md border border-slate-400 bg-gradient-to-r from-slate-400 via-white to-slate-500 sm:h-4 sm:w-5" />
         </div>
 
-        <span className="mt-0 block text-[9px] font-black uppercase tracking-wider sm:mt-1 sm:text-sm" style={{ color: meta.ink }}>
+        <span className="mt-0 block text-[9px] font-black uppercase tracking-wider sm:mt-1 sm:text-sm" style={{ color: meta.ink, ...(isCompactPhone ? { fontSize: 8 } : {}) }}>
           {meta.label}
         </span>
 
@@ -288,6 +294,7 @@ export default function ClayAlchemyEngine({ childId, onBack }: { childId: string
   const [startTime] = useState<number>(() => Date.now());
   const [isShaking, setIsShaking] = useState(false);
   const [feedback, setFeedback] = useState<"intro" | "added" | "mixing" | "success" | "tryAgain">("intro");
+  const [isCompactPhone, setIsCompactPhone] = useState(false);
 
   const isDraggingCrank = useRef(false);
   const crankAngleRef = useRef(0);
@@ -302,6 +309,30 @@ export default function ClayAlchemyEngine({ childId, onBack }: { childId: string
     yellow: yellowAmt,
     blue: blueAmt,
   }), [redAmt, yellowAmt, blueAmt]);
+
+  useEffect(() => {
+    const updateLayoutMode = () => {
+      const visualWidth = window.visualViewport?.width ?? window.innerWidth;
+      const visualHeight = window.visualViewport?.height ?? window.innerHeight;
+      const isIPhone = /iPhone|iPod/i.test(window.navigator.userAgent);
+      const isSmallTouch =
+        window.matchMedia("(pointer: coarse)").matches &&
+        Math.min(visualWidth, window.innerWidth) <= 520;
+
+      setIsCompactPhone(isIPhone || isSmallTouch || visualHeight < 760);
+    };
+
+    updateLayoutMode();
+    window.visualViewport?.addEventListener("resize", updateLayoutMode);
+    window.addEventListener("resize", updateLayoutMode);
+    window.addEventListener("orientationchange", updateLayoutMode);
+
+    return () => {
+      window.visualViewport?.removeEventListener("resize", updateLayoutMode);
+      window.removeEventListener("resize", updateLayoutMode);
+      window.removeEventListener("orientationchange", updateLayoutMode);
+    };
+  }, []);
 
   const speakText = useCallback((text: string) => {
     if (typeof window !== "undefined" && window.speechSynthesis) {
@@ -586,6 +617,7 @@ export default function ClayAlchemyEngine({ childId, onBack }: { childId: string
   return (
     <section
       className="mobile-alchemy-game relative mx-auto flex h-full min-h-0 w-full max-w-4xl select-none flex-col overflow-y-auto overflow-x-hidden rounded-[1.25rem] border-2 border-white/60 bg-[#fbf8f3] p-1.5 text-[#2f3e46] shadow-clay-card sm:overflow-hidden sm:rounded-[2.35rem] sm:border-[3px] sm:p-4"
+      style={isCompactPhone ? { padding: 4, borderRadius: 16 } : undefined}
       aria-label="Clay Alchemy color mixing game"
     >
       <div
@@ -599,7 +631,10 @@ export default function ClayAlchemyEngine({ childId, onBack }: { childId: string
       <div className="pointer-events-none absolute -right-24 -top-28 h-72 w-72 rounded-full bg-[#ffd166]/25 blur-3xl" />
       <div className="pointer-events-none absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-[#118ab2]/15 blur-3xl" />
 
-      <header className="mobile-alchemy-header relative z-20 flex shrink-0 items-center justify-between gap-2">
+      <header
+        className="mobile-alchemy-header relative z-20 flex shrink-0 items-center justify-between gap-2"
+        style={isCompactPhone ? { transform: "scale(0.84)", transformOrigin: "center top", marginBottom: -6 } : undefined}
+      >
         <ClayButton
           variant="surface"
           size="icon"
@@ -622,28 +657,42 @@ export default function ClayAlchemyEngine({ childId, onBack }: { childId: string
         </div>
       </header>
 
-      <div className="mobile-alchemy-top relative z-10 mt-1 grid shrink-0 gap-1 sm:mt-3 sm:gap-2 lg:grid-cols-[1fr_auto] lg:items-center">
+      <div
+        className="mobile-alchemy-top relative z-10 mt-1 grid shrink-0 gap-1 sm:mt-3 sm:gap-2 lg:grid-cols-[1fr_auto] lg:items-center"
+        style={isCompactPhone ? { marginTop: 0, gap: 3 } : undefined}
+      >
         <button
           type="button"
           onClick={() => speakText(activeLevel.mascotSpeech)}
           className="mobile-alchemy-goal flex min-w-0 items-center gap-2 rounded-[1rem] border-2 border-white/70 bg-white/88 p-1.5 text-left shadow-sm outline-none transition-transform active:scale-[0.99] focus-visible:ring-4 focus-visible:ring-[#118ab2]/25 sm:gap-3 sm:rounded-[1.5rem] sm:p-3"
+          style={isCompactPhone ? { padding: "4px 7px", borderRadius: 14 } : undefined}
           aria-label={`Hear instructions: ${activeLevel.mascotSpeech}`}
         >
           {MascotIcon && (
-            <span className="grid h-9 w-9 shrink-0 place-items-center overflow-visible sm:h-16 sm:w-16" aria-hidden="true">
+            <span
+              className="grid h-9 w-9 shrink-0 place-items-center overflow-visible sm:h-16 sm:w-16"
+              style={isCompactPhone ? { width: 30, height: 30 } : undefined}
+              aria-hidden="true"
+            >
               <MascotIcon size="100%" animClass="anim-sway" />
             </span>
           )}
           <span className="min-w-0">
             <span className="block text-[9px] font-black uppercase tracking-[0.2em] text-slate-500 sm:text-[10px]">Goal</span>
-            <span className="block text-xs font-black leading-tight text-[#2f3e46] sm:text-base">
+            <span
+              className="block text-xs font-black leading-tight text-[#2f3e46] sm:text-base"
+              style={isCompactPhone ? { fontSize: 11, lineHeight: 1.1 } : undefined}
+            >
               Mix {activeLevel.targetName} for the {activeLevel.vocabName}
             </span>
           </span>
           <Volume2 className="ml-auto h-5 w-5 shrink-0 text-slate-400" aria-hidden="true" />
         </button>
 
-        <div className="mobile-alchemy-recipe rounded-[1rem] border-2 border-white/70 bg-white/70 px-1.5 py-1 shadow-sm sm:rounded-[1.5rem] sm:px-3 sm:py-2">
+        <div
+          className="mobile-alchemy-recipe rounded-[1rem] border-2 border-white/70 bg-white/70 px-1.5 py-1 shadow-sm sm:rounded-[1.5rem] sm:px-3 sm:py-2"
+          style={isCompactPhone ? { padding: "2px 5px", borderRadius: 12 } : undefined}
+        >
           <IngredientRail activeLevel={activeLevel} counts={counts} />
         </div>
 
@@ -654,8 +703,14 @@ export default function ClayAlchemyEngine({ childId, onBack }: { childId: string
         </div>
       </div>
 
-      <div className="mobile-alchemy-main relative z-10 grid min-h-0 flex-1 grid-rows-[auto_1fr] gap-1.5 pt-1.5 md:grid-cols-[minmax(92px,120px)_1fr] md:grid-rows-1 md:items-center md:gap-4 md:pt-3">
-        <div className="mobile-alchemy-pods grid grid-cols-3 gap-1 md:grid-cols-1 md:gap-2">
+      <div
+        className="mobile-alchemy-main relative z-10 grid min-h-0 flex-1 grid-rows-[auto_1fr] gap-1.5 pt-1.5 md:grid-cols-[minmax(92px,120px)_1fr] md:grid-rows-1 md:items-center md:gap-4 md:pt-3"
+        style={isCompactPhone ? { gap: 3, paddingTop: 3, flex: "0 0 auto" } : undefined}
+      >
+        <div
+          className="mobile-alchemy-pods grid grid-cols-3 gap-1 md:grid-cols-1 md:gap-2"
+          style={isCompactPhone ? { gap: 3 } : undefined}
+        >
           {(["red", "yellow", "blue"] as const).map((color) => (
             <PaintPod
               key={color}
@@ -664,6 +719,7 @@ export default function ClayAlchemyEngine({ childId, onBack }: { childId: string
               isSqueezing={squeezingPod === color}
               isRecommended={activeLevel.ingredients.includes(color)}
               isDisabled={pourState !== "idle" || isShaking}
+              isCompactPhone={isCompactPhone}
               onClick={() => handleSqueeze(color)}
             />
           ))}
@@ -676,6 +732,7 @@ export default function ClayAlchemyEngine({ childId, onBack }: { childId: string
             className={`mobile-alchemy-blender relative aspect-square w-[180px] rounded-full border border-slate-200/30 bg-[#f8f6f2] shadow-[0_14px_32px_rgba(47,62,70,0.12),_inset_0_3px_12px_rgba(0,0,0,0.07),_0_0_0_5px_white] touch-none sm:w-[min(62vw,42vh,25rem)] sm:shadow-[0_14px_32px_rgba(47,62,70,0.12),_inset_0_3px_12px_rgba(0,0,0,0.07),_0_0_0_7px_white] ${
               totalAdded > 0 && pourState === "idle" ? "cursor-grab" : "cursor-default"
             }`}
+            style={isCompactPhone ? { width: 138, boxShadow: "0 8px 18px rgba(47,62,70,0.12), inset 0 3px 10px rgba(0,0,0,0.07), 0 0 0 4px white" } : undefined}
             onPointerDown={handleCrankPointerDown}
             onPointerMove={handleCrankPointerMove}
             onPointerUp={handleCrankPointerUp}
