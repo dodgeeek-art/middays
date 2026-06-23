@@ -152,6 +152,8 @@ const MazeIcon = (props: any) => {
   );
 };
 
+const BUILD_VERSION = "1b5da4c";
+
 
 
 export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps) {
@@ -453,9 +455,14 @@ export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps
               <h1 className="font-sans text-sm sm:text-base text-primary tracking-tight font-black uppercase">
                 Midday
               </h1>
-              <span className="text-[7px] sm:text-[8px] font-black uppercase tracking-widest text-[#0d4036]/50">
-                Playbook
-              </span>
+              <div className="flex flex-wrap items-center gap-1">
+                <span className="text-[7px] sm:text-[8px] font-black uppercase tracking-widest text-[#0d4036]/50">
+                  Playbook
+                </span>
+                <span className="rounded-full bg-[#2f3e46]/8 px-1.5 py-0.5 text-[7px] font-black uppercase tracking-wider text-[#2f3e46]/60">
+                  Build {BUILD_VERSION}
+                </span>
+              </div>
             </div>
           </div>
         </div>
