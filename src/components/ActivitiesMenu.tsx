@@ -152,7 +152,7 @@ const MazeIcon = (props: any) => {
   );
 };
 
-const BUILD_VERSION = "1b5da4c";
+const BUILD_VERSION = "v2026.06.23.2";
 
 
 
@@ -459,16 +459,16 @@ export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps
                 <span className="text-[7px] sm:text-[8px] font-black uppercase tracking-widest text-[#0d4036]/50">
                   Playbook
                 </span>
-                <span className="rounded-full bg-[#2f3e46]/8 px-1.5 py-0.5 text-[7px] font-black uppercase tracking-wider text-[#2f3e46]/60">
-                  Build {BUILD_VERSION}
-                </span>
               </div>
             </div>
           </div>
         </div>
 
         {/* Small header text info */}
-        <div className="text-right flex flex-col justify-center">
+        <div className="text-right flex flex-col items-end justify-center gap-1">
+          <span className="rounded-full bg-[#2f3e46] px-2.5 py-1 text-[8px] sm:text-[9px] font-black uppercase tracking-wider text-white shadow-[0_4px_10px_rgba(47,62,70,0.18)]">
+            {BUILD_VERSION}
+          </span>
           <p className="text-[8px] font-black text-[#d4a919] uppercase tracking-wider leading-none mb-0.5">Buddy says:</p>
           <p className="text-[10px] sm:text-xs font-bold text-[#4A5358]/85 leading-none">Pick a game to play together!</p>
         </div>
