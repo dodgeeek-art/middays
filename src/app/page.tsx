@@ -205,7 +205,7 @@ export default function Home() {
       {/* Main View Shell */}
       <main className={`flex-grow max-w-6xl mx-auto w-full flex flex-col justify-center relative z-0 ${
         isGameActive 
-          ? "h-[100svh] max-h-[100svh] overflow-y-auto overflow-x-hidden p-1.5 pb-[calc(0.5rem+env(safe-area-inset-bottom))] sm:h-[calc(100dvh-2rem)] sm:max-h-[calc(100dvh-2rem)] sm:p-4 sm:pb-4 sm:overflow-hidden sm:mt-2" 
+          ? "h-[100svh] max-h-[100svh] overflow-hidden p-1.5 pb-[calc(0.5rem+env(safe-area-inset-bottom))] sm:h-[calc(100dvh-2rem)] sm:max-h-[calc(100dvh-2rem)] sm:p-4 sm:pb-4 sm:mt-2" 
           : `p-4 pb-28 sm:pb-32 md:pb-8 ${view === "lesson" ? "pt-6 sm:pt-8" : "pt-24 sm:pt-28"}`
       }`}>
         <AnimatePresence mode="wait">
