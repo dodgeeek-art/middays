@@ -179,7 +179,7 @@ function PaintPod({
           ? "border-white bg-white"
           : "border-slate-200/70 bg-white/70 opacity-80"
       } ${isDisabled ? "cursor-not-allowed opacity-45" : "cursor-pointer"}`}
-      style={isCompactPhone ? { minHeight: 50, borderRadius: 12, paddingTop: 3, paddingBottom: 3 } : undefined}
+      style={isCompactPhone ? { minHeight: 96, borderRadius: 22, paddingTop: 10, paddingBottom: 8 } : undefined}
     >
       <div
         className="absolute inset-1.5 rounded-[0.85rem] opacity-75 sm:inset-2 sm:rounded-[1.25rem]"
@@ -190,7 +190,7 @@ function PaintPod({
       <div className="relative z-10 flex w-full flex-col items-center">
         <div
           className="relative h-9 w-7 sm:h-24 sm:w-14 md:h-28 md:w-16"
-          style={isCompactPhone ? { width: 22, height: 28 } : undefined}
+          style={isCompactPhone ? { width: 42, height: 58 } : undefined}
         >
           <div className="absolute left-1/2 top-0 h-2.5 w-7 -translate-x-1/2 rounded-md border border-slate-300 bg-gradient-to-r from-slate-300 via-white to-slate-400 shadow-inner sm:h-4 sm:w-12" />
           <div
@@ -203,7 +203,7 @@ function PaintPod({
           <div className="absolute bottom-0 left-1/2 h-2.5 w-3.5 -translate-x-1/2 rounded-b-md border border-slate-400 bg-gradient-to-r from-slate-400 via-white to-slate-500 sm:h-4 sm:w-5" />
         </div>
 
-        <span className="mt-0 block text-[9px] font-black uppercase tracking-wider sm:mt-1 sm:text-sm" style={{ color: meta.ink, ...(isCompactPhone ? { fontSize: 8 } : {}) }}>
+        <span className="mt-0 block text-[9px] font-black uppercase tracking-wider sm:mt-1 sm:text-sm" style={{ color: meta.ink, ...(isCompactPhone ? { fontSize: 12 } : {}) }}>
           {meta.label}
         </span>
 
@@ -617,7 +617,7 @@ export default function ClayAlchemyEngine({ childId, onBack }: { childId: string
   return (
     <section
       className="mobile-alchemy-game relative mx-auto flex h-full min-h-0 w-full max-w-4xl select-none flex-col overflow-y-auto overflow-x-hidden rounded-[1.25rem] border-2 border-white/60 bg-[#fbf8f3] p-1.5 text-[#2f3e46] shadow-clay-card sm:overflow-hidden sm:rounded-[2.35rem] sm:border-[3px] sm:p-4"
-      style={isCompactPhone ? { padding: 4, borderRadius: 16 } : undefined}
+      style={isCompactPhone ? { padding: 10, borderRadius: 26 } : undefined}
       aria-label="Clay Alchemy color mixing game"
     >
       <div
@@ -633,7 +633,7 @@ export default function ClayAlchemyEngine({ childId, onBack }: { childId: string
 
       <header
         className="mobile-alchemy-header relative z-20 flex shrink-0 items-center justify-between gap-2"
-        style={isCompactPhone ? { transform: "scale(0.84)", transformOrigin: "center top", marginBottom: -6 } : undefined}
+        style={isCompactPhone ? { marginBottom: 8 } : undefined}
       >
         <ClayButton
           variant="surface"
@@ -659,19 +659,19 @@ export default function ClayAlchemyEngine({ childId, onBack }: { childId: string
 
       <div
         className="mobile-alchemy-top relative z-10 mt-1 grid shrink-0 gap-1 sm:mt-3 sm:gap-2 lg:grid-cols-[1fr_auto] lg:items-center"
-        style={isCompactPhone ? { marginTop: 0, gap: 3 } : undefined}
+        style={isCompactPhone ? { marginTop: 0, gap: 8 } : undefined}
       >
         <button
           type="button"
           onClick={() => speakText(activeLevel.mascotSpeech)}
           className="mobile-alchemy-goal flex min-w-0 items-center gap-2 rounded-[1rem] border-2 border-white/70 bg-white/88 p-1.5 text-left shadow-sm outline-none transition-transform active:scale-[0.99] focus-visible:ring-4 focus-visible:ring-[#118ab2]/25 sm:gap-3 sm:rounded-[1.5rem] sm:p-3"
-          style={isCompactPhone ? { padding: "4px 7px", borderRadius: 14 } : undefined}
+          style={isCompactPhone ? { padding: "10px 12px", borderRadius: 22 } : undefined}
           aria-label={`Hear instructions: ${activeLevel.mascotSpeech}`}
         >
           {MascotIcon && (
             <span
               className="grid h-9 w-9 shrink-0 place-items-center overflow-visible sm:h-16 sm:w-16"
-              style={isCompactPhone ? { width: 30, height: 30 } : undefined}
+              style={isCompactPhone ? { width: 42, height: 42 } : undefined}
               aria-hidden="true"
             >
               <MascotIcon size="100%" animClass="anim-sway" />
@@ -681,7 +681,7 @@ export default function ClayAlchemyEngine({ childId, onBack }: { childId: string
             <span className="block text-[9px] font-black uppercase tracking-[0.2em] text-slate-500 sm:text-[10px]">Goal</span>
             <span
               className="block text-xs font-black leading-tight text-[#2f3e46] sm:text-base"
-              style={isCompactPhone ? { fontSize: 11, lineHeight: 1.1 } : undefined}
+              style={isCompactPhone ? { fontSize: 15, lineHeight: 1.12 } : undefined}
             >
               Mix {activeLevel.targetName} for the {activeLevel.vocabName}
             </span>
@@ -691,7 +691,7 @@ export default function ClayAlchemyEngine({ childId, onBack }: { childId: string
 
         <div
           className="mobile-alchemy-recipe rounded-[1rem] border-2 border-white/70 bg-white/70 px-1.5 py-1 shadow-sm sm:rounded-[1.5rem] sm:px-3 sm:py-2"
-          style={isCompactPhone ? { padding: "2px 5px", borderRadius: 12 } : undefined}
+          style={isCompactPhone ? { padding: "7px 8px", borderRadius: 18 } : undefined}
         >
           <IngredientRail activeLevel={activeLevel} counts={counts} />
         </div>
@@ -705,11 +705,11 @@ export default function ClayAlchemyEngine({ childId, onBack }: { childId: string
 
       <div
         className="mobile-alchemy-main relative z-10 grid min-h-0 flex-1 grid-rows-[auto_1fr] gap-1.5 pt-1.5 md:grid-cols-[minmax(92px,120px)_1fr] md:grid-rows-1 md:items-center md:gap-4 md:pt-3"
-        style={isCompactPhone ? { gap: 3, paddingTop: 3, flex: "0 0 auto" } : undefined}
+        style={isCompactPhone ? { gap: 12, paddingTop: 8, flex: "0 0 auto" } : undefined}
       >
         <div
           className="mobile-alchemy-pods grid grid-cols-3 gap-1 md:grid-cols-1 md:gap-2"
-          style={isCompactPhone ? { gap: 3 } : undefined}
+          style={isCompactPhone ? { gap: 8 } : undefined}
         >
           {(["red", "yellow", "blue"] as const).map((color) => (
             <PaintPod
@@ -732,7 +732,7 @@ export default function ClayAlchemyEngine({ childId, onBack }: { childId: string
             className={`mobile-alchemy-blender relative aspect-square w-[180px] rounded-full border border-slate-200/30 bg-[#f8f6f2] shadow-[0_14px_32px_rgba(47,62,70,0.12),_inset_0_3px_12px_rgba(0,0,0,0.07),_0_0_0_5px_white] touch-none sm:w-[min(62vw,42vh,25rem)] sm:shadow-[0_14px_32px_rgba(47,62,70,0.12),_inset_0_3px_12px_rgba(0,0,0,0.07),_0_0_0_7px_white] ${
               totalAdded > 0 && pourState === "idle" ? "cursor-grab" : "cursor-default"
             }`}
-            style={isCompactPhone ? { width: 138, boxShadow: "0 8px 18px rgba(47,62,70,0.12), inset 0 3px 10px rgba(0,0,0,0.07), 0 0 0 4px white" } : undefined}
+            style={isCompactPhone ? { width: 260, boxShadow: "0 16px 30px rgba(47,62,70,0.14), inset 0 4px 14px rgba(0,0,0,0.07), 0 0 0 7px white" } : undefined}
             onPointerDown={handleCrankPointerDown}
             onPointerMove={handleCrankPointerMove}
             onPointerUp={handleCrankPointerUp}

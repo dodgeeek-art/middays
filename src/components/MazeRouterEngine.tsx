@@ -227,7 +227,7 @@ export default function MazeRouterEngine({ childId, onBack }: { childId: string;
   const activeLevel = levels[levelIdx];
   const goalItems = activeLevel.goals;
   const targetGoal = goalItems[activeLevel.targetCol];
-  const instructionText = `Connect the pipes to the ${targetGoal.label} goal for the ${targetGoal.animal}.`;
+  const instructionText = `Make a path to the ${targetGoal.label} ${targetGoal.animal}.`;
 
   useEffect(() => {
     const updateLayoutMode = () => {
@@ -555,7 +555,7 @@ export default function MazeRouterEngine({ childId, onBack }: { childId: string;
   return (
     <div
       className="mobile-maze-game relative flex flex-col items-center justify-start w-full h-full min-h-0 bg-gradient-to-b from-[#f3f8f6] to-[#e6edea] overflow-y-auto overflow-x-hidden p-1.5 sm:overflow-hidden sm:p-4 select-none"
-      style={isCompactPhone ? { padding: 4 } : undefined}
+      style={isCompactPhone ? { padding: 10 } : undefined}
     >
       
       {/* Grid Table Pattern decor background */}
@@ -589,7 +589,7 @@ export default function MazeRouterEngine({ childId, onBack }: { childId: string;
       {/* Top Header */}
       <div
         className="mobile-maze-header flex items-center justify-between w-full max-w-3xl mb-0.5 sm:mb-3 shrink-0 z-20"
-        style={isCompactPhone ? { marginBottom: 0, transform: "scale(0.82)", transformOrigin: "center top" } : undefined}
+        style={isCompactPhone ? { marginBottom: 8 } : undefined}
       >
         <ClayButton
           onClick={onBack}
@@ -616,7 +616,7 @@ export default function MazeRouterEngine({ childId, onBack }: { childId: string;
         type="button"
         onClick={() => speakText(instructionText)}
         className="mobile-maze-instruction z-10 mb-1 flex w-full max-w-xl cursor-pointer items-center gap-2 self-center rounded-[1rem] border-2 border-white/70 bg-white/90 p-1.5 text-left shadow-sm outline-none transition-all active:scale-[0.99] focus-visible:ring-4 focus-visible:ring-[#118ab2]/25 sm:mb-4 sm:gap-3 sm:rounded-[1.7rem] sm:p-4"
-        style={isCompactPhone ? { maxWidth: 330, marginBottom: 2, padding: "5px 8px", borderRadius: 14 } : undefined}
+        style={isCompactPhone ? { maxWidth: 354, marginBottom: 12, padding: "10px 12px", borderRadius: 22 } : undefined}
         aria-label={`Hear instructions: ${instructionText}`}
       >
         <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-[#fff4ca] text-sm shadow-inner sm:h-10 sm:w-10 sm:text-lg" aria-hidden="true">
@@ -626,7 +626,7 @@ export default function MazeRouterEngine({ childId, onBack }: { childId: string;
           <span className="block text-[9px] font-black uppercase tracking-[0.2em] text-slate-500 sm:text-[10px]">Instruction</span>
           <span
             className="block text-[11px] font-bold leading-tight text-[#4A5358] sm:text-base"
-            style={isCompactPhone ? { fontSize: 10.5, lineHeight: 1.15 } : undefined}
+            style={isCompactPhone ? { fontSize: 15, lineHeight: 1.15 } : undefined}
           >
             {instructionText}
           </span>
@@ -637,18 +637,18 @@ export default function MazeRouterEngine({ childId, onBack }: { childId: string;
       {/* Main Layout Grid */}
       <div
         className="mobile-maze-main flex flex-col md:flex-row items-center justify-center gap-1 sm:gap-4 w-full max-w-4xl min-h-0 flex-1 relative overflow-visible px-1"
-        style={isCompactPhone ? { gap: 2, justifyContent: "flex-start", flex: "0 0 auto" } : undefined}
+        style={isCompactPhone ? { gap: 10, justifyContent: "flex-start", flex: "0 0 auto" } : undefined}
       >
         
         {/* Center: Puzzle Arena */}
         <div
           className="mobile-maze-arena relative flex flex-col items-center min-h-0 w-full max-w-[300px] sm:max-w-[340px] overflow-visible"
-          style={isCompactPhone ? { maxWidth: 206 } : undefined}
+          style={isCompactPhone ? { maxWidth: 310 } : undefined}
         >
           {/* Top Entrance Dispenser */}
           <div
             className="mobile-maze-dispenser w-full flex justify-center mb-0 overflow-visible h-5 sm:h-10 relative"
-            style={isCompactPhone ? { height: 14 } : undefined}
+            style={isCompactPhone ? { height: 30 } : undefined}
           >
             <div className="absolute top-0 z-10 flex h-8 w-14 items-center justify-center rounded-b-[1rem] border-[3px] border-white bg-[#e07383] shadow-md sm:h-12 sm:w-20 sm:rounded-b-[1.5rem]">
               <span className="absolute -top-6 grid h-9 w-9 place-items-center sm:-top-8 sm:h-12 sm:w-12" aria-hidden="true">
@@ -661,12 +661,12 @@ export default function MazeRouterEngine({ childId, onBack }: { childId: string;
           {/* 3x3 Pipe Grid Clay Tray Container */}
           <div
             className="mobile-maze-board relative aspect-square bg-[#ebe6dd] border-[4px] border-white rounded-[1.7rem] sm:rounded-[2.6rem] sm:border-[5px] shadow-[inset_0_8px_16px_rgba(0,0,0,0.06),_0_12px_24px_rgba(0,0,0,0.1)] w-[220px] sm:w-[340px] p-1.5 sm:p-2 select-none overflow-visible"
-            style={isCompactPhone ? { width: 178, borderWidth: 3, borderRadius: 18, padding: 4 } : undefined}
+            style={isCompactPhone ? { width: 284, borderWidth: 5, borderRadius: 34, padding: 8 } : undefined}
           >
             {/* Base grid layout */}
             <div
               className="grid grid-cols-3 grid-rows-3 gap-1.5 sm:gap-2 w-full h-full select-none"
-              style={isCompactPhone ? { gap: 4 } : undefined}
+              style={isCompactPhone ? { gap: 8 } : undefined}
             >
               {grid.map((row, r) =>
                 row.map((cell, c) => {
@@ -766,42 +766,44 @@ export default function MazeRouterEngine({ childId, onBack }: { childId: string;
           {/* Bottom Color Goals */}
           <p
             className="mobile-maze-hint mt-1 rounded-full bg-white/80 px-3 py-0.5 text-center text-[9px] font-black uppercase tracking-wider text-[#5c6b73] shadow-sm sm:mt-3 sm:px-4 sm:py-1.5 sm:text-[11px]"
-            style={isCompactPhone ? { marginTop: 3, padding: "1px 8px", fontSize: 7.5 } : undefined}
+            style={isCompactPhone ? { marginTop: 10, padding: "6px 16px", fontSize: 11 } : undefined}
           >
             Tap pipes to rotate, then roll.
           </p>
 
           <div
             className="mobile-maze-goals mt-1 grid w-full grid-cols-3 gap-1 overflow-visible z-10 sm:mt-3 sm:gap-2"
-            style={isCompactPhone ? { marginTop: 3, gap: 3, width: 196 } : undefined}
+            style={isCompactPhone ? { marginTop: 10, gap: 8, width: 310 } : undefined}
           >
             {goalItems.map((goal) => {
               const isTarget = goal.animal === targetGoal.animal && goal.label === targetGoal.label;
               return (
                 <div
                   key={`${goal.label}-${goal.animal}`}
-                  className={`mobile-maze-goal-card relative flex min-h-[36px] flex-col items-center justify-center rounded-[0.75rem] border-2 bg-white px-1 py-0.5 shadow-sm sm:min-h-[72px] sm:rounded-[1.25rem] sm:border-[3px] sm:px-2 sm:py-2 ${
-                    isTarget ? "border-white ring-4 ring-[#ffd166]/55" : "border-white/70 opacity-80"
+                  className={`mobile-maze-goal-card relative flex min-h-[36px] flex-col items-center justify-center rounded-[0.75rem] border-2 px-1 py-0.5 shadow-sm sm:min-h-[72px] sm:rounded-[1.25rem] sm:border-[3px] sm:px-2 sm:py-2 ${
+                    isTarget ? "border-white ring-4 ring-[#ffd166]/70" : "border-white/70 opacity-85"
                   }`}
-                  style={isCompactPhone ? { minHeight: 28, borderRadius: 9, padding: 2 } : undefined}
+                  style={{
+                    background: `linear-gradient(180deg, ${goal.color}, ${goal.color}dd)`,
+                    ...(isCompactPhone ? { minHeight: 72, borderRadius: 20, padding: 6 } : {}),
+                  }}
                 >
                   {isTarget && (
-                    <span className="absolute -top-2.5 rounded-full bg-[#2f3e46] px-1.5 py-0.5 text-[7px] font-black uppercase tracking-wider text-white shadow-md sm:-top-3 sm:px-2 sm:text-[8px]">
+                    <span className="absolute -top-3 rounded-full bg-[#2f3e46] px-2 py-0.5 text-[8px] font-black uppercase tracking-wider text-white shadow-md sm:-top-3 sm:px-2 sm:text-[8px]">
                       Goal
                     </span>
                   )}
                   <span
-                    className="mb-0 grid h-4 w-8 place-items-center rounded-full border-2 border-white shadow-inner sm:mb-1 sm:h-8 sm:w-12"
-                    style={{ backgroundColor: goal.color }}
+                    className="mb-1 grid h-8 w-8 place-items-center rounded-full border-2 border-white/85 bg-white/92 shadow-sm sm:mb-1 sm:h-8 sm:w-8"
                     aria-hidden="true"
                   >
-                    <span className="h-2 w-5 rounded-full bg-black/16 sm:h-3 sm:w-8" />
+                    <FluentAnimalIcon name={goal.animal} size="100%" />
                   </span>
-                  <span className="text-[8px] font-black uppercase tracking-wider sm:text-[10px]" style={{ color: goal.color }}>
+                  <span className="text-[10px] font-black uppercase tracking-wider text-white drop-shadow-sm sm:text-[10px]">
                     {goal.label}
                   </span>
-                  <span className="hidden mt-0.5 h-4 w-4 sm:block sm:h-5 sm:w-5" aria-hidden="true">
-                    <FluentAnimalIcon name={goal.animal} size="100%" />
+                  <span className="mt-1 h-1.5 w-8 rounded-full bg-white/35 shadow-inner" aria-hidden="true">
+                    <span className="block h-full w-1/2 rounded-full bg-black/12" />
                   </span>
                 </div>
               );
@@ -812,14 +814,14 @@ export default function MazeRouterEngine({ childId, onBack }: { childId: string;
         {/* Right Panel: Roll controls */}
         <div
           className="mobile-maze-controls flex flex-col gap-1.5 justify-center items-center w-full max-w-[300px] md:w-36 shrink-0 z-10"
-          style={isCompactPhone ? { gap: 4, maxWidth: 220 } : undefined}
+          style={isCompactPhone ? { gap: 10, maxWidth: 310 } : undefined}
         >
           <ClayButton
             onClick={handleRoll}
             isDisabled={isRolling}
             variant="primary"
             className="w-full py-2 md:py-5 rounded-[1.1rem] md:rounded-[2rem] text-sm md:text-xl font-black uppercase tracking-wider flex flex-col items-center gap-0 active:scale-95 shadow-lg select-none disabled:opacity-60 disabled:cursor-not-allowed"
-            style={isCompactPhone ? { minHeight: 34, paddingTop: 5, paddingBottom: 5, borderRadius: 14 } : undefined}
+            style={isCompactPhone ? { minHeight: 62, paddingTop: 10, paddingBottom: 10, borderRadius: 24 } : undefined}
           >
             <span>Roll!</span>
             <span className="text-[10px] font-normal lowercase select-none md:text-xs">tap to drop</span>
@@ -834,7 +836,7 @@ export default function MazeRouterEngine({ childId, onBack }: { childId: string;
             }}
             variant="surface"
             className="w-full py-1.5 text-[10px] font-bold rounded-2xl sm:py-2.5 sm:text-xs"
-            style={isCompactPhone ? { minHeight: 30, paddingTop: 4, paddingBottom: 4, borderRadius: 14 } : undefined}
+            style={isCompactPhone ? { minHeight: 48, paddingTop: 8, paddingBottom: 8, borderRadius: 22 } : undefined}
           >
             Reset Marble
           </ClayButton>
