@@ -174,12 +174,12 @@ function PaintPod({
       whileHover={isDisabled ? {} : { y: -3, scale: 1.02 }}
       whileTap={isDisabled ? {} : { y: 4, scale: 0.96 }}
       transition={{ type: "spring", stiffness: 380, damping: 20 }}
-      className={`group relative flex min-h-[64px] w-full min-w-[72px] flex-col items-center justify-end rounded-[1.05rem] border-2 px-1.5 pb-1 pt-1.5 text-center shadow-clay-card outline-none transition-all focus-visible:ring-4 focus-visible:ring-[#118ab2]/35 sm:min-h-[132px] sm:min-w-[98px] sm:rounded-[1.65rem] sm:border-[3px] sm:px-2 sm:pb-2 sm:pt-4 md:min-h-[150px] ${
+      className={`group relative flex min-h-[64px] w-full min-w-0 flex-col items-center justify-end overflow-hidden rounded-[1.05rem] border-2 px-1.5 pb-1 pt-1.5 text-center shadow-clay-card outline-none transition-all focus-visible:ring-4 focus-visible:ring-[#118ab2]/35 sm:min-h-[132px] sm:min-w-[98px] sm:rounded-[1.65rem] sm:border-[3px] sm:px-2 sm:pb-2 sm:pt-4 md:min-h-[150px] ${
         isRecommended
           ? "border-white bg-white"
           : "border-slate-200/70 bg-white/70 opacity-80"
       } ${isDisabled ? "cursor-not-allowed opacity-45" : "cursor-pointer"}`}
-      style={isCompactPhone ? { minHeight: "min(15vh, 124px)", borderRadius: 22, paddingTop: 10, paddingBottom: 8 } : undefined}
+      style={isCompactPhone ? { minHeight: "min(13vh, 104px)", borderRadius: 22, paddingTop: 8, paddingBottom: 7 } : undefined}
     >
       <div
         className="absolute inset-1.5 rounded-[0.85rem] opacity-75 sm:inset-2 sm:rounded-[1.25rem]"
@@ -190,7 +190,7 @@ function PaintPod({
       <div className="relative z-10 flex w-full flex-col items-center">
         <div
           className="relative h-9 w-7 sm:h-24 sm:w-14 md:h-28 md:w-16"
-          style={isCompactPhone ? { width: 42, height: 58 } : undefined}
+          style={isCompactPhone ? { width: 36, height: 50 } : undefined}
         >
           <div className="absolute left-1/2 top-0 h-2.5 w-7 -translate-x-1/2 rounded-md border border-slate-300 bg-gradient-to-r from-slate-300 via-white to-slate-400 shadow-inner sm:h-4 sm:w-12" />
           <div
@@ -203,7 +203,7 @@ function PaintPod({
           <div className="absolute bottom-0 left-1/2 h-2.5 w-3.5 -translate-x-1/2 rounded-b-md border border-slate-400 bg-gradient-to-r from-slate-400 via-white to-slate-500 sm:h-4 sm:w-5" />
         </div>
 
-        <span className="mt-0 block text-[9px] font-black uppercase tracking-wider sm:mt-1 sm:text-sm" style={{ color: meta.ink, ...(isCompactPhone ? { fontSize: 12 } : {}) }}>
+        <span className="mt-0 block text-[9px] font-black uppercase tracking-wider sm:mt-1 sm:text-sm" style={{ color: meta.ink, ...(isCompactPhone ? { fontSize: 11 } : {}) }}>
           {meta.label}
         </span>
 
@@ -219,7 +219,7 @@ function PaintPod({
         </div>
       </div>
       {isRecommended && (
-        <span className="absolute -right-1 -top-2 rounded-full bg-[#2f3e46] px-1.5 py-0.5 text-[7px] font-black uppercase tracking-wider text-white shadow-md sm:-right-1.5 sm:px-2 sm:py-1 sm:text-[8px]">
+        <span className="absolute left-1/2 top-1.5 z-20 -translate-x-1/2 rounded-full bg-[#2f3e46] px-1.5 py-0.5 text-[7px] font-black uppercase tracking-wider text-white shadow-md sm:-right-1.5 sm:left-auto sm:top-auto sm:-translate-x-0 sm:px-2 sm:py-1 sm:text-[8px]">
           Needed
         </span>
       )}
@@ -704,12 +704,12 @@ export default function ClayAlchemyEngine({ childId, onBack }: { childId: string
       </div>
 
       <div
-        className="mobile-alchemy-main relative z-10 grid min-h-0 flex-1 grid-rows-[auto_1fr] gap-1.5 pt-1.5 md:grid-cols-[minmax(92px,120px)_1fr] md:grid-rows-1 md:items-center md:gap-4 md:pt-3"
-        style={isCompactPhone ? { gap: 10, paddingTop: 8, flex: "1 1 auto", alignContent: "center" } : undefined}
+        className="mobile-alchemy-main relative z-10 grid min-h-0 flex-1 grid-rows-[auto_1fr] gap-1.5 overflow-hidden pt-1.5 md:grid-cols-[minmax(92px,120px)_1fr] md:grid-rows-1 md:items-center md:gap-4 md:pt-3"
+        style={isCompactPhone ? { gap: 8, paddingTop: 6, flex: "1 1 auto", alignContent: "center" } : undefined}
       >
         <div
-          className="mobile-alchemy-pods grid grid-cols-3 gap-1 md:grid-cols-1 md:gap-2"
-          style={isCompactPhone ? { gap: 8 } : undefined}
+          className="mobile-alchemy-pods grid min-w-0 grid-cols-3 gap-1 overflow-hidden md:grid-cols-1 md:gap-2"
+          style={isCompactPhone ? { gap: 6, gridTemplateColumns: "repeat(3, minmax(0, 1fr))" } : undefined}
         >
           {(["red", "yellow", "blue"] as const).map((color) => (
             <PaintPod
@@ -727,7 +727,7 @@ export default function ClayAlchemyEngine({ childId, onBack }: { childId: string
 
         <div
           className="flex min-h-0 flex-col items-center justify-center gap-1.5 sm:gap-3"
-          style={isCompactPhone ? { justifyContent: "center", gap: 12 } : undefined}
+          style={isCompactPhone ? { justifyContent: "center", gap: 10, minWidth: 0, overflow: "hidden" } : undefined}
         >
           <motion.div
             animate={isShaking ? { x: [0, -12, 12, -10, 10, 0] } : {}}
@@ -735,7 +735,7 @@ export default function ClayAlchemyEngine({ childId, onBack }: { childId: string
             className={`mobile-alchemy-blender relative aspect-square w-[180px] rounded-full border border-slate-200/30 bg-[#f8f6f2] shadow-[0_14px_32px_rgba(47,62,70,0.12),_inset_0_3px_12px_rgba(0,0,0,0.07),_0_0_0_5px_white] touch-none sm:w-[min(62vw,42vh,25rem)] sm:shadow-[0_14px_32px_rgba(47,62,70,0.12),_inset_0_3px_12px_rgba(0,0,0,0.07),_0_0_0_7px_white] ${
               totalAdded > 0 && pourState === "idle" ? "cursor-grab" : "cursor-default"
             }`}
-            style={isCompactPhone ? { width: "min(82vw, 38vh, 330px)", boxShadow: "0 16px 30px rgba(47,62,70,0.14), inset 0 4px 14px rgba(0,0,0,0.07), 0 0 0 7px white" } : undefined}
+            style={isCompactPhone ? { width: totalAdded > 0 ? "min(78vw, 32vh, 300px)" : "min(82vw, 36vh, 320px)", boxShadow: "0 16px 30px rgba(47,62,70,0.14), inset 0 4px 14px rgba(0,0,0,0.07), 0 0 0 7px white" } : undefined}
             onPointerDown={handleCrankPointerDown}
             onPointerMove={handleCrankPointerMove}
             onPointerUp={handleCrankPointerUp}
@@ -889,11 +889,21 @@ export default function ClayAlchemyEngine({ childId, onBack }: { childId: string
           </div>
 
           <div
-            className="flex w-full max-w-md items-center justify-between gap-1.5 rounded-[1rem] border-2 border-white/80 bg-white/90 px-2 py-1.5 shadow-sm sm:gap-2 sm:rounded-[1.35rem] sm:px-3 sm:py-2"
+            className="flex w-full max-w-md min-w-0 items-center justify-between gap-1.5 rounded-[1rem] border-2 border-white/80 bg-white/90 px-2 py-1.5 shadow-sm sm:gap-2 sm:rounded-[1.35rem] sm:px-3 sm:py-2"
+            style={isCompactPhone ? { maxWidth: "100%", padding: "8px 9px", borderRadius: 18 } : undefined}
             role="status"
             aria-live="polite"
           >
-            <p className="min-w-0 truncate text-[10px] font-black uppercase tracking-wider text-[#2f3e46] sm:text-sm">
+            <p
+              className="min-w-0 flex-1 text-[10px] font-black uppercase tracking-wider text-[#2f3e46] sm:text-sm"
+              style={isCompactPhone ? {
+                display: "-webkit-box",
+                WebkitLineClamp: 2,
+                WebkitBoxOrient: "vertical",
+                overflow: "hidden",
+                lineHeight: 1.18,
+              } : undefined}
+            >
               {statusCopy}
             </p>
             <ClayButton
@@ -901,6 +911,7 @@ export default function ClayAlchemyEngine({ childId, onBack }: { childId: string
               size="sm"
               onClick={handleClear}
               className="min-h-[34px] shrink-0 gap-1 border-2 border-slate-200 bg-white px-2 text-[9px] shadow-md sm:min-h-[42px] sm:gap-1.5 sm:px-3 sm:text-xs"
+              style={isCompactPhone ? { minHeight: 40, paddingLeft: 10, paddingRight: 10 } : undefined}
               aria-label="Clear blender and start this mix again"
             >
               <RefreshCw size={15} aria-hidden="true" />
