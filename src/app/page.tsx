@@ -3,27 +3,10 @@
 import { alphabetData } from "@/lib/alphabetData";
 
 import React, { useState, useEffect } from "react";
-import ActiveLessonEngine from "@/components/ActiveLessonEngine";
+import dynamic from "next/dynamic";
 import ParentDashboard from "@/components/ParentDashboard";
 import ProgressVisualizer from "@/components/ProgressVisualizer";
 import ActivitiesMenu from "@/components/ActivitiesMenu";
-import MagicRevealEngine from "@/components/MagicRevealEngine";
-import BubblePopEngine from "@/components/BubblePopEngine";
-import FeedMonsterEngine from "@/components/FeedMonsterEngine";
-import SoundScavengerEngine from "@/components/SoundScavengerEngine";
-import RhymeRiverEngine from "@/components/RhymeRiverEngine";
-import PhonicsMatchEngine from "@/components/PhonicsMatchEngine";
-import SyllableDrummerEngine from "@/components/SyllableDrummerEngine";
-
-// Import new developmental games
-import SortingBasketEngine from "@/components/SortingBasketEngine";
-import WhereIsBunnyEngine from "@/components/WhereIsBunnyEngine";
-import StorySequenceEngine from "@/components/StorySequenceEngine";
-import MarkMakerEngine from "@/components/MarkMakerEngine";
-import PatternExplorerEngine from "@/components/PatternExplorerEngine";
-import ClayAlchemyEngine from "@/components/ClayAlchemyEngine";
-import MazeRouterEngine from "@/components/MazeRouterEngine";
-import SymmetryPainterEngine from "@/components/SymmetryPainterEngine";
 
 import { motion, AnimatePresence } from "framer-motion";
 import { Play, Trophy, Settings } from "@/components/Icons";
@@ -46,6 +29,40 @@ interface Child {
 }
 
 const DEMO_CHILD_ID = "demo-child";
+
+const GameLoading = () => (
+  <div className="flex h-full min-h-0 w-full items-center justify-center">
+    <div className="flex w-[min(88vw,22rem)] flex-col items-center gap-4 rounded-[2rem] border-[3px] border-white/70 bg-white/90 px-6 py-8 text-center shadow-clay-card">
+      <div className="relative h-16 w-16">
+        <span className="absolute inset-0 rounded-full bg-[#ffd166]/45 animate-ping" />
+        <span className="relative grid h-16 w-16 place-items-center rounded-full bg-[#ffd166] text-3xl shadow-clay-btn">
+          🎮
+        </span>
+      </div>
+      <div>
+        <p className="text-[10px] font-black uppercase tracking-[0.22em] text-[#5c6b73]/70">Loading Game</p>
+        <p className="mt-1 text-lg font-black uppercase tracking-wide text-[#2f3e46]">Setting up play</p>
+      </div>
+    </div>
+  </div>
+);
+
+const ActiveLessonEngine = dynamic(() => import("@/components/ActiveLessonEngine"), { loading: GameLoading });
+const MagicRevealEngine = dynamic(() => import("@/components/MagicRevealEngine"), { loading: GameLoading });
+const BubblePopEngine = dynamic(() => import("@/components/BubblePopEngine"), { loading: GameLoading });
+const FeedMonsterEngine = dynamic(() => import("@/components/FeedMonsterEngine"), { loading: GameLoading });
+const SoundScavengerEngine = dynamic(() => import("@/components/SoundScavengerEngine"), { loading: GameLoading });
+const RhymeRiverEngine = dynamic(() => import("@/components/RhymeRiverEngine"), { loading: GameLoading });
+const PhonicsMatchEngine = dynamic(() => import("@/components/PhonicsMatchEngine"), { loading: GameLoading });
+const SyllableDrummerEngine = dynamic(() => import("@/components/SyllableDrummerEngine"), { loading: GameLoading });
+const SortingBasketEngine = dynamic(() => import("@/components/SortingBasketEngine"), { loading: GameLoading });
+const WhereIsBunnyEngine = dynamic(() => import("@/components/WhereIsBunnyEngine"), { loading: GameLoading });
+const StorySequenceEngine = dynamic(() => import("@/components/StorySequenceEngine"), { loading: GameLoading });
+const MarkMakerEngine = dynamic(() => import("@/components/MarkMakerEngine"), { loading: GameLoading });
+const PatternExplorerEngine = dynamic(() => import("@/components/PatternExplorerEngine"), { loading: GameLoading });
+const ClayAlchemyEngine = dynamic(() => import("@/components/ClayAlchemyEngine"), { loading: GameLoading });
+const MazeRouterEngine = dynamic(() => import("@/components/MazeRouterEngine"), { loading: GameLoading });
+const SymmetryPainterEngine = dynamic(() => import("@/components/SymmetryPainterEngine"), { loading: GameLoading });
 
 const playSynthesizedSound = (type: "correct" | "click") => {
   if (typeof window === "undefined") return;
@@ -95,6 +112,7 @@ export default function Home() {
   const [currentLetterIndex, setCurrentLetterIndex] = useState(0);
   const currentLetter = alphabetData[currentLetterIndex].letter;
   const currentPath = alphabetData[currentLetterIndex].pathString;
+  const isGameActive = view === "lesson" && activeGame !== "menu";
 
   // Parent Gate state
   const [pendingTab, setPendingTab] = useState<"trophies" | "dashboard" | null>(null);
@@ -137,8 +155,10 @@ export default function Home() {
   }, []);
 
 
-  // Fetch progress records whenever childId is set or view changes
+  // Fetch progress records outside of active gameplay so games are not interrupted by app-level polling rerenders.
   useEffect(() => {
+    if (isGameActive) return;
+
     const fetchProgress = () => {
       fetch(`/api/progress/${childId}`)
         .then((res) => res.json())
@@ -149,18 +169,15 @@ export default function Home() {
         });
     };
     fetchProgress();
-    
-    // Periodically fetch in case updates happen during play
-    const interval = setInterval(fetchProgress, 5000);
+
+    const interval = setInterval(fetchProgress, 30000);
     return () => clearInterval(interval);
-  }, [childId, view, activeGame]);
+  }, [childId, view, isGameActive]);
 
   // Dynamic stars count based on the progress record length + base 12000 from Stitch design
   const starsCount = childProgress 
     ? 12000 + childProgress.progressRecord.length * 1000 
     : 12000;
-
-  const isGameActive = view === "lesson" && activeGame !== "menu";
 
   useEffect(() => {
     if (isGameActive) {

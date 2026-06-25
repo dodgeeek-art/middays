@@ -152,7 +152,7 @@ const MazeIcon = (props: any) => {
   );
 };
 
-const BUILD_VERSION = "v2026.06.23.5";
+const BUILD_VERSION = "v2026.06.25.1";
 
 
 
