@@ -13,6 +13,8 @@ export const CartoonSVG = ({ children, size = 100, animClass = "anim-float", ...
       xmlns="http://www.w3.org/2000/svg" 
       viewBox="0 0 32 32" 
       fill="none" 
+      width={size}
+      height={size}
       className={`overflow-visible transition-transform duration-300 hover:scale-108 active:scale-95 active:rotate-1 ${animClass}`}
       style={{ width: size, height: size, display: 'inline-block', cursor: 'pointer' }}
       {...props}

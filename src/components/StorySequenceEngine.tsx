@@ -530,7 +530,7 @@ const concepts: Concept[] = [
             initial={{ scale: 0, y: 40, opacity: 0 }}
             animate={{ scale: 1, y: 0, opacity: 1 }}
             transition={{ duration: 1.8, type: "spring", stiffness: 40 }}
-            transform="translate(110, 48)"
+            transform="translate(107.5, 48)"
           >
             <Snowman size={85} />
           </motion.g>
