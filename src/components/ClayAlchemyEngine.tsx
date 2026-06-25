@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 import ClayButton from "@/components/ui/ClayButton";
 import { vocabularyList } from "@/lib/svgDictionary";
+import { playSynthesizedSound } from "@/lib/audio";
 
 type PrimaryColor = "red" | "yellow" | "blue";
 type TargetColorName = "Orange" | "Green" | "Purple" | "Brown";
@@ -348,65 +349,7 @@ export default function ClayAlchemyEngine({ childId, onBack }: { childId: string
     }
   }, []);
 
-  const playSynthesizedSound = (type: "correct" | "click" | "squeeze" | "blend") => {
-    if (typeof window === "undefined") return;
-    try {
-      const AudioContextClass = window.AudioContext || (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
-      if (!AudioContextClass) return;
-      const ctx = new AudioContextClass();
-      const now = ctx.currentTime;
-      if (type === "correct") {
-        [261.63, 329.63, 392, 523.25].forEach((freq, idx) => {
-          const osc = ctx.createOscillator();
-          const gain = ctx.createGain();
-          osc.type = "sine";
-          osc.frequency.setValueAtTime(freq, now + idx * 0.08);
-          gain.gain.setValueAtTime(0.2, now + idx * 0.08);
-          gain.gain.exponentialRampToValueAtTime(0.01, now + idx * 0.08 + 0.2);
-          osc.connect(gain);
-          gain.connect(ctx.destination);
-          osc.start(now + idx * 0.08);
-          osc.stop(now + idx * 0.08 + 0.22);
-        });
-      } else if (type === "click") {
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.frequency.setValueAtTime(600, now);
-        gain.gain.setValueAtTime(0.1, now);
-        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.start();
-        osc.stop(now + 0.05);
-      } else if (type === "squeeze") {
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.type = "triangle";
-        osc.frequency.setValueAtTime(160, now);
-        osc.frequency.exponentialRampToValueAtTime(70, now + 0.35);
-        gain.gain.setValueAtTime(0.22, now);
-        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.start();
-        osc.stop(now + 0.35);
-      } else if (type === "blend") {
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.type = "sine";
-        osc.frequency.setValueAtTime(200, now);
-        osc.frequency.exponentialRampToValueAtTime(240, now + 0.12);
-        gain.gain.setValueAtTime(0.08, now);
-        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.start();
-        osc.stop(now + 0.12);
-      }
-    } catch (e) {
-      console.error(e);
-    }
-  };
+
 
   useEffect(() => {
     speakText(activeLevel.mascotSpeech);

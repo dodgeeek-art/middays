@@ -1,6 +1,7 @@
 "use client";
 
 import { alphabetData } from "@/lib/alphabetData";
+import { playSynthesizedSound } from "@/lib/audio";
 
 import React, { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
@@ -63,48 +64,11 @@ const PatternExplorerEngine = dynamic(() => import("@/components/PatternExplorer
 const ClayAlchemyEngine = dynamic(() => import("@/components/ClayAlchemyEngine"), { loading: GameLoading });
 const MazeRouterEngine = dynamic(() => import("@/components/MazeRouterEngine"), { loading: GameLoading });
 const SymmetryPainterEngine = dynamic(() => import("@/components/SymmetryPainterEngine"), { loading: GameLoading });
-
-const playSynthesizedSound = (type: "correct" | "click") => {
-  if (typeof window === "undefined") return;
-  try {
-    const AudioContextClass = window.AudioContext || (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
-    if (!AudioContextClass) return;
-    const ctx = new AudioContextClass();
-    const now = ctx.currentTime;
-    
-    if (type === "correct") {
-      [523.25, 659.25].forEach((freq, idx) => {
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.type = "sine";
-        osc.frequency.setValueAtTime(freq, now + idx * 0.08);
-        gain.gain.setValueAtTime(0.25, now + idx * 0.08);
-        gain.gain.exponentialRampToValueAtTime(0.01, now + idx * 0.08 + 0.15);
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.start(now + idx * 0.08);
-        osc.stop(now + idx * 0.08 + 0.16);
-      });
-    } else if (type === "click") {
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = "sine";
-      osc.frequency.setValueAtTime(600, now);
-      gain.gain.setValueAtTime(0.1, now);
-      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.start();
-      osc.stop(now + 0.05);
-    }
-  } catch (e) {
-    console.error(e);
-  }
-};
+const SoundGardenEngine = dynamic(() => import("@/components/SoundGardenEngine"), { loading: GameLoading });
 
 export default function Home() {
   const [view, setView] = useState<"lesson" | "dashboard" | "trophies">("lesson");
-  const [activeGame, setActiveGame] = useState<"menu" | "tracing" | "reveal" | "bubbles" | "monster" | "scavenger" | "rhyme" | "match" | "drummer" | "sorting" | "bunny" | "story" | "mark" | "pattern" | "alchemy" | "maze" | "symmetry">("menu");
+  const [activeGame, setActiveGame] = useState<"menu" | "tracing" | "reveal" | "bubbles" | "monster" | "scavenger" | "rhyme" | "match" | "drummer" | "sorting" | "bunny" | "story" | "mark" | "pattern" | "alchemy" | "maze" | "symmetry" | "garden">("menu");
   const [childId, setChildId] = useState<string>(DEMO_CHILD_ID);
   const [childProgress, setChildProgress] = useState<Child | null>(null);
 
@@ -327,6 +291,11 @@ export default function Home() {
                   {activeGame === "symmetry" && (
                     <motion.div key="symmetry" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="h-full min-h-0 flex flex-col justify-center">
                       <SymmetryPainterEngine childId={childId} onBack={() => setActiveGame("menu")} />
+                    </motion.div>
+                  )}
+                  {activeGame === "garden" && (
+                    <motion.div key="garden" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="h-full min-h-0 flex flex-col justify-center">
+                      <SoundGardenEngine childId={childId} onBack={() => setActiveGame("menu")} />
                     </motion.div>
                   )}
                 </AnimatePresence>

@@ -7,6 +7,7 @@ import confetti from "canvas-confetti";
 import ClayButton from "@/components/ui/ClayButton";
 import ClayCard from "@/components/ui/ClayCard";
 import { vocabularyList } from "@/lib/svgDictionary";
+import { playSynthesizedSound } from "@/lib/audio";
 
 interface Point {
   x: number;
@@ -31,71 +32,6 @@ interface TracingTemplate {
   color: string;
   details: TracingTemplateDetail[];
 }
-
-const playSynthesizedSound = (type: "correct" | "wrong" | "levelUp" | "click" | "tick") => {
-  if (typeof window === "undefined") return;
-  try {
-    const AudioContextClass = window.AudioContext || (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
-    if (!AudioContextClass) return;
-    const ctx = new AudioContextClass();
-    
-    if (type === "correct") {
-      const now = ctx.currentTime;
-      [523.25, 659.25].forEach((freq, idx) => {
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.type = "sine";
-        osc.frequency.setValueAtTime(freq, now + idx * 0.08);
-        gain.gain.setValueAtTime(0.25, now + idx * 0.08);
-        gain.gain.exponentialRampToValueAtTime(0.01, now + idx * 0.08 + 0.15);
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.start(now + idx * 0.08);
-        osc.stop(now + idx * 0.08 + 0.16);
-      });
-    } else if (type === "levelUp") {
-      const now = ctx.currentTime;
-      [261.63, 329.63, 392.00, 523.25].forEach((freq, idx) => {
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.type = "sine";
-        osc.frequency.setValueAtTime(freq, now + idx * 0.1);
-        gain.gain.setValueAtTime(0.2, now + idx * 0.1);
-        gain.gain.exponentialRampToValueAtTime(0.01, now + idx * 0.1 + 0.2);
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.start(now + idx * 0.1);
-        osc.stop(now + idx * 0.1 + 0.22);
-      });
-    } else if (type === "click") {
-      const now = ctx.currentTime;
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = "sine";
-      osc.frequency.setValueAtTime(600, now);
-      gain.gain.setValueAtTime(0.1, now);
-      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.start();
-      osc.stop(now + 0.05);
-    } else if (type === "tick") {
-      const now = ctx.currentTime;
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = "sine";
-      osc.frequency.setValueAtTime(400, now);
-      gain.gain.setValueAtTime(0.15, now);
-      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.start();
-      osc.stop(now + 0.08);
-    }
-  } catch (e) {
-    console.error("Audio Synthesis error:", e);
-  }
-};
 
 const tracingTemplates: TracingTemplate[] = [
   {
@@ -320,6 +256,8 @@ export default function MarkMakerEngine({ childId, onBack }: { childId: string; 
   const isDrawingRef = useRef(false);
   const drawnStrokes = useRef<Point[][]>([]);
   const particles = useRef<{ x: number; y: number; color: string; alpha: number; vx: number; vy: number }[]>([]);
+  const animFrameRef = useRef<number | null>(null);
+  const loopRunningRef = useRef(false);
 
   const template = tracingTemplates[activeTemplateIdx];
   const vocabItem = vocabularyList.find(v => v.name === template.vocabName);
@@ -368,20 +306,18 @@ export default function MarkMakerEngine({ childId, onBack }: { childId: string; 
         }
         checkpointsRef.current = pts;
       }
+      drawCanvas();
     }, 100);
 
     return () => clearTimeout(timer);
   }, [activeTemplateIdx, template, speakText]);
 
-  // Smooth canvas animation loop
   useEffect(() => {
-    let animFrameId: number;
-    const tick = () => {
-      drawCanvas();
-      animFrameId = requestAnimationFrame(tick);
+    return () => {
+      if (animFrameRef.current !== null) {
+        cancelAnimationFrame(animFrameRef.current);
+      }
     };
-    animFrameId = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(animFrameId);
   }, []);
 
   const drawCanvas = () => {
@@ -451,6 +387,23 @@ export default function MarkMakerEngine({ childId, onBack }: { childId: string; 
     });
   };
 
+  const startLoop = useCallback(() => {
+    if (loopRunningRef.current) return;
+    loopRunningRef.current = true;
+
+    const tick = () => {
+      drawCanvas();
+      if (isDrawingRef.current || particles.current.length > 0) {
+        animFrameRef.current = requestAnimationFrame(tick);
+      } else {
+        loopRunningRef.current = false;
+        animFrameRef.current = null;
+      }
+    };
+
+    animFrameRef.current = requestAnimationFrame(tick);
+  }, []);
+
   const getCanvasCoordinates = (e: React.PointerEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
     if (!canvas) return { x: 0, y: 0 };
@@ -487,6 +440,7 @@ export default function MarkMakerEngine({ childId, onBack }: { childId: string; 
     drawnStrokes.current.push([pt]);
     addParticles(pt.x, pt.y, 6);
     playSynthesizedSound("click");
+    startLoop();
   };
 
   const handlePointerMove = (e: React.PointerEvent<HTMLCanvasElement>) => {
@@ -515,6 +469,7 @@ export default function MarkMakerEngine({ childId, onBack }: { childId: string; 
     if (hitCount === checkpointsRef.current.length) {
       setAllCheckpointsHit(true);
     }
+    startLoop();
   };
 
   const handlePointerUp = (e: React.PointerEvent<HTMLCanvasElement>) => {
@@ -574,6 +529,7 @@ export default function MarkMakerEngine({ childId, onBack }: { childId: string; 
     drawnStrokes.current = [];
     checkpointsRef.current.forEach(cp => cp.hit = false);
     setAllCheckpointsHit(false);
+    drawCanvas();
   };
 
   const activeParentPrompt = template ? `Ask your child: "Can you trace the outline of the ${template.name}? What shape does it make?"` : "";

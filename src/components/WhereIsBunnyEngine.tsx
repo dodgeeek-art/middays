@@ -8,6 +8,7 @@ import ClayButton from "@/components/ui/ClayButton";
 import ClayCard from "@/components/ui/ClayCard";
 import MascotSVG from "@/components/MascotSVG";
 import { vocabularyList, CartoonSVG } from "@/lib/svgDictionary";
+import { playSynthesizedSound } from "@/lib/audio";
 
 interface ShelterItem {
   emoji: string;
@@ -23,75 +24,7 @@ interface ShelterQuestion {
   wrongShelters: ShelterItem[];
 }
 
-const playSynthesizedSound = (type: "correct" | "wrong" | "levelUp" | "click" | "hey") => {
-  if (typeof window === "undefined") return;
-  try {
-    const AudioContextClass = window.AudioContext || (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
-    if (!AudioContextClass) return;
-    const ctx = new AudioContextClass();
-    
-    if (type === "correct" || type === "hey") {
-      const now = ctx.currentTime;
-      // High-pitched bright "Hey!" sound synthesized using oscillators
-      [587.33, 739.99, 880.00, 1174.66].forEach((freq, idx) => {
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.type = "sine";
-        osc.frequency.setValueAtTime(freq, now + idx * 0.02);
-        osc.frequency.exponentialRampToValueAtTime(freq * 1.15, now + idx * 0.02 + 0.15);
-        
-        gain.gain.setValueAtTime(0.18, now + idx * 0.02);
-        gain.gain.exponentialRampToValueAtTime(0.002, now + idx * 0.02 + 0.22);
-        
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.start(now + idx * 0.02);
-        osc.stop(now + idx * 0.02 + 0.24);
-      });
-    } else if (type === "wrong") {
-      const now = ctx.currentTime;
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = "triangle";
-      osc.frequency.setValueAtTime(150, now);
-      osc.frequency.exponentialRampToValueAtTime(80, now + 0.3);
-      gain.gain.setValueAtTime(0.3, now);
-      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.start();
-      osc.stop(now + 0.3);
-    } else if (type === "levelUp") {
-      const now = ctx.currentTime;
-      [261.63, 329.63, 392.00, 523.25].forEach((freq, idx) => {
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.type = "sine";
-        osc.frequency.setValueAtTime(freq, now + idx * 0.1);
-        gain.gain.setValueAtTime(0.2, now + idx * 0.1);
-        gain.gain.exponentialRampToValueAtTime(0.01, now + idx * 0.1 + 0.2);
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.start(now + idx * 0.1);
-        osc.stop(now + idx * 0.1 + 0.22);
-      });
-    } else if (type === "click") {
-      const now = ctx.currentTime;
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = "sine";
-      osc.frequency.setValueAtTime(600, now);
-      gain.gain.setValueAtTime(0.1, now);
-      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.start();
-      osc.stop(now + 0.05);
-    }
-  } catch (e) {
-    console.error("Audio Synthesis error:", e);
-  }
-};
+
 // Helpers to lookup Fluent icons
 const getAnimalIcon = (name: string): React.FC<any> | null => {
   const lowerName = name.toLowerCase();

@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 import ClayButton from "@/components/ui/ClayButton";
 import { vocabularyList } from "@/lib/svgDictionary";
+import { playSynthesizedSound } from "@/lib/audio";
 
 interface Point {
   x: number;
@@ -63,6 +64,8 @@ export default function SymmetryPainterEngine({ childId, onBack }: { childId: st
   const isDrawingRef = useRef(false);
   const drawnStrokes = useRef<Stroke[]>([]);
   const particles = useRef<{ x: number; y: number; color: string; alpha: number; vx: number; vy: number }[]>([]);
+  const animFrameRef = useRef<number | null>(null);
+  const loopRunningRef = useRef(false);
 
   const template = symmetryTemplates[activeTemplateIdx];
   const vocabItem = vocabularyList.find(v => v.name === template.vocabName);
@@ -78,41 +81,7 @@ export default function SymmetryPainterEngine({ childId, onBack }: { childId: st
     }
   }, []);
 
-  const playSynthesizedSound = (type: "correct" | "click" | "levelUp") => {
-    if (typeof window === "undefined") return;
-    try {
-      const AudioContextClass = window.AudioContext || (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
-      if (!AudioContextClass) return;
-      const ctx = new AudioContextClass();
-      const now = ctx.currentTime;
-      if (type === "correct" || type === "levelUp") {
-        [329.63, 392.00, 523.25].forEach((freq, idx) => {
-          const osc = ctx.createOscillator();
-          const gain = ctx.createGain();
-          osc.type = "sine";
-          osc.frequency.setValueAtTime(freq, now + idx * 0.1);
-          gain.gain.setValueAtTime(0.15, now + idx * 0.1);
-          gain.gain.exponentialRampToValueAtTime(0.01, now + idx * 0.1 + 0.25);
-          osc.connect(gain);
-          gain.connect(ctx.destination);
-          osc.start(now + idx * 0.1);
-          osc.stop(now + idx * 0.1 + 0.26);
-        });
-      } else if (type === "click") {
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.frequency.setValueAtTime(580, now);
-        gain.gain.setValueAtTime(0.08, now);
-        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.06);
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.start();
-        osc.stop(now + 0.07);
-      }
-    } catch (e) {
-      console.error(e);
-    }
-  };
+
 
   useEffect(() => {
     drawnStrokes.current = [];
@@ -143,19 +112,18 @@ export default function SymmetryPainterEngine({ childId, onBack }: { childId: st
         }
         checkpointsRef.current = pts;
       }
+      drawCanvas();
     }, 100);
 
     return () => clearTimeout(timer);
   }, [activeTemplateIdx, template, speakText]);
 
   useEffect(() => {
-    let animFrameId: number;
-    const tick = () => {
-      drawCanvas();
-      animFrameId = requestAnimationFrame(tick);
+    return () => {
+      if (animFrameRef.current !== null) {
+        cancelAnimationFrame(animFrameRef.current);
+      }
     };
-    animFrameId = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(animFrameId);
   }, []);
 
   const drawCanvas = () => {
@@ -255,6 +223,23 @@ export default function SymmetryPainterEngine({ childId, onBack }: { childId: st
     });
   };
 
+  const startLoop = useCallback(() => {
+    if (loopRunningRef.current) return;
+    loopRunningRef.current = true;
+
+    const tick = () => {
+      drawCanvas();
+      if (isDrawingRef.current || particles.current.length > 0) {
+        animFrameRef.current = requestAnimationFrame(tick);
+      } else {
+        loopRunningRef.current = false;
+        animFrameRef.current = null;
+      }
+    };
+
+    animFrameRef.current = requestAnimationFrame(tick);
+  }, []);
+
   const getCanvasCoordinates = (e: React.PointerEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
     if (!canvas) return { x: 0, y: 0 };
@@ -296,6 +281,7 @@ export default function SymmetryPainterEngine({ childId, onBack }: { childId: st
     });
     addParticles(pt.x, pt.y, 5);
     playSynthesizedSound("click");
+    startLoop();
   };
 
   const handlePointerMove = (e: React.PointerEvent<HTMLCanvasElement>) => {
@@ -323,6 +309,7 @@ export default function SymmetryPainterEngine({ childId, onBack }: { childId: st
       isDrawingRef.current = false;
       handleSymmetryComplete();
     }
+    startLoop();
   };
 
   const handlePointerUp = (e: React.PointerEvent<HTMLCanvasElement>) => {
@@ -332,6 +319,7 @@ export default function SymmetryPainterEngine({ childId, onBack }: { childId: st
 
   const handleSymmetryComplete = () => {
     setUnfolded(true);
+    drawCanvas();
     playSynthesizedSound("correct");
     confetti({
       particleCount: 70,
@@ -363,6 +351,7 @@ export default function SymmetryPainterEngine({ childId, onBack }: { childId: st
     playSynthesizedSound("click");
     drawnStrokes.current = [];
     checkpointsRef.current.forEach(cp => cp.hit = false);
+    drawCanvas();
   };
 
   return (

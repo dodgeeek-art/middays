@@ -32,27 +32,41 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const isDev = process.env.NODE_ENV === "development";
   return (
     <html
       lang="en"
       className={`${quicksand.variable} h-full antialiased`}
     >
       <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              if ('serviceWorker' in navigator) {
-                window.addEventListener('load', function() {
-                  navigator.serviceWorker.register('/sw.js').then(function(reg) {
-                    console.log('SW registered:', reg.scope);
-                  }).catch(function(err) {
-                    console.log('SW registration failed:', err);
+        {isDev && (
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `
+                if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
+                  navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                    if (registrations.length > 0) {
+                      registrations.forEach(function(registration) {
+                        registration.unregister();
+                      });
+                      if ('caches' in window) {
+                        caches.keys().then(function(keys) {
+                          Promise.all(keys.map(function(key) {
+                            return caches.delete(key);
+                          })).then(function() {
+                            window.location.reload();
+                          });
+                        });
+                      } else {
+                        window.location.reload();
+                      }
+                    }
                   });
-                });
-              }
-            `
-          }}
-        />
+                }
+              `
+            }}
+          />
+        )}
       </head>
       <body className="min-h-full flex flex-col font-sans">{children}</body>
     </html>

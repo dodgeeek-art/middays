@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { motion } from 'framer-motion';
 import ClayCard from '@/components/ui/ClayCard';
 import ClayButton from '@/components/ui/ClayButton';
 import MascotSVG from '@/components/MascotSVG';
@@ -22,12 +21,12 @@ import {
 
 interface ActivitiesMenuProps {
   onSelectActivity: (
-    activity: "tracing" | "reveal" | "bubbles" | "monster" | "scavenger" | "rhyme" | "match" | "drummer" | "sorting" | "bunny" | "story" | "mark" | "pattern" | "alchemy" | "maze" | "symmetry"
+    activity: "tracing" | "reveal" | "bubbles" | "monster" | "scavenger" | "rhyme" | "match" | "drummer" | "sorting" | "bunny" | "story" | "mark" | "pattern" | "alchemy" | "maze" | "symmetry" | "garden"
   ) => void;
 }
 
 interface ActivityItem {
-  id: "tracing" | "reveal" | "bubbles" | "monster" | "scavenger" | "scavenger-advanced" | "rhyme" | "match" | "drummer" | "sorting" | "bunny" | "story" | "mark" | "pattern" | "alchemy" | "maze" | "symmetry";
+  id: "tracing" | "reveal" | "bubbles" | "monster" | "scavenger" | "scavenger-advanced" | "rhyme" | "match" | "drummer" | "sorting" | "bunny" | "story" | "mark" | "pattern" | "alchemy" | "maze" | "symmetry" | "garden";
   name: string;
   subtitle: string;
   clayVariant: "primary" | "secondary" | "tertiary" | "purple" | "blue" | "lime" | "peach" | "glass";
@@ -152,7 +151,16 @@ const MazeIcon = (props: any) => {
   );
 };
 
-const BUILD_VERSION = "v2026.06.25.1";
+const GardenIcon = (props: React.SVGProps<SVGSVGElement> & { size?: string | number; animClass?: string }) => {
+  const SunflowerIcon = vocabularyList.find(v => v.name === "Sunflower")?.icon || Sparkles;
+  return (
+    <CartoonSVG animClass="anim-sway" {...props}>
+      <SunflowerIcon size="100%" />
+    </CartoonSVG>
+  );
+};
+
+const BUILD_VERSION = "v2026.06.25.2";
 
 
 
@@ -218,6 +226,18 @@ export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps
       disabled: false,
       floatDuration: 5.5,
       benefit: "Sound ID",
+      glowColor: "shadow-[0_20px_50px_rgba(190,232,212,0.14)] hover:shadow-[0_25px_60px_rgba(190,232,212,0.25)]",
+      gradient: "from-[#bee8d4]/40 to-[#a3d8c1]/30"
+    },
+    { 
+      id: "garden", 
+      name: "Garden", 
+      subtitle: "Sound Garden",
+      clayVariant: "glass",
+      textColor: "text-[#16533f]",
+      disabled: false,
+      floatDuration: 4.8,
+      benefit: "Beginning Sounds",
       glowColor: "shadow-[0_20px_50px_rgba(190,232,212,0.14)] hover:shadow-[0_25px_60px_rgba(190,232,212,0.25)]",
       gradient: "from-[#bee8d4]/40 to-[#a3d8c1]/30"
     },
@@ -370,7 +390,7 @@ export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps
   const filteredActivities = activities.filter(act => {
     if (activeCategory === "all") return true;
     if (activeCategory === "phonics") {
-      return ["tracing", "reveal", "bubbles", "monster", "scavenger", "scavenger-advanced"].includes(act.id);
+      return ["tracing", "reveal", "bubbles", "monster", "scavenger", "scavenger-advanced", "garden"].includes(act.id);
     }
     if (activeCategory === "logic") {
       return ["match", "drummer", "sorting", "bunny", "pattern", "maze"].includes(act.id);
@@ -405,38 +425,17 @@ export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps
       case "alchemy": return <AlchemyIcon {...props} style={{ animationDuration: `${floatDuration}s` }} />;
       case "maze": return <MazeIcon {...props} style={{ animationDuration: `${floatDuration}s` }} />;
       case "symmetry": return <SymmetryIcon {...props} style={{ animationDuration: `${floatDuration}s` }} />;
+      case "garden": return <GardenIcon {...props} style={{ animationDuration: `${floatDuration}s` }} />;
       default: return null;
     }
   };
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: { staggerChildren: 0.05 }
-    }
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, scale: 0.95, y: 15 },
-    show: { 
-      opacity: 1, 
-      scale: 1, 
-      y: 0, 
-      transition: { type: "spring" as const, stiffness: 180, damping: 15 } 
-    }
-  };
-
   return (
-    <motion.div 
-      variants={containerVariants}
-      initial="hidden"
-      animate="show"
+    <div
       className="grid grid-cols-3 gap-2.5 sm:gap-6 w-full max-w-4xl mx-auto p-2 sm:p-4 z-10 relative overflow-visible"
     >
       {/* Playful compact header bar */}
-      <motion.div 
-        variants={itemVariants}
+      <div
         className="col-span-3 mb-1 flex items-center justify-between w-full bg-white/95 backdrop-blur-md px-4 py-2.5 rounded-[1.8rem] border-white/60 border-[3px] shadow-[0_8px_20px_rgba(0,0,0,0.02)] overflow-visible"
       >
         <div className="flex items-center gap-2.5">
@@ -472,7 +471,7 @@ export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps
           <p className="text-[8px] font-black text-[#d4a919] uppercase tracking-wider leading-none mb-0.5">Buddy says:</p>
           <p className="text-[10px] sm:text-xs font-bold text-[#4A5358]/85 leading-none">Pick a game to play together!</p>
         </div>
-      </motion.div>
+      </div>
 
       {/* Playful Category Switcher */}
       <div className="col-span-3 flex flex-row items-center justify-start sm:justify-center gap-2 overflow-x-auto whitespace-nowrap scrollbar-none py-1.5 my-1 z-10 w-full">
@@ -499,14 +498,9 @@ export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps
 
       {filteredActivities.map((act) => {
         return (
-          <motion.div
+          <div
             key={act.id}
-            layout
-            variants={itemVariants}
-            whileHover={{ scale: 1.04, y: -6 }}
-            whileTap={{ scale: 0.96, y: 2 }}
-            transition={{ type: "spring" as const, stiffness: 260, damping: 16 }}
-            className="w-full"
+            className="w-full transition-transform duration-150 active:scale-[0.98] sm:hover:-translate-y-1 sm:hover:scale-[1.02]"
           >
             <ClayCard
               variant="glass"
@@ -516,7 +510,7 @@ export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps
                 if (act.id === "scavenger-advanced") {
                   router.push("/advanced-search");
                 } else {
-                  onSelectActivity(act.id as "tracing" | "reveal" | "bubbles" | "monster" | "scavenger" | "rhyme" | "match" | "drummer" | "sorting" | "bunny" | "story" | "mark" | "pattern" | "alchemy" | "maze" | "symmetry");
+                  onSelectActivity(act.id as "tracing" | "reveal" | "bubbles" | "monster" | "scavenger" | "rhyme" | "match" | "drummer" | "sorting" | "bunny" | "story" | "mark" | "pattern" | "alchemy" | "maze" | "symmetry" | "garden");
                 }
               }}
               className={`relative overflow-visible p-2.5 sm:p-5 flex flex-col justify-between h-full w-full min-h-[150px] sm:min-h-[220px] select-none cursor-pointer border-white/50 border-[3px] bg-gradient-to-br ${act.gradient} ${act.glowColor} ${act.disabled ? "opacity-60 saturate-50 cursor-not-allowed" : ""}`}
@@ -553,9 +547,9 @@ export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps
                 </div>
               </div>
             </ClayCard>
-          </motion.div>
+          </div>
         );
       })}
-    </motion.div>
+    </div>
   );
 }

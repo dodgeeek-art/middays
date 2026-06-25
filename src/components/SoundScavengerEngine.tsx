@@ -7,6 +7,7 @@ import confetti from "canvas-confetti";
 import { vocabularyList, VocabularyItem } from "@/lib/svgDictionary";
 import MascotSVG from "./MascotSVG";
 import ClayButton from "@/components/ui/ClayButton";
+import { playSynthesizedSound } from "@/lib/audio";
 
 interface SoundScavengerEngineProps {
   childId: string;
@@ -61,7 +62,6 @@ export default function SoundScavengerEngine({ childId, onBack }: SoundScavenger
   const [selectedIdx, setSelectedIdx] = useState<number | null>(null);
   const [wrongSelections, setWrongSelections] = useState<number[]>([]);
   
-  const audioCtxRef = useRef<AudioContext | null>(null);
   const activeUtteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
 
   const speakText = useCallback((text: string, pitch: number = 1.0) => {
@@ -105,64 +105,7 @@ export default function SoundScavengerEngine({ childId, onBack }: SoundScavenger
     return () => clearTimeout(t);
   }, [roundData.targetName, speakCommand]);
 
-  const initAudio = () => {
-    if (!audioCtxRef.current) {
-      audioCtxRef.current = new (window.AudioContext || (window as Window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext)();
-    }
-    if (audioCtxRef.current.state === "suspended") {
-      audioCtxRef.current.resume();
-    }
-  };
-
-  // Calming woodwind/wooden-block tone for taps
-  const playWoodBlockSound = (pitch: number = 400, duration: number = 0.12) => {
-    if (!audioCtxRef.current) return;
-    const ctx = audioCtxRef.current;
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    
-    // Triangle wave gives a softer, rounder tone
-    osc.type = "triangle";
-    osc.frequency.setValueAtTime(pitch, ctx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(pitch * 0.7, ctx.currentTime + duration);
-    
-    gain.gain.setValueAtTime(0.25, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.005, ctx.currentTime + duration);
-    
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    
-    osc.start();
-    osc.stop(ctx.currentTime + duration);
-  };
-
-  const playSuccessChime = () => {
-    if (!audioCtxRef.current) return;
-    const ctx = audioCtxRef.current;
-    
-    const playNote = (freq: number, delay: number) => {
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = "sine";
-      osc.frequency.setValueAtTime(freq, ctx.currentTime + delay);
-      
-      gain.gain.setValueAtTime(0.18, ctx.currentTime + delay);
-      gain.gain.exponentialRampToValueAtTime(0.002, ctx.currentTime + delay + 0.35);
-      
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.start(ctx.currentTime + delay);
-      osc.stop(ctx.currentTime + delay + 0.4);
-    };
-
-    // Calming pentatonic arpeggio (C5 - E5 - A5)
-    playNote(523.25, 0);
-    playNote(659.25, 0.1);
-    playNote(880.00, 0.2);
-  };
-
   const startNewRound = () => {
-    initAudio();
     setRoundData(generateRoundData());
     setSelectedIdx(null);
     setWrongSelections([]);
@@ -199,13 +142,12 @@ export default function SoundScavengerEngine({ childId, onBack }: SoundScavenger
 
   const handleChoiceClick = (idx: number) => {
     if (gameState !== "playing" || selectedIdx !== null || wrongSelections.includes(idx)) return;
-    initAudio();
 
     const choice = roundData.choices[idx];
     if (choice.name === roundData.targetName) {
       // Correct match!
       setSelectedIdx(idx);
-      playSuccessChime();
+      playSynthesizedSound("correct");
       
       speakText(`Excellent! ${choice.name}`, 1.15);
 
@@ -229,7 +171,7 @@ export default function SoundScavengerEngine({ childId, onBack }: SoundScavenger
       }, 800);
     } else {
       // Incorrect match
-      playWoodBlockSound(180, 0.25); // Lower, hollow block sound
+      playSynthesizedSound("wrong");
       setWrongSelections(prev => [...prev, idx]);
     }
   };
@@ -237,7 +179,7 @@ export default function SoundScavengerEngine({ childId, onBack }: SoundScavenger
 
 
   return (
-    <div className="w-full max-w-3xl mx-auto p-3 sm:p-6 clay-card border border-white/20 flex flex-col items-center justify-between h-full min-h-0 relative overflow-hidden">
+    <div className="w-full max-w-3xl mx-auto p-3 sm:p-6 clay-card border border-white/20 flex flex-col items-center justify-between h-full min-h-0 relative overflow-hidden scavenger-container">
       {/* Top Bar */}
       <div className="w-full flex justify-between items-center mb-3 sm:mb-4 z-10">
         <ClayButton
@@ -256,17 +198,17 @@ export default function SoundScavengerEngine({ childId, onBack }: SoundScavenger
       {/* Mascot Command (Hovering Mascot + Speech Bubble next to it, no surrounding card box) */}
       <div 
         onClick={speakCommand}
-        className="w-full max-w-xl flex items-center gap-4 mb-4 sm:mb-6 z-10 cursor-pointer select-none active:scale-[0.99] transition-all"
+        className="w-full max-w-xl flex items-center gap-4 mb-4 sm:mb-6 z-10 cursor-pointer select-none active:scale-[0.99] transition-all scavenger-mascot-command"
       >
         {/* Hovering Mascot SVG */}
-        <div className="w-16 h-16 sm:w-24 sm:h-24 shrink-0 drop-shadow-md">
+        <div className="w-16 h-16 sm:w-24 sm:h-24 shrink-0 drop-shadow-md scavenger-mascot">
           <MascotSVG className="w-full h-full" />
         </div>
         
         {/* Speech Bubble */}
-        <div className="flex-1 relative bg-white border border-[#4a5358]/10 p-3.5 sm:p-4 rounded-[2rem] shadow-[4px_4px_12px_rgba(0,0,0,0.03),_inset_2px_2px_4px_rgba(255,255,255,0.9)] text-left">
+        <div className="flex-1 relative bg-white border border-[#4a5358]/10 p-3.5 sm:p-4 rounded-[2rem] shadow-[4px_4px_12px_rgba(0,0,0,0.03),_inset_2px_2px_4px_rgba(255,255,255,0.9)] text-left scavenger-speech-bubble">
           {/* Bubble Tail */}
-          <div className="absolute top-1/2 -left-3 -translate-y-1/2 w-0 h-0 border-t-[8px] border-t-transparent border-r-[12px] border-r-white border-b-[8px] border-b-transparent filter drop-shadow-[-1px_0_0_rgba(74,83,88,0.06)]"></div>
+          <div className="absolute top-1/2 -left-3 -translate-y-1/2 w-0 h-0 border-t-[8px] border-t-transparent border-r-[12px] border-r-white border-b-[8px] border-b-transparent filter drop-shadow-[-1px_0_0_rgba(74,83,88,0.06)] scavenger-bubble-tail"></div>
           
           <p className="text-[10px] font-black text-primary uppercase tracking-widest mb-0.5">
             Guide says:
@@ -281,20 +223,12 @@ export default function SoundScavengerEngine({ childId, onBack }: SoundScavenger
         </div>
       </div>
 
-      {/* Horizontal Scrollable Bento Collage of Choices */}
-      <div className="w-full flex-grow overflow-x-auto overflow-y-hidden pb-4 pt-2 px-1 snap-x snap-mandatory scrollbar-none flex items-center gap-4">
+      {/* Grid of Choices */}
+      <div className="w-full flex-grow grid grid-cols-3 gap-2.5 sm:gap-4 max-w-2xl mx-auto py-2 min-h-0 justify-items-center items-center scavenger-grid">
         {roundData.choices.map((choice, idx) => {
           const isWrong = wrongSelections.includes(idx);
           const isSelected = selectedIdx === idx;
           
-          const sizeClasses = [
-            "w-44 h-44 sm:w-56 sm:h-56 snap-center", // Large
-            "w-36 h-48 sm:w-48 sm:h-64 snap-center", // Tall
-            "w-36 h-36 sm:w-44 sm:h-44 snap-center", // Small
-            "w-48 h-40 sm:w-60 sm:h-52 snap-center", // Wide
-          ];
-          const bentoStyle = sizeClasses[idx % sizeClasses.length];
-
           const cardColors = [
             "bg-[#ffcad4] border-[#ffb3c1]/40", // Pink
             "bg-[#c3f2ec] border-[#b2ebe2]/40", // Mint
@@ -315,17 +249,17 @@ export default function SoundScavengerEngine({ childId, onBack }: SoundScavenger
               whileTap={gameState === "playing" && !isWrong ? { scale: 0.95, y: 4 } : {}}
               onClick={() => handleChoiceClick(idx)}
               disabled={gameState !== "playing" || isWrong}
-              className={`flex-shrink-0 rounded-[2rem] border-[4px] p-4 flex flex-col items-center justify-center transition-all duration-300 relative shadow-clay-card ${bentoStyle} ${cardColor}`}
+              className={`w-full aspect-square max-w-[110px] sm:max-w-[160px] rounded-[1.5rem] sm:rounded-[2rem] border-[3px] sm:border-[4px] p-2.5 sm:p-4 flex flex-col items-center justify-center transition-all duration-300 relative shadow-clay-card scavenger-button ${cardColor}`}
               animate={isWrong ? { rotate: [0, -6, 6, -6, 6, 0] } : {}}
               transition={{ type: "tween", duration: 0.4 }}
             >
               {/* SVG Icon */}
-              <div className={`w-[70%] h-[70%] flex items-center justify-center transition-transform duration-500 ${isSelected ? "scale-110" : ""}`}>
+              <div className={`w-[60%] h-[60%] flex items-center justify-center transition-transform duration-500 ${isSelected ? "scale-110" : ""}`}>
                 {React.createElement(choice.icon, { size: "100%" })}
               </div>
 
               {/* Subtitle name (appears on correct tap or after round) */}
-              <span className={`text-xs font-black uppercase tracking-wider mt-2 transition-opacity duration-300 ${
+              <span className={`text-[9px] sm:text-xs font-black uppercase tracking-wider mt-1.5 transition-opacity duration-300 ${
                 isSelected || gameState === "success" ? "opacity-100 text-[#4A5358]" : "opacity-0"
               }`}>
                 {choice.name}
@@ -333,8 +267,8 @@ export default function SoundScavengerEngine({ childId, onBack }: SoundScavenger
 
               {/* Success Overlay Indicator */}
               {isSelected && (
-                <div className="absolute top-4 right-4 bg-white border-2 border-slate-100 rounded-full p-1 shadow-md text-[#4ecdc4] animate-clay-bounce">
-                  <CheckCircle2 className="w-6 h-6 fill-[#d2f4e6] stroke-[#0b4a45]" strokeWidth={3.5} />
+                <div className="absolute top-1 right-1 sm:top-3 sm:right-3 bg-white border border-slate-100 rounded-full p-0.5 sm:p-1 shadow-md text-[#4ecdc4] animate-clay-bounce">
+                  <CheckCircle2 className="w-4 h-4 sm:w-6 sm:h-6 fill-[#d2f4e6] stroke-[#0b4a45]" strokeWidth={3.5} />
                 </div>
               )}
             </motion.button>
@@ -345,6 +279,58 @@ export default function SoundScavengerEngine({ childId, onBack }: SoundScavenger
       {/* Ambient Zen Wave Decor */}
       <div className="absolute -bottom-16 -right-16 w-48 h-48 rounded-full border border-white/5 bg-gradient-to-tr from-[#ffcad4]/10 to-[#FAF5EC]/10 pointer-events-none" />
       <div className="absolute -bottom-24 -left-24 w-64 h-64 rounded-full border border-white/5 bg-gradient-to-tr from-[#ffafa6]/5 to-[#FAF5EC]/10 pointer-events-none" />
+
+      <style>{`
+        @media (max-height: 740px) {
+          .scavenger-container {
+            padding: 0.5rem !important;
+          }
+          .scavenger-mascot-command {
+            margin-bottom: 0.5rem !important;
+            gap: 0.5rem !important;
+          }
+          .scavenger-mascot {
+            width: 3.5rem !important;
+            height: 3.5rem !important;
+          }
+          .scavenger-speech-bubble {
+            padding: 0.5rem 1rem !important;
+            border-radius: 1.25rem !important;
+          }
+          .scavenger-grid {
+            gap: 0.5rem !important;
+            padding-top: 0.25rem !important;
+            padding-bottom: 0.25rem !important;
+          }
+          .scavenger-button {
+            max-width: 90px !important;
+            border-radius: 1.25rem !important;
+            border-width: 2px !important;
+            padding: 0.5rem !important;
+          }
+          .scavenger-button span {
+            font-size: 8px !important;
+            margin-top: 0.25rem !important;
+          }
+        }
+        @media (max-height: 560px) {
+          .scavenger-mascot {
+            display: none !important;
+          }
+          .scavenger-bubble-tail {
+            display: none !important;
+          }
+          .scavenger-container {
+            padding: 0.25rem !important;
+          }
+          .scavenger-grid {
+            gap: 0.25rem !important;
+          }
+          .scavenger-button {
+            max-width: 75px !important;
+          }
+        }
+      `}</style>
     </div>
   );
 }
