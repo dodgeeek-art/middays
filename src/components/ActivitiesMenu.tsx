@@ -21,12 +21,12 @@ import {
 
 interface ActivitiesMenuProps {
   onSelectActivity: (
-    activity: "tracing" | "reveal" | "bubbles" | "monster" | "scavenger" | "rhyme" | "match" | "drummer" | "sorting" | "bunny" | "story" | "mark" | "pattern" | "alchemy" | "maze" | "symmetry" | "garden"
+    activity: "tracing" | "reveal" | "bubbles" | "monster" | "scavenger" | "rhyme" | "match" | "drummer" | "sorting" | "bunny" | "story" | "mark" | "pattern" | "alchemy" | "maze" | "symmetry" | "garden" | "magicsoundbubbles"
   ) => void;
 }
 
 interface ActivityItem {
-  id: "tracing" | "reveal" | "bubbles" | "monster" | "scavenger" | "scavenger-advanced" | "rhyme" | "match" | "drummer" | "sorting" | "bunny" | "story" | "mark" | "pattern" | "alchemy" | "maze" | "symmetry" | "garden";
+  id: "tracing" | "reveal" | "bubbles" | "monster" | "scavenger" | "scavenger-advanced" | "rhyme" | "match" | "drummer" | "sorting" | "bunny" | "story" | "mark" | "pattern" | "alchemy" | "maze" | "symmetry" | "garden" | "magicsoundbubbles";
   name: string;
   subtitle: string;
   clayVariant: "primary" | "secondary" | "tertiary" | "purple" | "blue" | "lime" | "peach" | "glass";
@@ -55,6 +55,16 @@ const EraserIcon = (props: any) => (
 const BubbleIcon = (props: any) => (
   <CartoonSVG animClass="anim-breathe" {...props}>
     <Sparkles size="100%" className="text-[#4ea0cd]" />
+  </CartoonSVG>
+);
+
+const MagicSoundBubblesIcon = (props: React.SVGProps<SVGSVGElement> & { size?: number | string }) => (
+  <CartoonSVG animClass="anim-float" {...props}>
+    <g fill="none">
+      <circle cx="16" cy="16" r="12" fill="rgba(56, 189, 248, 0.15)" stroke="#38bdf8" strokeWidth="2.5" />
+      <circle cx="12" cy="12" r="3" fill="#ffffff" opacity="0.6" />
+      <circle cx="21" cy="12" r="1.5" fill="#ffffff" opacity="0.4" />
+    </g>
   </CartoonSVG>
 );
 
@@ -242,6 +252,18 @@ export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps
       gradient: "from-[#bee8d4]/40 to-[#a3d8c1]/30"
     },
     { 
+      id: "magicsoundbubbles", 
+      name: "Bubbles", 
+      subtitle: "Magic Sounds",
+      clayVariant: "glass",
+      textColor: "text-[#1d4ed8]",
+      disabled: false,
+      floatDuration: 4.5,
+      benefit: "Sound Popping",
+      glowColor: "shadow-[0_20px_50px_rgba(186,230,253,0.18)] hover:shadow-[0_25px_60px_rgba(186,230,253,0.3)]",
+      gradient: "from-[#bae6fd]/40 to-[#7dd3fc]/30"
+    },
+    { 
       id: "scavenger-advanced", 
       name: "Search+", 
       subtitle: "Advanced Words",
@@ -390,7 +412,7 @@ export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps
   const filteredActivities = activities.filter(act => {
     if (activeCategory === "all") return true;
     if (activeCategory === "phonics") {
-      return ["tracing", "reveal", "bubbles", "monster", "scavenger", "scavenger-advanced", "garden"].includes(act.id);
+      return ["tracing", "reveal", "bubbles", "monster", "scavenger", "scavenger-advanced", "garden", "magicsoundbubbles"].includes(act.id);
     }
     if (activeCategory === "logic") {
       return ["match", "drummer", "sorting", "bunny", "pattern", "maze"].includes(act.id);
@@ -426,6 +448,7 @@ export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps
       case "maze": return <MazeIcon {...props} style={{ animationDuration: `${floatDuration}s` }} />;
       case "symmetry": return <SymmetryIcon {...props} style={{ animationDuration: `${floatDuration}s` }} />;
       case "garden": return <GardenIcon {...props} style={{ animationDuration: `${floatDuration}s` }} />;
+      case "magicsoundbubbles": return <MagicSoundBubblesIcon {...props} style={{ animationDuration: `${floatDuration}s` }} />;
       default: return null;
     }
   };
@@ -510,7 +533,7 @@ export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps
                 if (act.id === "scavenger-advanced") {
                   router.push("/advanced-search");
                 } else {
-                  onSelectActivity(act.id as "tracing" | "reveal" | "bubbles" | "monster" | "scavenger" | "rhyme" | "match" | "drummer" | "sorting" | "bunny" | "story" | "mark" | "pattern" | "alchemy" | "maze" | "symmetry" | "garden");
+                  onSelectActivity(act.id as "tracing" | "reveal" | "bubbles" | "monster" | "scavenger" | "rhyme" | "match" | "drummer" | "sorting" | "bunny" | "story" | "mark" | "pattern" | "alchemy" | "maze" | "symmetry" | "garden" | "magicsoundbubbles");
                 }
               }}
               className={`relative overflow-visible p-2.5 sm:p-5 flex flex-col justify-between h-full w-full min-h-[150px] sm:min-h-[220px] select-none cursor-pointer border-white/50 border-[3px] bg-gradient-to-br ${act.gradient} ${act.glowColor} ${act.disabled ? "opacity-60 saturate-50 cursor-not-allowed" : ""}`}

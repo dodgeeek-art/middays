@@ -21,16 +21,20 @@ interface SoundItem {
 }
 
 const SOUNDS_DATA: SoundItem[] = [
-  { soundId: "m", phonemeText: "/m/", speakSound: "mmm", objects: ["Moon", "Monkey", "Mushroom"] },
-  { soundId: "s", phonemeText: "/s/", speakSound: "sss", objects: ["Sun", "Star", "Snake"] },
-  { soundId: "t", phonemeText: "/t/", speakSound: "t t t", objects: ["Turtle", "Tree", "Tomato"] },
-  { soundId: "p", phonemeText: "/p/", speakSound: "p p p", objects: ["Pig", "Panda", "Penguin"] },
-  { soundId: "b", phonemeText: "/b/", speakSound: "b b b", objects: ["Ball", "Bear", "Banana"] },
-  { soundId: "d", phonemeText: "/d/", speakSound: "d d d", objects: ["Dog", "Duck", "Drum"] },
-  { soundId: "k", phonemeText: "/k/", speakSound: "k k k", objects: ["Cat", "Cake", "Kite"] },
-  { soundId: "f", phonemeText: "/f/", speakSound: "fff", objects: ["Fish", "Frog", "Fox"] },
-  { soundId: "a", phonemeText: "/æ/", speakSound: "a a", objects: ["Apple", "Alligator"] },
-  { soundId: "o", phonemeText: "/ɒ/", speakSound: "o o", objects: ["Octopus", "Owl"] },
+  { soundId: "m", phonemeText: "/m/", speakSound: "muh", objects: ["Moon", "Monkey", "Mushroom"] },
+  { soundId: "s", phonemeText: "/s/", speakSound: "suh", objects: ["Sun", "Star", "Snake", "Strawberry", "Sunflower", "Shell", "Snowman"] },
+  { soundId: "t", phonemeText: "/t/", speakSound: "tuh", objects: ["Turtle", "Tree", "Tomato", "Tulip", "Truck"] },
+  { soundId: "p", phonemeText: "/p/", speakSound: "puh", objects: ["Pig", "Panda", "Penguin", "Plane", "Pizza", "Pear"] },
+  { soundId: "b", phonemeText: "/b/", speakSound: "buh", objects: ["Ball", "Bear", "Banana", "Bee", "Bell", "Butterfly", "Balloon", "Boat", "Bus"] },
+  { soundId: "d", phonemeText: "/d/", speakSound: "duh", objects: ["Dog", "Duck", "Drum", "Donut", "Dolphin"] },
+  { soundId: "k", phonemeText: "/k/", speakSound: "kuh", objects: ["Cat", "Cake", "Kite", "Koala", "Carrot", "Cloud", "Cookie", "Crown", "Cup", "Crab", "Cheese"] },
+  { soundId: "f", phonemeText: "/f/", speakSound: "fuh", objects: ["Fish", "Frog", "Fox"] },
+  { soundId: "a", phonemeText: "/æ/", speakSound: "ah", objects: ["Apple", "Alligator"] },
+  { soundId: "o", phonemeText: "/ɒ/", speakSound: "ah", objects: ["Octopus", "Owl"] },
+  { soundId: "l", phonemeText: "/l/", speakSound: "luh", objects: ["Lion", "Leaf", "Lemon"] },
+  { soundId: "r", phonemeText: "/r/", speakSound: "ruh", objects: ["Rabbit", "Rain", "Rose", "Rocket"] },
+  { soundId: "h", phonemeText: "/h/", speakSound: "huh", objects: ["Hippo", "Hat", "House", "Heart", "Helicopter", "Hamburger"] },
+  { soundId: "g", phonemeText: "/g/", speakSound: "guh", objects: ["Grapes", "Gift", "Guitar"] },
 ];
 
 const BLOOM_FLOWERS = ["Sunflower", "Rose", "Tulip", "Strawberry", "Cherry", "Banana"];
@@ -109,6 +113,54 @@ function createRound(recentSounds: string[]): RoundData & { nextRecent: string[]
   };
 }
 
+// Pure helper to select the best available English voice while filtering out macOS novelty voices
+function selectPreferredVoice(): SpeechSynthesisVoice | null {
+  if (typeof window === "undefined" || !window.speechSynthesis) return null;
+  const voices = window.speechSynthesis.getVoices();
+  if (voices.length === 0) return null;
+
+  // Filter English voices
+  const enVoices = voices.filter(v => v.lang.toLowerCase().startsWith("en"));
+  
+  // Filter out macOS novelty/joke voices
+  const noveltyVoices = [
+    "albert", "bad news", "bahh", "bells", "boing", "bubbles", "cellos",
+    "deranged", "good news", "hysterical", "pipe organ", "trinoids",
+    "whisper", "wobble", "zarvox"
+  ];
+  const clearVoices = enVoices.filter(v => {
+    const name = v.name.toLowerCase();
+    return !noveltyVoices.some(nv => name.includes(nv));
+  });
+
+  // Priority list for high-quality standard voices
+  const priorityNames = [
+    "google us english",
+    "google uk english female",
+    "google uk english male",
+    "samantha",
+    "alex",
+    "daniel",
+    "karen",
+    "fiona",
+    "moira",
+    "tessa",
+    "veena",
+    "hazel",
+    "zira",
+    "david"
+  ];
+
+  for (const pName of priorityNames) {
+    const found = clearVoices.find(v => v.name.toLowerCase().includes(pName));
+    if (found) return found;
+  }
+
+  if (clearVoices.length > 0) return clearVoices[0];
+  if (enVoices.length > 0) return enVoices[0];
+  return voices[0] || null;
+}
+
 export default function SoundGardenEngine({ childId, onBack }: SoundGardenEngineProps) {
   // Lazy state initializers to avoid triggering setState on mount
   const [roundData, setRoundData] = useState<RoundData>(() => createRound([]));
@@ -123,6 +175,41 @@ export default function SoundGardenEngine({ childId, onBack }: SoundGardenEngine
   const audioCtxRef = useRef<AudioContext | null>(null);
   const activeUtteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
   const roundStartTimeRef = useRef<number>(getCurrentTime());
+
+  const [voicesLoaded, setVoicesLoaded] = useState(false);
+  const preferredVoiceRef = useRef<SpeechSynthesisVoice | null>(null);
+
+  // Asynchronously load voices and select the preferred English voice
+  useEffect(() => {
+    if (typeof window === "undefined" || !window.speechSynthesis) return;
+
+    let timeoutId: NodeJS.Timeout;
+
+    const handleVoicesChanged = () => {
+      const voice = selectPreferredVoice();
+      if (voice) {
+        preferredVoiceRef.current = voice;
+        setVoicesLoaded(true);
+        if (timeoutId) clearTimeout(timeoutId);
+      }
+    };
+
+    // Try immediately
+    handleVoicesChanged();
+
+    if (window.speechSynthesis.onvoiceschanged !== undefined) {
+      window.speechSynthesis.onvoiceschanged = handleVoicesChanged;
+    }
+
+    // Fallback: force loaded after 1.5 seconds if we still don't have voices loaded
+    timeoutId = setTimeout(() => {
+      setVoicesLoaded(true);
+    }, 1500);
+
+    return () => {
+      if (timeoutId) clearTimeout(timeoutId);
+    };
+  }, []);
 
   // Initialize Web Audio Context
   const initAudio = () => {
@@ -206,8 +293,22 @@ export default function SoundGardenEngine({ childId, onBack }: SoundGardenEngine
         activeUtteranceRef.current = null;
       }
       const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = "en-US";
       utterance.rate = 0.78; // Slow rate for 3.5 year olds
       utterance.pitch = pitch;
+
+      // Select high-quality English voice
+      let selectedVoice = preferredVoiceRef.current;
+      if (!selectedVoice) {
+        selectedVoice = selectPreferredVoice();
+        if (selectedVoice) {
+          preferredVoiceRef.current = selectedVoice;
+        }
+      }
+      if (selectedVoice) {
+        utterance.voice = selectedVoice;
+      }
+
       activeUtteranceRef.current = utterance;
       window.speechSynthesis.speak(utterance);
     }
@@ -218,15 +319,15 @@ export default function SoundGardenEngine({ childId, onBack }: SoundGardenEngine
     speakText(`Find... ${sound.speakSound}... ${sound.speakSound}... ${sound.speakSound}.`);
   }, [speakText]);
 
-  // Play introduction audio prompt when roundIndex or roundData changes
+  // Play introduction audio prompt when roundIndex or roundData changes and voices are loaded
   useEffect(() => {
-    if (roundData) {
+    if (roundData && voicesLoaded) {
       const t = setTimeout(() => {
         speakPrompt(roundData.targetSound);
       }, 550);
       return () => clearTimeout(t);
     }
-  }, [roundIndex, roundData, speakPrompt]);
+  }, [roundIndex, roundData, speakPrompt, voicesLoaded]);
 
   const handleReplayPrompt = () => {
     if (roundData && gameState === "playing") {

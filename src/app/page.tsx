@@ -65,10 +65,11 @@ const ClayAlchemyEngine = dynamic(() => import("@/components/ClayAlchemyEngine")
 const MazeRouterEngine = dynamic(() => import("@/components/MazeRouterEngine"), { loading: GameLoading });
 const SymmetryPainterEngine = dynamic(() => import("@/components/SymmetryPainterEngine"), { loading: GameLoading });
 const SoundGardenEngine = dynamic(() => import("@/components/SoundGardenEngine"), { loading: GameLoading });
+const MagicSoundBubblesEngine = dynamic(() => import("@/components/MagicSoundBubblesEngine"), { loading: GameLoading });
 
 export default function Home() {
   const [view, setView] = useState<"lesson" | "dashboard" | "trophies">("lesson");
-  const [activeGame, setActiveGame] = useState<"menu" | "tracing" | "reveal" | "bubbles" | "monster" | "scavenger" | "rhyme" | "match" | "drummer" | "sorting" | "bunny" | "story" | "mark" | "pattern" | "alchemy" | "maze" | "symmetry" | "garden">("menu");
+  const [activeGame, setActiveGame] = useState<"menu" | "tracing" | "reveal" | "bubbles" | "monster" | "scavenger" | "rhyme" | "match" | "drummer" | "sorting" | "bunny" | "story" | "mark" | "pattern" | "alchemy" | "maze" | "symmetry" | "garden" | "magicsoundbubbles">("menu");
   const [childId, setChildId] = useState<string>(DEMO_CHILD_ID);
   const [childProgress, setChildProgress] = useState<Child | null>(null);
 
@@ -296,6 +297,11 @@ export default function Home() {
                   {activeGame === "garden" && (
                     <motion.div key="garden" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="h-full min-h-0 flex flex-col justify-center">
                       <SoundGardenEngine childId={childId} onBack={() => setActiveGame("menu")} />
+                    </motion.div>
+                  )}
+                  {activeGame === "magicsoundbubbles" && (
+                    <motion.div key="magicsoundbubbles" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="h-full min-h-0 flex flex-col justify-center">
+                      <MagicSoundBubblesEngine childId={childId} onBack={() => setActiveGame("menu")} />
                     </motion.div>
                   )}
                 </AnimatePresence>
