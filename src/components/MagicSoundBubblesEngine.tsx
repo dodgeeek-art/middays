@@ -286,7 +286,7 @@ export default function MagicSoundBubblesEngine({ childId, onBack }: MagicSoundB
     setPoppedIdxs([]);
     
     const phoneme = nextRound.targetSound.speakSound;
-    const text = `Pop ${nextRound.targetSound.phonemeText}. ${phoneme}, ${phoneme}.`;
+    const text = `Pop ${phoneme}. ${phoneme}, ${phoneme}.`;
     
     setTimeout(() => {
       speakText(text);
@@ -331,7 +331,7 @@ export default function MagicSoundBubblesEngine({ childId, onBack }: MagicSoundB
       setCorrectCount(nextCount);
 
       const phoneme = roundData!.targetSound.speakSound;
-      const text = `Great job! ${roundData!.targetSound.phonemeText}, ${phoneme}, ${choice.name.toLowerCase()}.`;
+      const text = `Great job! ${phoneme}, ${phoneme}, ${choice.name.toLowerCase()}.`;
 
       speakText(text, async () => {
         if (nextCount >= 5) {
@@ -380,7 +380,8 @@ export default function MagicSoundBubblesEngine({ childId, onBack }: MagicSoundB
       playSynthesizedSound("wrong");
       setWrongIdxs(prev => [...prev, idx]);
 
-      const text = `Good try. Listen again: ${roundData!.targetSound.phonemeText}.`;
+      const phoneme = roundData!.targetSound.speakSound;
+      const text = `Good try. Listen again: ${phoneme}.`;
       speakText(text, () => {
         setSelectedIdx(null);
       });
