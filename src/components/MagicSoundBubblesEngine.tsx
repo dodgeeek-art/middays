@@ -268,7 +268,9 @@ export default function MagicSoundBubblesEngine({ childId, onBack }: MagicSoundB
       if (onEndCallback) onEndCallback();
     };
     utterance.onerror = (e) => {
-      console.error("Speech error:", e);
+      if (e.error !== "interrupted" && e.error !== "canceled") {
+        console.error("Speech error:", e);
+      }
       setIsSpeaking(false);
       if (onEndCallback) onEndCallback();
     };
