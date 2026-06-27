@@ -88,3 +88,30 @@ export default function InGameShell({
     </section>
   );
 }
+
+export function InGameSuccessState({
+  title,
+  message,
+  action,
+  icon = "★",
+}: {
+  title: string;
+  message: string;
+  action?: React.ReactNode;
+  icon?: React.ReactNode;
+}) {
+  return (
+    <div className="w-full max-w-sm rounded-[1.75rem] border border-[var(--brand-line)] bg-[#fffdf7] p-6 text-center shadow-[0_18px_42px_rgba(34,49,63,0.14)]">
+      <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-[1.45rem] border-2 border-white bg-[#ffb51f] text-4xl text-[#593900] shadow-[0_8px_0_rgba(34,49,63,0.14),0_16px_28px_rgba(255,181,31,0.24)]">
+        {icon}
+      </div>
+      <h2 className="font-display text-3xl font-extrabold leading-none tracking-normal text-[var(--brand-ink)]">
+        {title}
+      </h2>
+      <p className="mx-auto mt-3 max-w-[16rem] text-sm font-extrabold leading-relaxed text-[var(--brand-muted)]">
+        {message}
+      </p>
+      {action && <div className="mt-5">{action}</div>}
+    </div>
+  );
+}

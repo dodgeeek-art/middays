@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 import ClayButton from "@/components/ui/ClayButton";
 import ClayCard from "@/components/ui/ClayCard";
+import { InGameSuccessState } from "@/components/ui/InGameShell";
 import { alphabetData } from "@/lib/alphabetData";
 import { objectDictionary } from "@/lib/svgDictionary";
 
@@ -463,30 +464,24 @@ export default function ActiveLessonEngine({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-[#f3f8fc]/90 backdrop-blur-sm z-[60] flex flex-col items-center justify-center p-6"
+            className="fixed inset-0 bg-[#fff8e7]/88 backdrop-blur-sm z-[60] flex flex-col items-center justify-center p-6"
           >
-            <ClayCard 
+            <motion.div
               initial={{ y: 30, scale: 0.8 }}
               animate={{ y: 0, scale: 1 }}
               exit={{ y: 20, scale: 0.8 }}
               transition={{ type: "spring", stiffness: 200, damping: 15 }}
-              variant="default"
-              className="p-8 max-w-sm w-full text-center flex flex-col items-center gap-6 border-white/20"
             >
               {objectDictionary[letter] && (
-                <>
-                  <div className="w-32 h-32 sm:w-40 sm:h-40 bg-[var(--surface-container-lowest)] border border-white/25 rounded-[2rem] flex items-center justify-center shadow-[6px_6px_12px_rgba(0,0,0,0.04),_inset_2px_2px_4px_rgba(255,255,255,0.85)] p-4">
-                    {React.createElement(objectDictionary[letter].icon, { size: "100%" })}
-                  </div>
-                  <div className="flex flex-col gap-2">
-                    <h3 className="text-3xl font-black text-[#ff85a1] uppercase">Awesome Tracing!</h3>
-                    <span className="text-xl sm:text-2xl font-black text-[#4A5358] uppercase tracking-wider">
-                      {letter} is for {objectDictionary[letter].name}
-                    </span>
-                  </div>
-                </>
+                <InGameSuccessState
+                  title="Awesome Tracing!"
+                  message={`${letter} is for ${objectDictionary[letter].name}.`}
+                  icon={React.createElement(objectDictionary[letter].icon, {
+                    size: "100%",
+                  })}
+                />
               )}
-            </ClayCard>
+            </motion.div>
           </motion.div>
         )}
         {showAlphabetGrid && (

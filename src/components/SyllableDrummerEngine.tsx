@@ -1,11 +1,12 @@
 "use client";
 
 import React, { useState, useRef } from "react";
-import { ArrowLeft, Music, Trophy } from "@/components/Icons";
+import { ArrowLeft, Music } from "@/components/Icons";
 import { motion } from "framer-motion";
 import confetti from "canvas-confetti";
 import { objectDictionary } from "@/lib/svgDictionary";
 import ClayButton from "@/components/ui/ClayButton";
+import { InGameSuccessState } from "@/components/ui/InGameShell";
 
 interface SyllableDrummerEngineProps {
   childId: string;
@@ -413,19 +414,17 @@ export default function SyllableDrummerEngine({ childId, onBack }: SyllableDrumm
         <motion.div 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="absolute inset-0 bg-[#f3f8fc]/90 backdrop-blur-sm z-20 flex flex-col items-center justify-center p-6"
+          className="absolute inset-0 bg-[#fff8e7]/88 backdrop-blur-sm z-20 flex flex-col items-center justify-center p-6"
         >
           <motion.div 
             initial={{ y: 30, scale: 0.8 }}
             animate={{ y: 0, scale: 1 }}
             transition={{ type: "spring", stiffness: 200, damping: 15 }}
-            className="clay-card border border-white/20 p-8 bg-white max-w-sm w-full text-center flex flex-col items-center gap-4"
           >
-            <div className="w-20 h-20 rounded-full bg-secondary-container flex items-center justify-center text-secondary shadow-[inset_2px_2px_4px_rgba(255,255,255,0.8),_inset_-2px_-2px_4px_rgba(0,0,0,0.05)] border border-white/10 animate-bounce">
-              <Trophy size={40} className="fill-current text-[#4ecdc4]" />
-            </div>
-            <h3 className="text-2xl font-black text-[#4A5358] uppercase">Great Rhythm!</h3>
-            <p className="text-sm font-bold text-[#4A5358]/70">You drummed all the syllables! Get ready for the next word...</p>
+            <InGameSuccessState
+              title="Great Rhythm!"
+              message="You drummed all the syllables. Get ready for the next word."
+            />
           </motion.div>
         </motion.div>
       )}

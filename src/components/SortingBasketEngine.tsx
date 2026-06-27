@@ -6,7 +6,7 @@ import { motion, AnimatePresence, PanInfo } from "framer-motion";
 import confetti from "canvas-confetti";
 import { vocabularyList } from "@/lib/svgDictionary";
 import ClayButton from "@/components/ui/ClayButton";
-import ClayCard from "@/components/ui/ClayCard";
+import { InGameSuccessState } from "@/components/ui/InGameShell";
 import { playSynthesizedSound } from "@/lib/audio";
 
 interface SortingItem {
@@ -477,30 +477,27 @@ export default function SortingBasketEngine({ childId, onBack }: SortingBasketEn
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="absolute inset-0 z-40 bg-black/40 backdrop-blur-md flex items-center justify-center p-6"
+            className="absolute inset-0 z-40 bg-[#fff8e7]/88 backdrop-blur-sm flex items-center justify-center p-6"
           >
-            <ClayCard
-              variant="secondary"
-              className="max-w-md w-full p-8 text-center flex flex-col items-center gap-6 border-white/40"
+            <motion.div
               initial={{ scale: 0.9, y: 20 }}
               animate={{ scale: 1, y: 0 }}
             >
-              <div className="w-20 h-20 rounded-full bg-[#a2ea63] text-white text-4xl flex items-center justify-center shadow-clay-mint mb-2">
-                🎉
-              </div>
-              <h2 className="text-3xl font-black text-[#0d4036] tracking-wide uppercase">Level {level} Complete!</h2>
-              <p className="text-sm font-bold text-[#0d4036]/80 leading-relaxed">
-                Super sorting! You sorted all items perfectly. Keep exploring and learning together!
-              </p>
-
-              <ClayButton
-                variant="primary"
-                onClick={advanceLevel}
-                className="w-full py-4 text-lg font-black rounded-full mt-2 toddler-target"
-              >
-                {level < 3 ? "Next Level ➡️" : "Finish Game 🏆"}
-              </ClayButton>
-            </ClayCard>
+              <InGameSuccessState
+                title={`Level ${level} Complete!`}
+                message="Super sorting. You sorted every item perfectly."
+                icon="✦"
+                action={
+                  <ClayButton
+                    variant="primary"
+                    onClick={advanceLevel}
+                    className="w-full py-4 text-lg font-black rounded-full toddler-target"
+                  >
+                    {level < 3 ? "Next Level" : "Finish Game"}
+                  </ClayButton>
+                }
+              />
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>

@@ -5,7 +5,7 @@ import { ArrowLeft, Volume2, PenTool, Sparkles } from "@/components/Icons";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 import ClayButton from "@/components/ui/ClayButton";
-import ClayCard from "@/components/ui/ClayCard";
+import { InGameSuccessState } from "@/components/ui/InGameShell";
 import { vocabularyList } from "@/lib/svgDictionary";
 import { playSynthesizedSound } from "@/lib/audio";
 
@@ -577,30 +577,27 @@ export default function MarkMakerEngine({ childId, onBack }: { childId: string; 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="absolute inset-0 z-40 bg-black/40 backdrop-blur-md flex items-center justify-center p-6"
+            className="absolute inset-0 z-40 bg-[#fff8e7]/88 backdrop-blur-sm flex items-center justify-center p-6"
           >
-            <ClayCard
-              variant="peach"
-              className="max-w-md w-full p-8 text-center flex flex-col items-center gap-6 border-white/40"
+            <motion.div
               initial={{ scale: 0.9, y: 20 }}
               animate={{ scale: 1, y: 0 }}
             >
-              <div className="w-20 h-20 rounded-full bg-[#f7c2b3] text-[#732010] text-4xl flex items-center justify-center shadow-clay-pink mb-2">
-                🎨
-              </div>
-              <h2 className="text-3xl font-black text-[#732010] tracking-wide uppercase">Drawing Complete!</h2>
-              <p className="text-sm font-bold text-[#732010]/80 leading-relaxed">
-                Super tracing! You earned the Trace & Color Badge!
-              </p>
-
-              <ClayButton
-                variant="primary"
-                onClick={onBack}
-                className="w-full py-4 text-lg font-black rounded-full mt-2 toddler-target"
-              >
-                Back to Map 🏆
-              </ClayButton>
-            </ClayCard>
+              <InGameSuccessState
+                title="Drawing Complete!"
+                message="Super tracing. You earned the Trace & Color Badge."
+                icon="✎"
+                action={
+                  <ClayButton
+                    variant="primary"
+                    onClick={onBack}
+                    className="w-full py-4 text-lg font-black rounded-full toddler-target"
+                  >
+                    Back to Library
+                  </ClayButton>
+                }
+              />
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>

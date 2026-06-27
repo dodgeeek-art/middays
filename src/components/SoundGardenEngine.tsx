@@ -1,12 +1,13 @@
 "use client";
 
 import React, { useState, useRef, useEffect, useCallback } from "react";
-import { ArrowLeft, Volume2, Trophy } from "@/components/Icons";
+import { ArrowLeft, Volume2 } from "@/components/Icons";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 import { vocabularyList } from "@/lib/svgDictionary";
 import MascotSVG from "./MascotSVG";
 import ClayButton from "@/components/ui/ClayButton";
+import { InGameSuccessState } from "@/components/ui/InGameShell";
 
 interface SoundGardenEngineProps {
   childId: string;
@@ -665,32 +666,23 @@ export default function SoundGardenEngine({ childId, onBack }: SoundGardenEngine
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="absolute inset-0 bg-[#f0fdf4]/90 backdrop-blur-sm z-30 flex flex-col items-center justify-center p-6"
+          className="absolute inset-0 bg-[#fff8e7]/88 backdrop-blur-sm z-30 flex flex-col items-center justify-center p-6"
         >
           <motion.div
             initial={{ y: 50, scale: 0.8 }}
             animate={{ y: 0, scale: 1 }}
             transition={{ type: "spring", stiffness: 220, damping: 14 }}
-            className="bg-white border-white/60 border-[4px] rounded-[2.5rem] p-8 max-w-sm w-full text-center flex flex-col items-center gap-5 shadow-clay-card"
           >
-            <div className="w-20 h-20 rounded-full bg-[#fef08a] flex items-center justify-center shadow-clay-btn animate-bounce border-[3px] border-white/40">
-              <Trophy size={40} className="text-[#d4a919] fill-current" />
-            </div>
-
-            <div>
-              <h3 className="text-2xl font-black text-[#16533f] uppercase tracking-wide">
-                Great Listening!
-              </h3>
-              <p className="text-sm font-bold text-[#4A5358]/80 mt-2 leading-relaxed">
-                You grew a beautiful Sound Garden! 🌸🌻🌷
-              </p>
-            </div>
-
-            <div className="flex flex-col gap-2 w-full mt-2">
-              <ClayButton variant="primary" onClick={onBack}>
-                Done playing
-              </ClayButton>
-            </div>
+            <InGameSuccessState
+              title="Great Listening!"
+              message="You grew a beautiful Sound Garden."
+              icon="✦"
+              action={
+                <ClayButton variant="primary" onClick={onBack} className="w-full">
+                  Done playing
+                </ClayButton>
+              }
+            />
           </motion.div>
         </motion.div>
       )}
