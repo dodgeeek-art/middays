@@ -4,141 +4,26 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import { ArrowLeft, Volume2, Trophy } from "@/components/Icons";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
-import { 
-  CartoonSVG, 
-  vocabularyList
-} from "@/lib/svgDictionary";
+import { vocabularyList } from "@/lib/svgDictionary";
 import MascotSVG from "./MascotSVG";
 import ClayButton from "@/components/ui/ClayButton";
 import { playSynthesizedSound } from "@/lib/audio";
+import {
+  PHONICS_SOUNDS,
+  PhonicsSound,
+  buildCorrectSoundPrompt,
+  buildFindSoundPrompt,
+  buildReplaySoundPrompt,
+  buildTryAgainSoundPrompt,
+} from "@/lib/phonics";
+import { selectPreferredVoice, speakWithPreferredVoice } from "@/lib/speech";
 
 interface MagicSoundBubblesEngineProps {
   childId: string;
   onBack: () => void;
 }
 
-interface SoundItem {
-  soundId: string;
-  phonemeText: string;
-  speakSound: string;
-  targetLetter: string;
-  objects: string[];
-}
-
-const SOUNDS_DATA: SoundItem[] = [
-  { soundId: "m", phonemeText: "/m/", speakSound: "mmm", targetLetter: "M", objects: ["Moon", "Monkey", "Milk"] },
-  { soundId: "s", phonemeText: "/s/", speakSound: "sss", targetLetter: "S", objects: ["Sun", "Star", "Snake"] },
-  { soundId: "t", phonemeText: "/t/", speakSound: "t, t, t", targetLetter: "T", objects: ["Turtle", "Tiger", "Tree"] },
-  { soundId: "p", phonemeText: "/p/", speakSound: "p, p, p", targetLetter: "P", objects: ["Pig", "Panda", "Pizza"] },
-  { soundId: "b", phonemeText: "/b/", speakSound: "b, b, b", targetLetter: "B", objects: ["Ball", "Bear", "Banana"] },
-  { soundId: "d", phonemeText: "/d/", speakSound: "d, d, d", targetLetter: "D", objects: ["Dog", "Duck", "Drum"] },
-  { soundId: "k", phonemeText: "/k/", speakSound: "k, k, k", targetLetter: "K", objects: ["Cat", "Cake", "Kite"] },
-  { soundId: "f", phonemeText: "/f/", speakSound: "fff", targetLetter: "F", objects: ["Fish", "Frog", "Flower"] },
-  { soundId: "a", phonemeText: "/æ/", speakSound: "short a sound, ah", targetLetter: "A", objects: ["Apple", "Ant", "Alligator"] },
-  { soundId: "o", phonemeText: "/ɒ/", speakSound: "short o sound, owh", targetLetter: "O", objects: ["Octopus", "Orange", "Owl"] }
-];
-
-// --- Custom Local SVG Placeholders ---
-
-const Milk = (props: React.SVGProps<SVGSVGElement> & { size?: number | string }) => (
-  <CartoonSVG animClass="anim-float" {...props}>
-    <g fill="none" strokeWidth="1.5">
-      <rect x="7" y="10" width="18" height="17" rx="3" fill="#cbd5e1" stroke="#94a3b8" />
-      <path d="M7 10 L16 3 L25 10 Z" fill="#cbd5e1" stroke="#94a3b8" strokeLinejoin="round" />
-      <ellipse cx="16" cy="18" rx="5" ry="4" fill="#ffffff" />
-      <path d="M18 3 L22 -2" stroke="#ef4444" strokeWidth="2.5" strokeLinecap="round" />
-    </g>
-  </CartoonSVG>
-);
-
-const Tiger = (props: React.SVGProps<SVGSVGElement> & { size?: number | string }) => (
-  <CartoonSVG animClass="anim-breathe" {...props}>
-    <g fill="none">
-      <circle cx="16" cy="16" r="11" fill="#f97316" />
-      <circle cx="7" cy="8" r="4.5" fill="#f97316" />
-      <circle cx="7" cy="8" r="2.5" fill="#ffedd5" />
-      <circle cx="25" cy="8" r="4.5" fill="#f97316" />
-      <circle cx="25" cy="8" r="2.5" fill="#ffedd5" />
-      <ellipse cx="11" cy="20" rx="3" ry="2.5" fill="#ffedd5" />
-      <ellipse cx="21" cy="20" rx="3" ry="2.5" fill="#ffedd5" />
-      <circle cx="11" cy="14" r="2" fill="#1e293b" />
-      <circle cx="21" cy="14" r="2" fill="#1e293b" />
-      <path d="M6 14 L10 15" stroke="#1e293b" strokeWidth="1.5" strokeLinecap="round" />
-      <path d="M26 14 L22 15" stroke="#1e293b" strokeWidth="1.5" strokeLinecap="round" />
-      <path d="M13 6 L14 10" stroke="#1e293b" strokeWidth="1.5" strokeLinecap="round" />
-      <path d="M19 6 L18 10" stroke="#1e293b" strokeWidth="1.5" strokeLinecap="round" />
-      <polygon points="15,18 17,18 16,19.5" fill="#f43f5e" />
-      <path d="M14.5 21 C15.5 22 16.5 22 17.5 21" stroke="#1e293b" strokeWidth="1.5" strokeLinecap="round" />
-    </g>
-  </CartoonSVG>
-);
-
-const Flower = (props: React.SVGProps<SVGSVGElement> & { size?: number | string }) => (
-  <CartoonSVG animClass="anim-sway" {...props}>
-    <g fill="none">
-      <path d="M16 22 L16 30" stroke="#22c55e" strokeWidth="2.5" strokeLinecap="round" />
-      <path d="M16 26 Q12 25 11 22" stroke="#22c55e" strokeWidth="2.0" strokeLinecap="round" fill="none" />
-      <path d="M16 28 Q20 27 21 24" stroke="#22c55e" strokeWidth="2.0" strokeLinecap="round" fill="none" />
-      <circle cx="16" cy="8" r="4.5" fill="#ec4899" />
-      <circle cx="16" cy="24" r="4.5" fill="#ec4899" />
-      <circle cx="8" cy="16" r="4.5" fill="#ec4899" />
-      <circle cx="24" cy="16" r="4.5" fill="#ec4899" />
-      <circle cx="10" cy="10" r="4.5" fill="#db2777" />
-      <circle cx="22" cy="10" r="4.5" fill="#db2777" />
-      <circle cx="10" cy="22" r="4.5" fill="#db2777" />
-      <circle cx="22" cy="22" r="4.5" fill="#db2777" />
-      <circle cx="16" cy="16" r="6.5" fill="#fbbf24" stroke="#d97706" strokeWidth="1" />
-      <circle cx="14" cy="15" r="1" fill="#78350f" />
-      <circle cx="18" cy="15" r="1" fill="#78350f" />
-      <path d="M14 18 Q16 19.5 18 18" stroke="#78350f" strokeWidth="1.2" strokeLinecap="round" />
-    </g>
-  </CartoonSVG>
-);
-
-const Ant = (props: React.SVGProps<SVGSVGElement> & { size?: number | string }) => (
-  <CartoonSVG animClass="anim-float" {...props}>
-    <g fill="none">
-      <path d="M10 20 L4 23" stroke="#334155" strokeWidth="1.5" strokeLinecap="round" />
-      <path d="M16 20 L16 25" stroke="#334155" strokeWidth="1.5" strokeLinecap="round" />
-      <path d="M22 20 L28 23" stroke="#334155" strokeWidth="1.5" strokeLinecap="round" />
-      <path d="M10 20 L4 17" stroke="#334155" strokeWidth="1.5" strokeLinecap="round" />
-      <path d="M16 20 L16 15" stroke="#334155" strokeWidth="1.5" strokeLinecap="round" />
-      <path d="M22 20 L28 17" stroke="#334155" strokeWidth="1.5" strokeLinecap="round" />
-      <circle cx="8" cy="19" r="4.5" fill="#1e293b" />
-      <ellipse cx="16" cy="19" rx="3.5" ry="3" fill="#334155" />
-      <ellipse cx="23" cy="19" rx="5.5" ry="4.5" fill="#1e293b" />
-      <path d="M6 16 Q3 12 1 14" stroke="#1e293b" strokeWidth="1.2" strokeLinecap="round" fill="none" />
-      <path d="M8 16 Q9 11 11 12" stroke="#1e293b" strokeWidth="1.2" strokeLinecap="round" fill="none" />
-      <circle cx="5" cy="17.5" r="1.2" fill="#ffffff" />
-      <circle cx="8" cy="17.5" r="0.8" fill="#ffffff" />
-    </g>
-  </CartoonSVG>
-);
-
-const Orange = (props: React.SVGProps<SVGSVGElement> & { size?: number | string }) => (
-  <CartoonSVG animClass="anim-breathe" {...props}>
-    <g fill="none">
-      <circle cx="16" cy="17" r="11" fill="#f97316" />
-      <path d="M16 6 Q18 2 17 1" stroke="#78350f" strokeWidth="2.0" strokeLinecap="round" fill="none" />
-      <path d="M17 4 C21 2 24 5 21 8 C18 9 17 6 17 4 Z" fill="#22c55e" />
-      <circle cx="10" cy="13" r="0.8" fill="#ea580c" />
-      <circle cx="22" cy="14" r="0.8" fill="#ea580c" />
-      <circle cx="13" cy="22" r="0.8" fill="#ea580c" />
-      <circle cx="19" cy="22" r="0.8" fill="#ea580c" />
-      <circle cx="13" cy="16" r="1.5" fill="#1e293b" />
-      <circle cx="19" cy="16" r="1.5" fill="#1e293b" />
-      <path d="M14.5 19 C15.5 20.2 16.5 20.2 17.5 19" stroke="#1e293b" strokeWidth="1.2" strokeLinecap="round" />
-    </g>
-  </CartoonSVG>
-);
-
 function getObjectIcon(name: string): React.FC<React.SVGProps<SVGSVGElement> & { size?: number | string }> {
-  if (name === "Milk") return Milk;
-  if (name === "Tiger") return Tiger;
-  if (name === "Flower") return Flower;
-  if (name === "Ant") return Ant;
-  if (name === "Orange") return Orange;
-
   const found = vocabularyList.find(v => v.name.toLowerCase() === name.toLowerCase());
   if (found) {
     return found.icon as React.FC<React.SVGProps<SVGSVGElement> & { size?: number | string }>;
@@ -153,47 +38,22 @@ interface ChoiceItem {
 }
 
 interface RoundData {
-  targetSound: SoundItem;
+  targetSound: PhonicsSound;
   correctObject: string;
   choices: ChoiceItem[];
 }
 
-function selectPreferredVoice(): SpeechSynthesisVoice | null {
-  if (typeof window === "undefined" || !window.speechSynthesis) return null;
-  const voices = window.speechSynthesis.getVoices();
-  if (voices.length === 0) return null;
-
-  const enVoices = voices.filter(v => v.lang.toLowerCase().startsWith("en"));
-  const noveltyVoices = [
-    "albert", "bad news", "bahh", "bells", "boing", "bubbles", "cellos",
-    "deranged", "good news", "hysterical", "pipe organ", "trinoids",
-    "whisper", "wobble", "zarvox"
-  ];
-  const clearVoices = enVoices.filter(v => {
-    const name = v.name.toLowerCase();
-    return !noveltyVoices.some(nv => name.includes(nv));
-  });
-
-  const priorityNames = ["google us english", "google uk english female", "samantha", "alex", "daniel", "karen"];
-  for (const pName of priorityNames) {
-    const found = clearVoices.find(v => v.name.toLowerCase().includes(pName));
-    if (found) return found;
-  }
-
-  return clearVoices[0] || enVoices[0] || voices[0] || null;
-}
-
 function generateRound(recentSoundIds: string[]): RoundData {
-  let availableSounds = SOUNDS_DATA;
+  let availableSounds = PHONICS_SOUNDS;
   if (recentSoundIds.length >= 2 && recentSoundIds[0] === recentSoundIds[1]) {
-    availableSounds = SOUNDS_DATA.filter(s => s.soundId !== recentSoundIds[0]);
+    availableSounds = PHONICS_SOUNDS.filter(s => s.soundId !== recentSoundIds[0]);
   }
   const targetSound = availableSounds[Math.floor(Math.random() * availableSounds.length)];
 
   const correctObject = targetSound.objects[Math.floor(Math.random() * targetSound.objects.length)];
 
   const distractors: ChoiceItem[] = [];
-  const otherSounds = SOUNDS_DATA.filter(s => s.soundId !== targetSound.soundId);
+  const otherSounds = PHONICS_SOUNDS.filter(s => s.soundId !== targetSound.soundId);
   const shuffledOtherSounds = [...otherSounds].sort(() => Math.random() - 0.5);
 
   for (let i = 0; i < 2; i++) {
@@ -247,35 +107,18 @@ export default function MagicSoundBubblesEngine({ childId, onBack }: MagicSoundB
   }, []);
 
   const speakText = useCallback((text: string, onEndCallback?: () => void) => {
-    if (typeof window === "undefined" || !window.speechSynthesis) {
-      if (onEndCallback) onEndCallback();
-      return;
-    }
-
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    
-    if (preferredVoiceRef.current) {
-      utterance.voice = preferredVoiceRef.current;
-    }
-    
-    utterance.rate = 0.78;
-    utterance.pitch = 1.15;
-
-    utterance.onstart = () => setIsSpeaking(true);
-    utterance.onend = () => {
-      setIsSpeaking(false);
-      if (onEndCallback) onEndCallback();
-    };
-    utterance.onerror = (e) => {
-      if (e.error !== "interrupted" && e.error !== "canceled") {
-        console.error("Speech error:", e);
-      }
-      setIsSpeaking(false);
-      if (onEndCallback) onEndCallback();
-    };
-
-    window.speechSynthesis.speak(utterance);
+    speakWithPreferredVoice(text, preferredVoiceRef.current, {
+      onStart: () => setIsSpeaking(true),
+      onEnd: () => {
+        setIsSpeaking(false);
+        onEndCallback?.();
+      },
+      onError: (event) => {
+        if (event.error !== "interrupted" && event.error !== "canceled") {
+          console.error("Speech error:", event);
+        }
+      },
+    });
   }, []);
 
   const startNewRound = useCallback((currentRecent: string[]) => {
@@ -285,11 +128,8 @@ export default function MagicSoundBubblesEngine({ childId, onBack }: MagicSoundB
     setWrongIdxs([]);
     setPoppedIdxs([]);
     
-    const phoneme = nextRound.targetSound.speakSound;
-    const text = `Pop ${phoneme}. ${phoneme}, ${phoneme}.`;
-    
     setTimeout(() => {
-      speakText(text);
+      speakText(buildFindSoundPrompt(nextRound.targetSound));
     }, 400);
   }, [speakText]);
 
@@ -306,8 +146,7 @@ export default function MagicSoundBubblesEngine({ childId, onBack }: MagicSoundB
   const handleReplayInstruction = () => {
     if (!roundData || isSpeaking) return;
     playSynthesizedSound("tick");
-    const phoneme = roundData.targetSound.speakSound;
-    speakText(`Listen: ${phoneme}, ${phoneme}.`);
+    speakText(buildReplaySoundPrompt(roundData.targetSound));
   };
 
   const handleChoiceClick = async (choice: ChoiceItem, idx: number) => {
@@ -330,8 +169,7 @@ export default function MagicSoundBubblesEngine({ childId, onBack }: MagicSoundB
       const nextCount = correctCount + 1;
       setCorrectCount(nextCount);
 
-      const phoneme = roundData!.targetSound.speakSound;
-      const text = `Great job! ${phoneme}, ${phoneme}, ${choice.name.toLowerCase()}.`;
+      const text = buildCorrectSoundPrompt(choice.name.toLowerCase(), roundData!.targetSound);
 
       speakText(text, async () => {
         if (nextCount >= 5) {
@@ -380,8 +218,7 @@ export default function MagicSoundBubblesEngine({ childId, onBack }: MagicSoundB
       playSynthesizedSound("wrong");
       setWrongIdxs(prev => [...prev, idx]);
 
-      const phoneme = roundData!.targetSound.speakSound;
-      const text = `Good try. Listen again: ${phoneme}.`;
+      const text = buildTryAgainSoundPrompt(roundData!.targetSound);
       speakText(text, () => {
         setSelectedIdx(null);
       });
@@ -459,7 +296,7 @@ export default function MagicSoundBubblesEngine({ childId, onBack }: MagicSoundB
               Let&apos;s Play Bubbles!
             </h2>
             <p className="text-sm sm:text-base font-bold text-[#57534e] mb-6">
-              Listen to the magic sound and pop the matching picture!
+              Listen for the phonics sound, then pop the picture that starts with that sound.
             </p>
 
             <ClayButton
@@ -489,10 +326,10 @@ export default function MagicSoundBubblesEngine({ childId, onBack }: MagicSoundB
 
               <div className="bg-white/80 border-[3px] border-white/90 rounded-2xl py-2 px-6 shadow-sm inline-block">
                 <p className="text-xl sm:text-2xl font-black text-sky-900 tracking-wide leading-none">
-                  Pop {roundData.targetSound.phonemeText}
+                  Find {roundData.targetSound.phonemeText}
                 </p>
                 <p className="text-[11px] font-bold text-sky-600/80 uppercase mt-0.5 tracking-wider">
-                  Listen: &quot;{roundData.targetSound.speakSound}&quot;
+                  Sound: &quot;{roundData.targetSound.speakSound}&quot;
                 </p>
               </div>
             </div>

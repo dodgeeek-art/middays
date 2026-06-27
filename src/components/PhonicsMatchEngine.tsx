@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import confetti from "canvas-confetti";
 import { objectDictionary } from "@/lib/svgDictionary";
 import { InGameSuccessState } from "@/components/ui/InGameShell";
+import { getPhonicsSoundCue } from "@/lib/phonics";
 
 interface PhonicsMatchEngineProps {
   childId: string;
@@ -193,7 +194,7 @@ export default function PhonicsMatchEngine({ childId, onBack }: PhonicsMatchEngi
 
     // Speak flipped card item
     if (clickedCard.type === "letter") {
-      speakText(clickedCard.letter);
+      speakText(getPhonicsSoundCue(clickedCard.letter));
     } else {
       const obj = objectDictionary[clickedCard.letter];
       speakText(obj ? obj.name : "");
@@ -215,7 +216,7 @@ export default function PhonicsMatchEngine({ childId, onBack }: PhonicsMatchEngi
           
           const obj = objectDictionary[cardA.letter];
           const objectName = obj ? obj.name : "";
-          speakText(`Match! ${cardA.letter} and ${objectName}`);
+          speakText(`Match. ${objectName} starts with ${getPhonicsSoundCue(cardA.letter)}.`);
 
           setCards(prev => prev.map(c => c.letter === cardA.letter ? { ...c, isMatched: true } : c));
           setSelectedIds([]);

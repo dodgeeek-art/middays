@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
-import { ArrowLeft, Volume2, Smile } from "@/components/Icons";
+import { Volume2, Smile } from "@/components/Icons";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 import ClayButton from "@/components/ui/ClayButton";
@@ -528,36 +528,20 @@ export default function MazeRouterEngine({ childId, onBack }: { childId: string;
       <div className="absolute -bottom-20 -right-20 w-80 h-80 rounded-full bg-emerald-500/10 blur-3xl pointer-events-none" />
       <div className="absolute -top-20 -left-20 w-80 h-80 rounded-full bg-sky-500/5 blur-3xl pointer-events-none" />
 
-      {/* Top Header */}
       <div
-        className="mobile-maze-header flex items-center justify-between w-full max-w-3xl mb-0.5 sm:mb-3 shrink-0 z-20"
+        className="mobile-maze-header flex w-full max-w-3xl justify-end mb-1 shrink-0 z-20"
         style={isCompactPhone ? { marginBottom: 6 } : undefined}
       >
-        <ClayButton
-          onClick={onBack}
-          variant="surface"
-          className="min-w-[38px] min-h-[38px] p-2 sm:min-w-[64px] sm:min-h-[64px] sm:p-3.5 rounded-full flex items-center justify-center border-2 border-white/50 active:scale-95 shadow-md"
-        >
-          <ArrowLeft className="w-5 h-5 sm:w-6 sm:h-6 text-[#5c6b73]" strokeWidth={3.5} />
-        </ClayButton>
-        <div className="flex flex-col items-center">
-          <h2 className="text-sm sm:text-2xl font-black text-[#2f3e46] uppercase tracking-wide">
-            Maze Router
-          </h2>
-          <span className="text-xs font-bold text-[#5c6b73]/80">
-            Puzzle {levelIdx + 1} of {levels.length}
-          </span>
-        </div>
-        <div className="w-10 h-10 sm:w-16 sm:h-16 rounded-full bg-[#ddcbf5] border-2 border-white flex items-center justify-center shadow-md">
-          <span className="text-lg font-black text-[#5c3e7f]">🧩</span>
-        </div>
+        <span className="rounded-full border-2 border-white/70 bg-white/80 px-3 py-1 text-[10px] font-black uppercase tracking-wider text-[#5c6b73] shadow-sm">
+          Puzzle {levelIdx + 1}/{levels.length}
+        </span>
       </div>
 
       {/* Instruction Card */}
       <button
         type="button"
         onClick={() => speakText(instructionText)}
-        className="mobile-maze-instruction z-10 mb-1 flex w-full max-w-xl cursor-pointer items-center gap-2 self-center rounded-[1rem] border-2 border-white/70 bg-white/90 p-1.5 text-left shadow-sm outline-none transition-all active:scale-[0.99] focus-visible:ring-4 focus-visible:ring-[#118ab2]/25 sm:mb-4 sm:gap-3 sm:rounded-[1.7rem] sm:p-4"
+        className="mobile-maze-instruction z-10 mb-1 flex w-full max-w-xl cursor-pointer items-center gap-2 self-center rounded-[1rem] border-2 border-white/70 bg-white/90 p-1.5 text-left shadow-sm outline-none transition-all active:scale-[0.99] focus-visible:ring-4 focus-visible:ring-[#118ab2]/25 sm:mb-3 sm:gap-3 sm:rounded-[1.35rem] sm:p-3"
         style={isCompactPhone ? { maxWidth: 368, marginBottom: 6, padding: "8px 12px", borderRadius: 22 } : undefined}
         aria-label={`Hear instructions: ${instructionText}`}
       >
@@ -565,7 +549,6 @@ export default function MazeRouterEngine({ childId, onBack }: { childId: string;
           →
         </span>
         <span className="min-w-0 flex-1">
-          <span className="block text-[9px] font-black uppercase tracking-[0.2em] text-slate-500 sm:text-[10px]">Instruction</span>
           <span
             className="block text-[11px] font-bold leading-tight text-[#4A5358] sm:text-base"
             style={isCompactPhone ? { fontSize: 15, lineHeight: 1.15 } : undefined}

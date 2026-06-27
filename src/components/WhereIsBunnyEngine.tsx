@@ -1,13 +1,10 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { ArrowLeft, Volume2, HelpCircle, Trophy } from "@/components/Icons";
+import { Volume2 } from "@/components/Icons";
 import { motion, AnimatePresence, PanInfo } from "framer-motion";
 import confetti from "canvas-confetti";
-import ClayButton from "@/components/ui/ClayButton";
-import ClayCard from "@/components/ui/ClayCard";
-import MascotSVG from "@/components/MascotSVG";
-import { vocabularyList, CartoonSVG } from "@/lib/svgDictionary";
+import { vocabularyList } from "@/lib/svgDictionary";
 import { playSynthesizedSound } from "@/lib/audio";
 
 interface ShelterItem {
@@ -26,7 +23,9 @@ interface ShelterQuestion {
 
 
 // Helpers to lookup Fluent icons
-const getAnimalIcon = (name: string): React.FC<any> | null => {
+const getAnimalIcon = (
+  name: string,
+): React.ComponentType<{ size?: string | number; className?: string; animClass?: string; style?: React.CSSProperties }> | null => {
   const lowerName = name.toLowerCase();
   const item = vocabularyList.find(v => v.name.toLowerCase() === lowerName);
   return item ? item.icon : null;
@@ -171,15 +170,13 @@ const shuffleArray = <T,>(array: T[]): T[] => {
   return [...array].sort(() => Math.random() - 0.5);
 };
 
-export default function WhereIsBunnyEngine({ childId, onBack }: { childId: string; onBack: () => void }) {
+export default function WhereIsBunnyEngine() {
   const [roundsList, setRoundsList] = useState<ShelterQuestion[]>([]);
   const [currentRoundIdx, setCurrentRoundIdx] = useState(0);
   const [choices, setChoices] = useState<ShelterItem[]>([]);
   const [gameState, setGameState] = useState<"playing" | "correct" | "incorrect" | "success">("playing");
   const [wrongSelections, setWrongSelections] = useState<string[]>([]);
   const [dragOffsetKey, setDragOffsetKey] = useState(0);
-  const [startTime] = useState<number>(() => Date.now());
-  const [errorsThisGame, setErrorsThisGame] = useState(0);
 
   // Refs for drop collision
   const zone0Ref = useRef<HTMLDivElement>(null);
@@ -277,7 +274,6 @@ export default function WhereIsBunnyEngine({ childId, onBack }: { childId: strin
 
   const handleFailure = (choiceName: string) => {
     playSynthesizedSound("wrong");
-    setErrorsThisGame(prev => prev + 1);
     if (choiceName && !wrongSelections.includes(choiceName)) {
       setWrongSelections(prev => [...prev, choiceName]);
     }
@@ -287,39 +283,6 @@ export default function WhereIsBunnyEngine({ childId, onBack }: { childId: strin
     setTimeout(() => {
       setDragOffsetKey(prev => prev + 1);
     }, 500);
-  };
-
-  const handleExit = async () => {
-    if (currentRoundIdx >= 1) {
-      const elapsed = Date.now() - startTime;
-      if (childId) {
-        try {
-          await fetch(`/api/progress/${childId}`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              targetLetter: "SHELTER",
-              tracingScore: Math.max(0, 100 - errorsThisGame * 15),
-              phonemicScore: 100,
-              timeSpentMs: elapsed
-            })
-          });
-
-          if (currentRoundIdx >= 5) {
-            await fetch(`/api/badges/${childId}`, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                badgeName: "Shelter Master"
-              })
-            });
-          }
-        } catch (err) {
-          console.error("Telemetry failed:", err);
-        }
-      }
-    }
-    onBack();
   };
 
   return (
@@ -446,47 +409,19 @@ export default function WhereIsBunnyEngine({ childId, onBack }: { childId: strin
         </svg>
       </svg>
 
-      {/* Header Row */}
-      <div className="flex items-center justify-between w-full shrink-0 px-1 z-10">
-        <ClayButton
-          variant="surface"
-          size="sm"
-          onClick={handleExit}
-        >
-          <ArrowLeft size={24} strokeWidth={3.5} />
-        </ClayButton>
-
-        <span className="text-[10px] font-black uppercase tracking-wider text-[#0b4a45]/80 bg-white/70 px-4 py-1.5 rounded-full border border-white/40 shadow-sm shadow-black/02">
-          ROUND {currentRoundIdx + 1}
+      <div className="mb-2 flex w-full shrink-0 items-center justify-end px-1 z-10">
+        <span className="rounded-full border border-white/50 bg-white/75 px-3 py-1 text-[10px] font-black uppercase tracking-wider text-[#0b4a45]/80 shadow-sm">
+          Round {currentRoundIdx + 1}
         </span>
       </div>
 
-      {/* Mascot Command at the top (under header) to make room for lower play area */}
       <div 
         onClick={() => currentQuestion && speakText(currentQuestion.questionText)}
-        className="w-full max-w-xl flex items-center gap-3 mt-2 mb-2 cursor-pointer select-none active:scale-[0.99] transition-all shrink-0 z-10"
+        className="w-full max-w-xl flex items-center gap-2 mb-2 cursor-pointer select-none active:scale-[0.99] transition-all shrink-0 z-10"
       >
-        {/* Hovering Mascot SVG */}
-        <div className="w-14 h-14 sm:w-18 sm:h-18 shrink-0 drop-shadow-md">
-          <MascotSVG className="w-full h-full" />
-        </div>
-        
-        {/* Speech Bubble */}
-        <div className="flex-1 relative bg-white border border-[#4a5358]/10 p-2.5 sm:p-3 rounded-[1.8rem] shadow-[4px_4px_12px_rgba(0,0,0,0.03),_inset_2px_2px_4px_rgba(255,255,255,0.9)] text-left">
-          {/* Bubble Tail */}
-          <div className="absolute top-1/2 -left-3 -translate-y-1/2 w-0 h-0 border-t-[7px] border-t-transparent border-r-[11px] border-r-white border-b-[7px] border-b-transparent filter drop-shadow-[-1px_0_0_rgba(74,83,88,0.06)]"></div>
-          
-          <p className="text-[9px] font-black text-primary uppercase tracking-widest mb-0.5">
-            Buddy says:
-          </p>
-          <h2 className="text-xs sm:text-sm font-black text-[#4A5358] tracking-tight uppercase flex items-center gap-1.5 flex-wrap">
-            <span>Where does the</span>
-            <span className="inline-flex items-center justify-center px-2 py-0.5 bg-[#d2f4e6] border border-white/20 rounded-xl text-[#0b4a45] font-black shadow-sm gap-1">
-              {currentQuestion?.animal}
-              <Volume2 className="w-3 h-3 ml-0.5 text-[#3fa394]" strokeWidth={3.5} />
-            </span>
-            <span>live?</span>
-          </h2>
+        <div className="flex flex-1 items-center justify-center gap-2 rounded-[1.35rem] border border-[#4a5358]/10 bg-white/90 px-3 py-2 text-center shadow-sm">
+          <span className="text-sm font-black text-[#4A5358]">Where does {currentQuestion?.animal} live?</span>
+          <Volume2 className="h-4 w-4 shrink-0 text-[#3fa394]" strokeWidth={3.5} />
         </div>
       </div>
 

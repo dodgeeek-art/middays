@@ -5,6 +5,7 @@ import { ArrowLeft, Volume2 } from "@/components/Icons";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 import { objectDictionary } from "@/lib/svgDictionary";
+import { getPhonicsSoundCue } from "@/lib/phonics";
 
 interface Choice {
   letter: string;
@@ -281,7 +282,7 @@ export default function FeedMonsterEngine({ childId, onBack }: FeedMonsterEngine
           // Speak letter sound + association (e.g. "A, Alligator")
           if (typeof window !== "undefined" && window.speechSynthesis) {
             window.speechSynthesis.cancel();
-            const utterance = new SpeechSynthesisUtterance(`${selectedChoice.letter}, ${selectedChoice.name}`);
+            const utterance = new SpeechSynthesisUtterance(`${selectedChoice.name} starts with ${getPhonicsSoundCue(selectedChoice.letter)}.`);
             utterance.rate = 0.85;
             utterance.pitch = 1.15;
             window.speechSynthesis.speak(utterance);

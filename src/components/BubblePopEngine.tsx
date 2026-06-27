@@ -5,6 +5,7 @@ import { ArrowLeft, Play, ArrowRight, Volume2 } from "@/components/Icons";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 import { objectDictionary } from "@/lib/svgDictionary";
+import { getLetterSoundCue } from "@/lib/phonics";
 
 interface Bubble {
   id: number;
@@ -154,7 +155,7 @@ export default function BubblePopEngine({ childId, onBack }: BubblePopEngineProp
   const playLetterSound = useCallback(() => {
     if (typeof window !== "undefined" && window.speechSynthesis) {
       window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(targetLetter);
+      const utterance = new SpeechSynthesisUtterance(`Pop this sound: ${getLetterSoundCue(targetLetter)}.`);
       utterance.rate = 0.85;
       utterance.pitch = 1.15;
       window.speechSynthesis.speak(utterance);
@@ -496,7 +497,7 @@ export default function BubblePopEngine({ childId, onBack }: BubblePopEngineProp
             {/* Giant bouncy sticker */}
             <div className="w-full max-w-sm clay-card p-6 sm:p-8 flex flex-col items-center text-center mt-3 sm:mt-6 bg-[#d2f4e6]/90 backdrop-blur-md border border-white/20">
               <h2 className="text-3xl sm:text-4xl font-black text-[#0b4a45] uppercase tracking-wide mb-2">Bubble Pop!</h2>
-              <p className="text-base sm:text-lg font-bold text-[#0b4a45]/70 mb-4 sm:mb-6">Pop the floating letters to find the match!</p>
+              <p className="text-base sm:text-lg font-bold text-[#0b4a45]/70 mb-4 sm:mb-6">Listen for the phonics sound, then pop the matching letter bubble.</p>
               
               <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full bg-white border border-white/20 flex items-center justify-center shadow-[4px_4px_10px_rgba(0,0,0,0.04),_inset_3px_3px_6px_rgba(255,255,255,0.85),_inset_-3px_-3px_6px_rgba(0,0,0,0.04)] mb-6 sm:mb-8 animate-bounce">
                 <span className="text-4xl sm:text-6xl font-black text-slate-dark">🎈</span>
@@ -588,7 +589,7 @@ export default function BubblePopEngine({ childId, onBack }: BubblePopEngineProp
             {/* Victory Sticker */}
             <div className="w-full max-w-sm clay-card p-6 sm:p-8 flex flex-col items-center text-center mt-3 sm:mt-6 bg-[#eaddfc]/90 backdrop-blur-md border border-white/20">
               <h2 className="text-3xl sm:text-4xl font-black text-[#3c1e70] uppercase tracking-wide mb-1">Awesome!</h2>
-              <p className="text-base sm:text-lg font-bold text-[#3c1e70]/70 mb-4 sm:mb-6">You popped all the letter {targetLetter}&apos;s!</p>
+              <p className="text-base sm:text-lg font-bold text-[#3c1e70]/70 mb-4 sm:mb-6">You popped every bubble for the {getLetterSoundCue(targetLetter)} sound.</p>
               
               {/* Display visual word association illustration */}
               {targetObject && (

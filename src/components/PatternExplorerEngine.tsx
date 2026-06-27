@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { ArrowLeft, Sparkles, HelpCircle } from "@/components/Icons";
+import { HelpCircle } from "@/components/Icons";
 import { motion, AnimatePresence } from "framer-motion";
 import ClayButton from "@/components/ui/ClayButton";
 import ClayCard from "@/components/ui/ClayCard";
@@ -163,27 +163,9 @@ export default function PatternExplorerEngine({ childId, onBack }: PatternExplor
       <div className="absolute -z-10 bg-[#ddcbf5]/30 w-72 h-72 rounded-full blur-[90px] opacity-40 -top-10 -right-10"></div>
       <div className="absolute -z-10 bg-[#c3f2ec]/20 w-80 h-80 rounded-full blur-[100px] opacity-30 -bottom-10 -left-10"></div>
 
-      {/* Header */}
-      <div className="flex items-center justify-between mb-4 shrink-0">
-        <ClayButton
-          variant="surface"
-          size="icon"
-          className="min-w-[64px] min-h-[64px]"
-          onClick={() => {
-            playSynthesizedSound("click");
-            onBack();
-          }}
-        >
-          <ArrowLeft size={28} strokeWidth={3.5} />
-        </ClayButton>
-
-        <h1 className="text-xl sm:text-2xl font-black uppercase text-[#4A5358] tracking-wider flex items-center gap-2">
-          <Sparkles size={24} className="text-[#7c52c7]" strokeWidth={3.5} />
-          Pattern Explorer
-        </h1>
-
-        <div className="bg-white/80 border-2 border-white/40 shadow-inner px-4 py-2 rounded-full font-black text-[#7c52c7] text-sm tracking-wide">
-          LEVEL {activeLevel.id}/{levels.length} 🧩
+      <div className="mb-3 flex shrink-0 justify-end">
+        <div className="rounded-full border-2 border-white/50 bg-white/80 px-3 py-1 text-[10px] font-black uppercase tracking-wider text-[#7c52c7] shadow-sm">
+          {activeLevel.id}/{levels.length}
         </div>
       </div>
 
@@ -212,9 +194,9 @@ export default function PatternExplorerEngine({ childId, onBack }: PatternExplor
         ) : (
           <div className="flex flex-col items-center w-full gap-8 min-h-0">
             {/* Title / Instruction */}
-            <div className="text-center">
-              <p className="text-lg sm:text-xl font-black text-[#4A5358] flex items-center justify-center gap-2">
-                <HelpCircle size={22} className="text-[#7c52c7]" strokeWidth={3} />
+            <div className="rounded-2xl border border-white/60 bg-white/75 px-3 py-2 text-center shadow-sm">
+              <p className="text-sm sm:text-base font-black text-[#4A5358] flex items-center justify-center gap-2">
+                <HelpCircle size={18} className="text-[#7c52c7]" strokeWidth={3} />
                 {activeLevel.instruction}
               </p>
             </div>

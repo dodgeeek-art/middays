@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef } from "react";
-import { ArrowLeft, Grid } from "@/components/Icons";
+import { Grid } from "@/components/Icons";
 import { motion, AnimatePresence, PanInfo } from "framer-motion";
 import confetti from "canvas-confetti";
 import { vocabularyList } from "@/lib/svgDictionary";
@@ -266,16 +266,6 @@ const getItemsForLevel = (level: number): { items: SortingItem[]; baskets: Baske
   }
 };
 
-const getParentPromptForLevel = (level: number, currentItem: string): string => {
-  if (level === 1) {
-    return `Ask your child: "What color is the ${currentItem}? Can you find other things in this room that are the same color?"`;
-  } else if (level === 2) {
-    return `Ask your child: "Is the ${currentItem} something we eat or a friendly animal?"`;
-  } else {
-    return `Ask your child: "Does the ${currentItem} live on a farm or swim in the deep blue ocean?"`;
-  }
-};
-
 export default function SortingBasketEngine({ childId, onBack }: SortingBasketEngineProps) {
   const [level, setLevel] = useState(1);
   const [items, setItems] = useState<SortingItem[]>(() => getItemsForLevel(1).items);
@@ -420,7 +410,6 @@ export default function SortingBasketEngine({ childId, onBack }: SortingBasketEn
     }
   };
 
-  const activeParentPrompt = currentItem ? getParentPromptForLevel(level, currentItem.name) : "";
   const activeGlow = baskets.find(b => b.id === currentItem?.category)?.glow || "bg-[#ffd166]";
 
   return (
@@ -429,22 +418,12 @@ export default function SortingBasketEngine({ childId, onBack }: SortingBasketEn
       {/* Background blobs specific to Sorting game */}
       <div className="absolute -z-10 bg-[#bee8d4] w-64 h-64 rounded-full blur-[80px] opacity-40 -top-10 -right-10"></div>
       
-      {/* Header bar */}
-      <div className="flex items-center justify-between gap-2 mb-3 shrink-0">
-        <ClayButton
-          variant="surface"
-          size="icon"
-          className="min-w-[64px] min-h-[64px]"
-          onClick={() => {
-            playSynthesizedSound("click");
-            onBack();
-          }}
-        >
-          <ArrowLeft size={28} strokeWidth={3.5} />
-        </ClayButton>
-
-        {/* Integrated Progress Dots Container - Acts as the centered layout element */}
-        <div className="bg-white/85 border-2 border-white/40 shadow-[inset_-2px_-2px_4px_rgba(0,0,0,0.02),_inset_2px_2px_4px_rgba(255,255,255,0.85)] px-4 py-2 rounded-[1.5rem] flex gap-1.5 items-center justify-center min-h-[46px] shadow-sm">
+      <div className="mb-3 flex shrink-0 items-center justify-between gap-2 rounded-[1.25rem] border-2 border-white/50 bg-white/70 px-3 py-2 shadow-sm">
+        <div className="flex items-center gap-2">
+          <Grid size={18} className="text-[#3fa394]" />
+          <span className="text-[10px] font-black uppercase tracking-[0.16em] text-[#3fa394]">Level {level}/3</span>
+        </div>
+        <div className="flex items-center justify-center gap-1.5">
           {items.map((_, idx) => (
             <div
               key={idx}
@@ -458,16 +437,6 @@ export default function SortingBasketEngine({ childId, onBack }: SortingBasketEn
             />
           ))}
         </div>
-
-        <div className="bg-white/85 border-2 border-white/40 shadow-[inset_-2px_-2px_4px_rgba(0,0,0,0.02),_inset_2px_2px_4px_rgba(255,255,255,0.85)] px-4 py-2.5 rounded-[1.5rem] font-black text-[#3fa394] text-xs sm:text-sm tracking-wide shadow-sm shrink-0">
-          LEVEL {level}/3
-        </div>
-      </div>
-
-      {/* Parental Co-Play Banner */}
-      <div className="bg-[#ddcbf5]/85 border-2 border-white/45 text-[#42236b] px-3.5 py-2.5 rounded-[1.8rem] mb-3 text-center font-bold text-xs sm:text-sm shadow-[inset_-2px_-2px_4px_rgba(0,0,0,0.02),_inset_2px_2px_4px_rgba(255,255,255,0.85)] leading-snug shrink-0">
-        <span className="text-[9px] font-black uppercase tracking-wider text-[#7c52c7] block mb-0.5">🧑‍🍼 Parent & Child Co-Play Option</span>
-        {activeParentPrompt}
       </div>
 
       {/* Success Completion Overlay */}

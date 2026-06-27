@@ -8,35 +8,20 @@ import { vocabularyList } from "@/lib/svgDictionary";
 import MascotSVG from "./MascotSVG";
 import ClayButton from "@/components/ui/ClayButton";
 import { InGameSuccessState } from "@/components/ui/InGameShell";
+import {
+  PHONICS_SOUNDS,
+  PhonicsSound,
+  buildCorrectSoundPrompt,
+  buildFindSoundPrompt,
+  buildReplaySoundPrompt,
+  buildTryAgainSoundPrompt,
+} from "@/lib/phonics";
+import { selectPreferredVoice, speakWithPreferredVoice } from "@/lib/speech";
 
 interface SoundGardenEngineProps {
   childId: string;
   onBack: () => void;
 }
-
-interface SoundItem {
-  soundId: string;
-  phonemeText: string;
-  speakSound: string;
-  objects: string[];
-}
-
-const SOUNDS_DATA: SoundItem[] = [
-  { soundId: "m", phonemeText: "/m/", speakSound: "muh", objects: ["Moon", "Monkey", "Mushroom"] },
-  { soundId: "s", phonemeText: "/s/", speakSound: "suh", objects: ["Sun", "Star", "Snake", "Strawberry", "Sunflower", "Shell", "Snowman"] },
-  { soundId: "t", phonemeText: "/t/", speakSound: "tuh", objects: ["Turtle", "Tree", "Tomato", "Tulip", "Truck"] },
-  { soundId: "p", phonemeText: "/p/", speakSound: "puh", objects: ["Pig", "Panda", "Penguin", "Plane", "Pizza", "Pear"] },
-  { soundId: "b", phonemeText: "/b/", speakSound: "buh", objects: ["Ball", "Bear", "Banana", "Bee", "Bell", "Butterfly", "Balloon", "Boat", "Bus"] },
-  { soundId: "d", phonemeText: "/d/", speakSound: "duh", objects: ["Dog", "Duck", "Drum", "Donut", "Dolphin"] },
-  { soundId: "k", phonemeText: "/k/", speakSound: "kuh", objects: ["Cat", "Cake", "Kite", "Koala", "Carrot", "Cloud", "Cookie", "Crown", "Cup", "Crab", "Cheese"] },
-  { soundId: "f", phonemeText: "/f/", speakSound: "fuh", objects: ["Fish", "Frog", "Fox"] },
-  { soundId: "a", phonemeText: "/æ/", speakSound: "ah", objects: ["Apple", "Alligator"] },
-  { soundId: "o", phonemeText: "/ɒ/", speakSound: "ah", objects: ["Octopus", "Owl"] },
-  { soundId: "l", phonemeText: "/l/", speakSound: "luh", objects: ["Lion", "Leaf", "Lemon"] },
-  { soundId: "r", phonemeText: "/r/", speakSound: "ruh", objects: ["Rabbit", "Rain", "Rose", "Rocket"] },
-  { soundId: "h", phonemeText: "/h/", speakSound: "huh", objects: ["Hippo", "Hat", "House", "Heart", "Helicopter", "Hamburger"] },
-  { soundId: "g", phonemeText: "/g/", speakSound: "guh", objects: ["Grapes", "Gift", "Guitar"] },
-];
 
 const BLOOM_FLOWERS = ["Sunflower", "Rose", "Tulip", "Strawberry", "Cherry", "Banana"];
 
@@ -47,7 +32,7 @@ interface ChoiceItem {
 }
 
 interface RoundData {
-  targetSound: SoundItem;
+  targetSound: PhonicsSound;
   correctChoice: ChoiceItem;
   choices: ChoiceItem[];
   bloomFlower: string;
@@ -58,9 +43,9 @@ const getCurrentTime = (): number => Date.now();
 // Pure helper function defined outside component scope to comply with React purity rules
 function createRound(recentSounds: string[]): RoundData & { nextRecent: string[] } {
   // 1. Select a sound item, excluding recent choices if possible
-  let availableSounds = SOUNDS_DATA.filter(s => !recentSounds.includes(s.soundId));
+  let availableSounds = PHONICS_SOUNDS.filter(s => !recentSounds.includes(s.soundId));
   if (availableSounds.length === 0) {
-    availableSounds = SOUNDS_DATA;
+    availableSounds = PHONICS_SOUNDS;
   }
   const chosenSound = availableSounds[Math.floor(Math.random() * availableSounds.length)];
   
@@ -79,10 +64,10 @@ function createRound(recentSounds: string[]): RoundData & { nextRecent: string[]
 
   // 3. Select 2 distractors from different sounds
   const wrongChoices: ChoiceItem[] = [];
-  const otherSounds = SOUNDS_DATA.filter(s => s.soundId !== chosenSound.soundId);
+  const otherSounds = PHONICS_SOUNDS.filter(s => s.soundId !== chosenSound.soundId);
   
   // Pick 2 unique other sounds
-  const distractorSounds: SoundItem[] = [];
+  const distractorSounds: PhonicsSound[] = [];
   while (distractorSounds.length < 2) {
     const s = otherSounds[Math.floor(Math.random() * otherSounds.length)];
     if (!distractorSounds.some(ds => ds.soundId === s.soundId)) {
@@ -114,54 +99,6 @@ function createRound(recentSounds: string[]): RoundData & { nextRecent: string[]
   };
 }
 
-// Pure helper to select the best available English voice while filtering out macOS novelty voices
-function selectPreferredVoice(): SpeechSynthesisVoice | null {
-  if (typeof window === "undefined" || !window.speechSynthesis) return null;
-  const voices = window.speechSynthesis.getVoices();
-  if (voices.length === 0) return null;
-
-  // Filter English voices
-  const enVoices = voices.filter(v => v.lang.toLowerCase().startsWith("en"));
-  
-  // Filter out macOS novelty/joke voices
-  const noveltyVoices = [
-    "albert", "bad news", "bahh", "bells", "boing", "bubbles", "cellos",
-    "deranged", "good news", "hysterical", "pipe organ", "trinoids",
-    "whisper", "wobble", "zarvox"
-  ];
-  const clearVoices = enVoices.filter(v => {
-    const name = v.name.toLowerCase();
-    return !noveltyVoices.some(nv => name.includes(nv));
-  });
-
-  // Priority list for high-quality standard voices
-  const priorityNames = [
-    "google us english",
-    "google uk english female",
-    "google uk english male",
-    "samantha",
-    "alex",
-    "daniel",
-    "karen",
-    "fiona",
-    "moira",
-    "tessa",
-    "veena",
-    "hazel",
-    "zira",
-    "david"
-  ];
-
-  for (const pName of priorityNames) {
-    const found = clearVoices.find(v => v.name.toLowerCase().includes(pName));
-    if (found) return found;
-  }
-
-  if (clearVoices.length > 0) return clearVoices[0];
-  if (enVoices.length > 0) return enVoices[0];
-  return voices[0] || null;
-}
-
 export default function SoundGardenEngine({ childId, onBack }: SoundGardenEngineProps) {
   // Lazy state initializers to avoid triggering setState on mount
   const [roundData, setRoundData] = useState<RoundData>(() => createRound([]));
@@ -174,7 +111,6 @@ export default function SoundGardenEngine({ childId, onBack }: SoundGardenEngine
   const [gardenFlowers, setGardenFlowers] = useState<string[]>([]);
   
   const audioCtxRef = useRef<AudioContext | null>(null);
-  const activeUtteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
   const roundStartTimeRef = useRef<number>(getCurrentTime());
 
   const [voicesLoaded, setVoicesLoaded] = useState(false);
@@ -286,38 +222,11 @@ export default function SoundGardenEngine({ childId, onBack }: SoundGardenEngine
 
   // Speak text using Web Speech API with slow/warm settings suitable for toddler
   const speakText = useCallback((text: string, pitch: number = 1.15) => {
-    if (typeof window !== "undefined" && window.speechSynthesis) {
-      window.speechSynthesis.cancel();
-      if (activeUtteranceRef.current) {
-        activeUtteranceRef.current.onend = null;
-        activeUtteranceRef.current.onerror = null;
-        activeUtteranceRef.current = null;
-      }
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = "en-US";
-      utterance.rate = 0.78; // Slow rate for 3.5 year olds
-      utterance.pitch = pitch;
-
-      // Select high-quality English voice
-      let selectedVoice = preferredVoiceRef.current;
-      if (!selectedVoice) {
-        selectedVoice = selectPreferredVoice();
-        if (selectedVoice) {
-          preferredVoiceRef.current = selectedVoice;
-        }
-      }
-      if (selectedVoice) {
-        utterance.voice = selectedVoice;
-      }
-
-      activeUtteranceRef.current = utterance;
-      window.speechSynthesis.speak(utterance);
-    }
+    speakWithPreferredVoice(text, preferredVoiceRef.current, { pitch });
   }, []);
 
-  const speakPrompt = useCallback((sound: SoundItem) => {
-    // Write phonics representation with spacing for better speech-engine phoneme audio
-    speakText(`Find... ${sound.speakSound}... ${sound.speakSound}... ${sound.speakSound}.`);
+  const speakPrompt = useCallback((sound: PhonicsSound) => {
+    speakText(buildFindSoundPrompt(sound));
   }, [speakText]);
 
   // Play introduction audio prompt when roundIndex or roundData changes and voices are loaded
@@ -333,7 +242,7 @@ export default function SoundGardenEngine({ childId, onBack }: SoundGardenEngine
   const handleReplayPrompt = () => {
     if (roundData && gameState === "playing") {
       initAudio();
-      speakPrompt(roundData.targetSound);
+      speakText(buildReplaySoundPrompt(roundData.targetSound));
     }
   };
 
@@ -378,8 +287,7 @@ export default function SoundGardenEngine({ childId, onBack }: SoundGardenEngine
       setGameState("correct-animation");
       playCorrectChime();
 
-      // Auditory Feedback: "Yes! mmm, mmm, Moon!"
-      speakText(`Yes!... ${roundData.targetSound.speakSound}... ${roundData.targetSound.speakSound}... ${tappedChoice.name}!`);
+      speakText(buildCorrectSoundPrompt(tappedChoice.name, roundData.targetSound));
 
       // Grow seedling into flower list
       setGardenFlowers(prev => [...prev, tappedChoice.name]);
@@ -418,14 +326,7 @@ export default function SoundGardenEngine({ childId, onBack }: SoundGardenEngine
       setWrongSelections(prev => [...prev, index]);
       setSelectedIdx(null);
 
-      // Auditory Feedback: "Good try. Listen again: mmm"
-      speakText(`Good try!... Listen again... ${roundData.targetSound.speakSound}.`);
-
-      // Auto replay prompt after delay
-      setTimeout(() => {
-        // Re-read current round data to check state
-        speakPrompt(roundData.targetSound);
-      }, 2500);
+      speakText(buildTryAgainSoundPrompt(roundData.targetSound));
     }
   };
 
@@ -463,7 +364,7 @@ export default function SoundGardenEngine({ childId, onBack }: SoundGardenEngine
           </p>
           <div className="flex items-center justify-between gap-3">
             <h2 className="text-lg sm:text-xl font-black text-[#2f3e46] tracking-tight uppercase flex items-center gap-2">
-              Find {roundData?.targetSound.phonemeText}
+              Find a picture that starts with {roundData?.targetSound.phonemeText}
             </h2>
             <button
               onClick={handleReplayPrompt}

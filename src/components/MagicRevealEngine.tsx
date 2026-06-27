@@ -3,6 +3,7 @@ import confetti from "canvas-confetti";
 import { ArrowLeft, RefreshCw } from "@/components/Icons";
 import { motion, AnimatePresence } from "framer-motion";
 import { objectDictionary } from "../lib/svgDictionary";
+import { getPhonicsSoundCue } from "@/lib/phonics";
 
 interface Point {
   x: number;
@@ -240,7 +241,7 @@ export default function MagicRevealEngine({ childId, onBack }: MagicRevealEngine
     // Speak the letter sound
     if (typeof window !== "undefined" && window.speechSynthesis) {
       window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(targetLetter);
+      const utterance = new SpeechSynthesisUtterance(getPhonicsSoundCue(targetLetter));
       utterance.rate = 0.85;
       utterance.pitch = 1.15;
       window.speechSynthesis.speak(utterance);
@@ -289,7 +290,7 @@ export default function MagicRevealEngine({ childId, onBack }: MagicRevealEngine
       if (typeof window !== "undefined" && window.speechSynthesis) {
         window.speechSynthesis.cancel();
         const obj = objectDictionary[targetLetter];
-        const utterance = new SpeechSynthesisUtterance(`${targetLetter}, ${obj ? obj.name : ""}`);
+        const utterance = new SpeechSynthesisUtterance(`${obj ? obj.name : ""} starts with ${getPhonicsSoundCue(targetLetter)}.`);
         utterance.rate = 0.85;
         utterance.pitch = 1.15;
         window.speechSynthesis.speak(utterance);

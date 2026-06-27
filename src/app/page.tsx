@@ -125,7 +125,7 @@ const IN_GAME_META: Record<Exclude<ActiveGame, "menu">, InGameShellMeta> = {
   story: {
     title: "Story",
     eyebrow: "Sequence",
-    instruction: "Put the story pieces in an order that makes sense.",
+    instruction: "Build each story in order.",
     category: "creative",
     status: "Story order",
   },
@@ -339,7 +339,7 @@ export default function Home() {
       case "sorting":
         return <SortingBasketEngine childId={childId} onBack={backToMenu} />;
       case "bunny":
-        return <WhereIsBunnyEngine childId={childId} onBack={backToMenu} />;
+        return <WhereIsBunnyEngine />;
       case "story":
         return <StorySequenceEngine childId={childId} onBack={backToMenu} />;
       case "mark":
@@ -380,7 +380,7 @@ export default function Home() {
       <main className={`flex-grow max-w-6xl mx-auto w-full flex flex-col relative z-0 ${
         isGameActive 
           ? "h-[100svh] max-h-[100svh] justify-center overflow-hidden p-1.5 pb-[calc(0.5rem+env(safe-area-inset-bottom))] sm:h-[calc(100dvh-2rem)] sm:max-h-[calc(100dvh-2rem)] sm:p-4 sm:pb-4 sm:mt-2" 
-          : `justify-start p-4 pb-32 sm:pb-36 md:pb-28 ${view === "lesson" ? "pt-6 sm:pt-8" : "pt-24 sm:pt-28"}`
+          : `justify-start p-4 pb-52 sm:pb-40 md:pb-28 ${view === "lesson" ? "pt-6 sm:pt-8" : "pt-24 sm:pt-28"}`
       }`}>
         <AnimatePresence mode="wait">
             {view === "lesson" && (

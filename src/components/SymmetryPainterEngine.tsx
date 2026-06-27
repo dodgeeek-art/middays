@@ -1,8 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { ArrowLeft, Volume2, Sparkles, Lightbulb } from "@/components/Icons";
-import { motion, AnimatePresence } from "framer-motion";
+import { Lightbulb } from "@/components/Icons";
 import confetti from "canvas-confetti";
 import ClayButton from "@/components/ui/ClayButton";
 import { vocabularyList } from "@/lib/svgDictionary";
@@ -52,7 +51,7 @@ const symmetryTemplates: SymmetryTemplate[] = [
 
 const colorsPalette = ["#ff4d6d", "#ffd166", "#06d6a0", "#118ab2", "#9e7bf5"];
 
-export default function SymmetryPainterEngine({ childId, onBack }: { childId: string; onBack: () => void }) {
+export default function SymmetryPainterEngine({ childId }: { childId: string; onBack: () => void }) {
   const [activeTemplateIdx, setActiveTemplateIdx] = useState(0);
   const [selectedColor, setSelectedColor] = useState(colorsPalette[0]);
   const [unfolded, setUnfolded] = useState(false);
@@ -360,36 +359,24 @@ export default function SymmetryPainterEngine({ childId, onBack }: { childId: st
       {/* Background decoration */}
       <div className="absolute -top-20 -left-20 w-80 h-80 rounded-full bg-[#118ab2]/5 blur-3xl pointer-events-none" />
 
-      {/* Header */}
-      <div className="flex items-center justify-between mb-4 shrink-0">
-        <ClayButton
-          variant="surface"
-          size="icon"
-          className="min-w-[64px] min-h-[64px]"
-          onClick={() => {
-            playSynthesizedSound("click");
-            onBack();
-          }}
-        >
-          <ArrowLeft size={28} strokeWidth={3.5} />
-        </ClayButton>
-
-        <h1 className="text-xl sm:text-2xl font-black uppercase text-[#4A5358] tracking-wider flex items-center gap-2">
-          <Lightbulb size={24} className="text-[#118ab2]" strokeWidth={3.5} />
-          Symmetry Painter
-        </h1>
-
-        <div className="bg-white/80 border-2 border-white/40 shadow-inner px-4 py-2 rounded-full font-black text-[#118ab2] text-sm tracking-wide">
-          PAINT {activeTemplateIdx + 1}/{symmetryTemplates.length} 🎨
+      <div className="mb-3 flex shrink-0 items-center justify-between rounded-2xl border-2 border-white/50 bg-white/70 px-3 py-2 shadow-sm">
+        <div className="flex items-center gap-2 min-w-0">
+          <Lightbulb size={18} className="shrink-0 text-[#118ab2]" strokeWidth={3.5} />
+          <span className="truncate text-xs font-black uppercase tracking-wider text-[#0f607f]">
+            Paint {template.name}
+          </span>
         </div>
+        <span className="shrink-0 rounded-full bg-white px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-[#118ab2] shadow-sm">
+          {activeTemplateIdx + 1}/{symmetryTemplates.length}
+        </span>
       </div>
 
       <div className="flex-grow flex flex-col justify-between min-h-0 relative z-10">
         
         {/* Draw Prompt */}
-        <div className="text-center mb-3 shrink-0">
-          <span className="text-sm sm:text-base font-black text-[#118ab2] uppercase tracking-wider">
-            Trace the right side to paint the left side!
+        <div className="text-center mb-2 shrink-0">
+          <span className="text-xs sm:text-sm font-black text-[#118ab2] uppercase tracking-wider">
+            Trace the right side.
           </span>
         </div>
 

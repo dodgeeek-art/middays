@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
-import { ArrowLeft, Check, RefreshCw, Sparkles, Volume2 } from "@/components/Icons";
+import { Check, RefreshCw, Sparkles, Volume2 } from "@/components/Icons";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 import ClayButton from "@/components/ui/ClayButton";
@@ -282,7 +282,7 @@ function StepBadge({ index, label, active, complete }: { index: number; label: s
   );
 }
 
-export default function ClayAlchemyEngine({ childId, onBack }: { childId: string; onBack: () => void }) {
+export default function ClayAlchemyEngine({ childId }: { childId: string; onBack: () => void }) {
   const [levelIdx, setLevelIdx] = useState(0);
   const [redAmt, setRedAmt] = useState(0);
   const [yellowAmt, setYellowAmt] = useState(0);
@@ -574,31 +574,14 @@ export default function ClayAlchemyEngine({ childId, onBack }: { childId: string
       <div className="pointer-events-none absolute -right-24 -top-28 h-72 w-72 rounded-full bg-[#ffd166]/25 blur-3xl" />
       <div className="pointer-events-none absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-[#118ab2]/15 blur-3xl" />
 
-      <header
-        className="mobile-alchemy-header relative z-20 flex shrink-0 items-center justify-between gap-2"
+      <div
+        className="mobile-alchemy-header relative z-20 flex shrink-0 justify-end"
         style={isCompactPhone ? { marginBottom: 6 } : undefined}
       >
-        <ClayButton
-          variant="surface"
-          size="icon"
-          className="min-h-[38px] min-w-[38px] p-2 border-2 border-white/60 shadow-md sm:min-h-[60px] sm:min-w-[60px] sm:p-3.5"
-          onClick={onBack}
-          aria-label="Back to activities"
-        >
-          <ArrowLeft size={22} strokeWidth={3.5} className="text-[#5c6b73] sm:h-[26px] sm:w-[26px]" />
-        </ClayButton>
-
-        <div className="min-w-0 text-center">
-          <p className="text-[8px] font-black uppercase tracking-[0.24em] text-slate-500 sm:text-[10px]">Color Mixing Lab</p>
-          <h1 className="truncate text-sm font-black uppercase tracking-wide text-[#2f3e46] sm:text-2xl">
-            Clay Alchemy
-          </h1>
-        </div>
-
-        <div className="rounded-full border-2 border-white bg-[#ffd166] px-2 py-1 text-center text-[8px] font-black uppercase tracking-wider text-[#604500] shadow-inner sm:px-4 sm:py-2 sm:text-xs">
+        <div className="rounded-full border-2 border-white bg-[#ffd166] px-3 py-1 text-center text-[9px] font-black uppercase tracking-wider text-[#604500] shadow-inner sm:px-4 sm:py-1.5 sm:text-xs">
           Mix {levelIdx + 1}/{levels.length}
         </div>
-      </header>
+      </div>
 
       <div
         className="mobile-alchemy-top relative z-10 mt-1 grid shrink-0 gap-1 sm:mt-3 sm:gap-2 lg:grid-cols-[1fr_auto] lg:items-center"

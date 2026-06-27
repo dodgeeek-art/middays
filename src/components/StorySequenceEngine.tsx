@@ -1,10 +1,9 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { ArrowLeft, Volume2, BookOpen } from "@/components/Icons";
-import { motion, AnimatePresence, PanInfo } from "framer-motion";
+import { Volume2 } from "@/components/Icons";
+import { motion, PanInfo } from "framer-motion";
 import ClayButton from "@/components/ui/ClayButton";
-import ClayCard from "@/components/ui/ClayCard";
 import { playSynthesizedSound } from "@/lib/audio";
 import { 
   Cake as CakeRaw, 
@@ -90,25 +89,25 @@ const concepts: Concept[] = [
     steps: [
       {
         stepIndex: 0,
-        instruction: "Drag the Hoe to dig a hole in the soil!",
+        instruction: "Drag Hoe to soil.",
         voicePrompt: "Drag the hoe to dig a hole in the soil!",
         correctToolId: "hoe"
       },
       {
         stepIndex: 1,
-        instruction: "Drag the Seed Packet to plant the seeds!",
+        instruction: "Drag Seeds to soil.",
         voicePrompt: "Excellent! Now drag the seed packet to plant the seeds!",
         correctToolId: "seed"
       },
       {
         stepIndex: 2,
-        instruction: "Drag the Watering Can to water the soil!",
+        instruction: "Drag Water to soil.",
         voicePrompt: "Almost there! Drag the watering can to water the seeds and help them grow!",
         correctToolId: "water"
       }
     ],
     renderScene: (sceneStep: number, activeActionTool: string | null) => (
-      <svg viewBox="0 0 300 200" className="w-full h-full rounded-[1.8rem] overflow-hidden">
+      <svg viewBox="0 0 300 200" preserveAspectRatio="xMidYMid slice" className="w-full h-full rounded-[1.8rem] overflow-hidden">
         {/* Sky */}
         <rect x="0" y="0" width="300" height="130" fill="#bae6fd" />
         {/* Sun */}
@@ -270,25 +269,25 @@ const concepts: Concept[] = [
     steps: [
       {
         stepIndex: 0,
-        instruction: "Drag the Eggs to crack them into the mixing bowl!",
+        instruction: "Drag Eggs to bowl.",
         voicePrompt: "Let's start baking! Drag the eggs to crack them into the mixing bowl!",
         correctToolId: "egg"
       },
       {
         stepIndex: 1,
-        instruction: "Drag the Whisk to stir the cake batter!",
+        instruction: "Drag Whisk to bowl.",
         voicePrompt: "Now drag the whisk to stir the cake batter together!",
         correctToolId: "whisk"
       },
       {
         stepIndex: 2,
-        instruction: "Drag the Cake Pan to pour the batter and bake!",
+        instruction: "Drag Pan to bake.",
         voicePrompt: "Perfect! Drag the cake pan to pour the batter and bake it in the oven!",
         correctToolId: "pan"
       }
     ],
     renderScene: (sceneStep: number, activeActionTool: string | null) => (
-      <svg viewBox="0 0 300 200" className="w-full h-full rounded-[1.8rem] overflow-hidden">
+      <svg viewBox="0 0 300 200" preserveAspectRatio="xMidYMid slice" className="w-full h-full rounded-[1.8rem] overflow-hidden">
         {/* Wall */}
         <rect x="0" y="0" width="300" height="135" fill="#fef3c7" />
         <line x1="0" y1="45" x2="300" y2="45" stroke="#fde68a" strokeWidth="2.5" strokeDasharray="6,6" />
@@ -443,25 +442,25 @@ const concepts: Concept[] = [
     steps: [
       {
         stepIndex: 0,
-        instruction: "Drag the Snowballs to stack the snowman's body!",
+        instruction: "Drag Snowballs to snow.",
         voicePrompt: "It's snowing! Drag the snowballs to stack the snowman's body!",
         correctToolId: "snowballs"
       },
       {
         stepIndex: 1,
-        instruction: "Drag the Carrot to add the face and stick arms!",
+        instruction: "Drag Carrot to face.",
         voicePrompt: "Great stack! Now drag the carrot to add the face and stick arms!",
         correctToolId: "carrot"
       },
       {
         stepIndex: 2,
-        instruction: "Drag the Top Hat to dress him up!",
+        instruction: "Drag Hat to head.",
         voicePrompt: "Awesome! Finally, drag the top hat to dress up the snowman!",
         correctToolId: "hat"
       }
     ],
     renderScene: (sceneStep: number, activeActionTool: string | null) => (
-      <svg viewBox="0 0 300 200" className="w-full h-full rounded-[1.8rem] overflow-hidden">
+      <svg viewBox="0 0 300 200" preserveAspectRatio="xMidYMid slice" className="w-full h-full rounded-[1.8rem] overflow-hidden">
         {/* Winter Night Sky */}
         <rect x="0" y="0" width="300" height="130" fill="#0f172a" />
         {/* Stars */}
@@ -727,68 +726,40 @@ export default function StorySequenceEngine({ childId, onBack }: { childId: stri
   };
 
   return (
-    <div className="flex flex-col w-full max-w-4xl mx-auto h-full min-h-0 bg-[#f8fafc] p-4 rounded-[2.5rem] border-[3px] border-white/50 shadow-clay-card relative overflow-hidden select-none">
-      
-      {/* Background blobs decoration */}
-      <div className="absolute -z-10 bg-indigo-200/20 w-80 h-80 rounded-full blur-[80px] -top-10 -left-10" />
-
-      {/* Header */}
-      <div className="flex items-center justify-between mb-4 shrink-0">
-        <ClayButton
-          variant="surface"
-          size="sm"
-          onClick={() => {
-            playSynthesizedSound("click");
-            onBack();
-          }}
-        >
-          <ArrowLeft size={24} strokeWidth={3.5} />
-        </ClayButton>
-
-        <h1 className="text-xl sm:text-2xl font-black uppercase text-[#4A5358] tracking-wider flex items-center gap-2">
-          <BookOpen size={24} className="text-[#6366f1]" strokeWidth={3.5} />
-          Story Builder
-        </h1>
-
-        <div className="bg-white/80 border-2 border-white/40 shadow-inner px-4 py-2 rounded-full font-black text-[#6366f1] text-xs sm:text-sm tracking-wide">
-          STORY {activeConceptIdx + 1}/{concepts.length} 🎬
+    <div className="relative mx-auto flex h-full min-h-0 w-full max-w-4xl select-none flex-col overflow-hidden rounded-[1.35rem] border border-[var(--brand-line)] bg-[#fffdf7] p-2.5 shadow-[0_14px_34px_rgba(34,49,63,0.08)] sm:p-4">
+      <div className="mb-2 flex shrink-0 items-center justify-between gap-2 rounded-2xl border border-[#ffb51f]/20 bg-[#fff8e7]/75 px-3 py-2">
+        <div className="min-w-0">
+          <p className="truncate text-xs font-extrabold leading-tight text-[var(--brand-ink)] sm:text-sm">
+            {concept.title}
+          </p>
         </div>
+        <span className="shrink-0 rounded-full border border-[var(--brand-line)] bg-white px-3 py-1 text-[10px] font-black uppercase tracking-[0.1em] text-[var(--brand-muted)] shadow-sm">
+          {currentStep + 1}/{concept.steps.length}
+        </span>
       </div>
 
-      {/* Parental Co-Play Banner */}
-      <div className="bg-indigo-50 border-2 border-indigo-100 text-indigo-900 p-3 rounded-2xl mb-4 text-center font-semibold text-xs sm:text-sm shadow-inner shrink-0 leading-snug">
-        <span className="text-[10px] font-black uppercase tracking-wider text-indigo-600 block mb-0.5">🧑‍🍼 Parent & Child Co-Play Option</span>
-        {concept.parentPrompt}
-      </div>
-
-      {/* Victory popup modal removed to keep final scene fully visible */}
-
-      {/* Main Gameboard */}
-      <div className="flex-grow flex flex-col justify-between min-h-0 relative">
-        
-        {/* Instruction Guidance bar */}
-        <div className="w-full bg-white p-3 rounded-2xl border-2 border-white/60 shadow-clay-card flex items-center justify-center gap-3 mb-4 shrink-0">
-          <ClayButton
-            variant="surface"
-            size="sm"
+      <div className="min-h-0 flex-1 rounded-[1.2rem] border border-[var(--brand-line)] bg-white/72 p-2 shadow-inner sm:p-3">
+        <div className="flex h-full min-h-0 flex-col">
+          <div className="mb-2 flex shrink-0 items-center justify-center gap-2 rounded-2xl border border-[var(--brand-line)] bg-white px-2 py-1.5 shadow-[0_5px_14px_rgba(34,49,63,0.06)]">
+          <button
+            type="button"
             onClick={() => speakText(step.instruction)}
-            className="p-1.5 bg-[#fcfcfc] rounded-full shadow-sm"
+            aria-label="Replay story instruction"
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-[var(--brand-line)] bg-[#fff8e7] text-[#ff7a59] shadow-[0_4px_10px_rgba(34,49,63,0.08)] transition active:scale-95"
           >
-            <Volume2 size={18} className="text-indigo-500" strokeWidth={3.5} />
-          </ClayButton>
-          <span className="text-xs sm:text-sm font-black text-[#4A5358] tracking-wide text-center">
-            {isAnimating ? "Watch the magic happen! 🌟" : step.instruction}
+            <Volume2 size={16} strokeWidth={3.5} />
+          </button>
+          <span className="min-w-0 text-center text-xs font-black leading-snug tracking-normal text-[var(--brand-ink)] sm:text-sm">
+            {isAnimating ? "Watch the story change." : step.instruction}
           </span>
         </div>
 
-        {/* The Animated Story Scene */}
         <div 
           ref={sceneRef}
-          className="flex-grow w-full max-w-lg mx-auto aspect-[3/2] bg-white rounded-[2rem] border-[4px] border-white shadow-clay-card relative overflow-hidden"
+            className="relative mx-auto min-h-0 w-full max-w-lg flex-1 overflow-hidden rounded-[1.25rem] border-[3px] border-white bg-white shadow-[0_10px_26px_rgba(34,49,63,0.1)] [&>svg]:h-full [&>svg]:w-full [&>svg]:rounded-none"
         >
           {concept.renderScene(sceneStep, activeActionTool)}
 
-          {/* Sparkles / Completed feedback overlay */}
           {sceneStep === concept.steps.length && (
             <motion.div
               initial={{ opacity: 0 }}
@@ -799,68 +770,66 @@ export default function StorySequenceEngine({ childId, onBack }: { childId: stri
           )}
         </div>
 
-        {/* Step Indicator Dots */}
-        <div className="flex justify-center gap-2.5 my-4">
+          <div className="my-2 flex shrink-0 justify-center gap-2">
           {concept.steps.map((_, idx) => (
             <div
               key={idx}
-              className={`w-4 h-4 rounded-full border-2 border-white transition-all duration-300 ${
+                className={`h-3 w-3 rounded-full border border-white transition-all duration-300 ${
                 idx < sceneStep 
-                  ? "bg-indigo-500 scale-110 shadow-sm" 
+                    ? "bg-[#ffb51f] scale-110 shadow-sm" 
                   : idx === sceneStep 
-                    ? "bg-indigo-300 scale-125 animate-pulse" 
+                      ? "bg-[#ff7a59] scale-125 animate-pulse" 
                     : "bg-slate-200"
               }`}
             />
           ))}
         </div>
 
-        {/* Toolbox / Tools Drawer */}
-        <div className="w-full bg-indigo-50/50 border-2 border-dashed border-indigo-200/80 rounded-[2.2rem] p-4 shrink-0 flex items-center justify-around gap-4 min-h-[120px] relative shadow-[inset_2px_2px_8px_rgba(0,0,0,0.01)]">
+          <div className="relative mt-auto flex min-h-[112px] shrink-0 items-center justify-around gap-2 rounded-[1.5rem] border border-dashed border-[#ffb51f]/36 bg-[#fff8e7]/70 px-2.5 pb-2 pt-5 shadow-[inset_0_2px_10px_rgba(34,49,63,0.04)] sm:min-h-[124px] sm:gap-4 sm:px-4">
           {gameState === "finished" ? (
             <motion.div
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              className="w-full flex flex-col sm:flex-row items-center justify-between gap-4 px-4 py-2"
+                className="flex w-full flex-col items-center justify-between gap-3 px-3 py-1 text-center sm:flex-row sm:text-left"
             >
-              <div className="text-center sm:text-left">
-                <span className="text-[10px] font-black uppercase text-indigo-600 tracking-wider">🏆 Game Complete!</span>
-                <h4 className="text-base sm:text-lg font-black text-slate-700 leading-tight">
-                  Superb storytelling! You completed all the builder stories!
+              <div>
+                  <span className="text-[9px] font-black uppercase tracking-[0.14em] text-[#ff7a59]">Game Complete</span>
+                  <h4 className="text-sm font-black leading-tight text-[var(--brand-ink)] sm:text-lg">
+                  You completed all the builder stories.
                 </h4>
               </div>
               <ClayButton
                 variant="primary"
                 onClick={onBack}
-                className="w-full sm:w-auto px-8 py-3.5 font-black text-sm uppercase rounded-full shadow-clay toddler-target"
+                  className="w-full rounded-full px-6 py-3 text-sm font-black uppercase sm:w-auto"
               >
-                Back to Map 🏆
+                Back to Library
               </ClayButton>
             </motion.div>
           ) : gameState === "concept-complete" ? (
             <motion.div
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              className="w-full flex flex-col sm:flex-row items-center justify-between gap-4 px-4 py-2"
+                className="flex w-full flex-col items-center justify-between gap-3 px-3 py-1 text-center sm:flex-row sm:text-left"
             >
-              <div className="text-center sm:text-left">
-                <span className="text-[10px] font-black uppercase text-indigo-600 tracking-wider">🎉 Story Complete!</span>
-                <h4 className="text-base sm:text-lg font-black text-slate-700 leading-tight">
-                  Awesome job building <span className="text-indigo-600 font-extrabold">{concept.title}</span>!
+              <div>
+                  <span className="text-[9px] font-black uppercase tracking-[0.14em] text-[#ff7a59]">Story Complete</span>
+                  <h4 className="text-sm font-black leading-tight text-[var(--brand-ink)] sm:text-lg">
+                  You built <span className="font-extrabold text-[#ff7a59]">{concept.title}</span>.
                 </h4>
               </div>
               <ClayButton
                 variant="primary"
                 onClick={handleNextConcept}
-                className="w-full sm:w-auto px-8 py-3.5 font-black text-sm uppercase rounded-full shadow-clay toddler-target"
+                  className="w-full rounded-full px-6 py-3 text-sm font-black uppercase sm:w-auto"
               >
-                {activeConceptIdx + 1 >= concepts.length ? "Finish Storybook 🏆" : "Play Next Story 🚀"}
+                {activeConceptIdx + 1 >= concepts.length ? "Finish Storybook" : "Next Story"}
               </ClayButton>
             </motion.div>
           ) : (
             <>
-              <div className="absolute top-1.5 left-1/2 -translate-x-1/2 bg-white px-3 py-0.5 rounded-full border border-white text-[8px] sm:text-[9px] font-black uppercase text-indigo-500 tracking-wider shadow-sm pointer-events-none select-none">
-                {isAnimating ? "✨ Watching the story... ✨" : "🧰 Grab your tools"}
+                <div className="pointer-events-none absolute left-1/2 top-1.5 -translate-x-1/2 select-none rounded-full border border-[var(--brand-line)] bg-white px-3 py-0.5 text-[8px] font-black uppercase tracking-[0.14em] text-[var(--brand-muted)] shadow-sm sm:text-[9px]">
+                {isAnimating ? "Watching Story" : "Tool Tray"}
               </div>
 
               {concept.tools.map((tool) => (
@@ -872,19 +841,20 @@ export default function StorySequenceEngine({ childId, onBack }: { childId: stri
                   onDragEnd={(e, info) => handleDragEnd(tool.id, e, info)}
                   whileDrag={{ scale: 1.15, rotate: -2, zIndex: 50 }}
                   whileHover={!isAnimating ? { scale: 1.05 } : {}}
-                  className={`w-18 h-18 sm:w-22 sm:h-22 bg-white rounded-3xl border-[3px] border-white shadow-clay-card flex flex-col items-center justify-center p-2.5 Toddler-target relative select-none ${
-                    isAnimating ? "opacity-50 cursor-not-allowed" : "cursor-grab active:cursor-grabbing toddler-target"
+                    className={`relative flex h-[82px] w-[82px] select-none flex-col items-center justify-center rounded-[1.2rem] border border-[var(--brand-line)] bg-white p-2 shadow-[0_7px_16px_rgba(34,49,63,0.08)] sm:h-[96px] sm:w-[96px] ${
+                    isAnimating ? "cursor-not-allowed opacity-50" : "cursor-grab active:cursor-grabbing"
                   }`}
                   style={{ touchAction: "none" }}
                 >
                   {tool.renderIcon()}
-                  <span className="text-[8px] sm:text-[9.5px] font-black text-slate-500 uppercase mt-1 pointer-events-none">
+                    <span className="pointer-events-none mt-1 max-w-full truncate text-[8px] font-black uppercase tracking-normal text-[var(--brand-muted)] sm:text-[9.5px]">
                     {tool.name}
                   </span>
                 </motion.div>
               ))}
             </>
           )}
+          </div>
         </div>
       </div>
     </div>

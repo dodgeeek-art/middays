@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { ArrowLeft, Volume2, PenTool, Sparkles } from "@/components/Icons";
+import { Volume2, PenTool } from "@/components/Icons";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 import ClayButton from "@/components/ui/ClayButton";
@@ -532,42 +532,22 @@ export default function MarkMakerEngine({ childId, onBack }: { childId: string; 
     drawCanvas();
   };
 
-  const activeParentPrompt = template ? `Ask your child: "Can you trace the outline of the ${template.name}? What shape does it make?"` : "";
-
   return (
     <div className="flex flex-col w-full max-w-4xl mx-auto h-full min-h-0 bg-[#fef5f6] p-4 rounded-[2.5rem] border-[3px] border-white/50 shadow-clay-card relative overflow-hidden select-none">
       
       {/* Background blobs */}
       <div className="absolute -z-10 bg-[#f7c2b3]/30 w-72 h-72 rounded-full blur-[90px] opacity-40 -top-10 -right-10"></div>
       
-      {/* Header */}
-      <div className="flex items-center justify-between mb-4 shrink-0">
-        <ClayButton
-          variant="surface"
-          size="icon"
-          className="min-w-[64px] min-h-[64px]"
-          onClick={() => {
-            playSynthesizedSound("click");
-            onBack();
-          }}
-        >
-          <ArrowLeft size={28} strokeWidth={3.5} />
-        </ClayButton>
-
-        <h1 className="text-xl sm:text-2xl font-black uppercase text-[#4A5358] tracking-wider flex items-center gap-2">
-          <PenTool size={24} className="text-[#e07383]" strokeWidth={3.5} />
-          Trace & Color
-        </h1>
-
-        <div className="bg-white/80 border-2 border-white/40 shadow-inner px-4 py-2 rounded-full font-black text-[#e07383] text-sm tracking-wide">
-          TRACE {activeTemplateIdx + 1}/{tracingTemplates.length} ✏️
+      <div className="mb-3 flex shrink-0 items-center justify-between rounded-2xl border-2 border-white/50 bg-white/70 px-3 py-2 shadow-sm">
+        <div className="flex items-center gap-2 min-w-0">
+          <PenTool size={18} className="shrink-0 text-[#e07383]" strokeWidth={3.5} />
+          <span className="truncate text-xs font-black uppercase tracking-wider text-[#732010]">
+            Trace {template.name}
+          </span>
         </div>
-      </div>
-
-      {/* Parental Co-Play Banner */}
-      <div className="bg-[#f7c2b3]/70 border-2 border-white/50 text-[#732010] p-3 rounded-2xl mb-4 text-center font-bold text-xs sm:text-sm shadow-[inset_-2px_-2px_4px_rgba(0,0,0,0.02),_inset_2px_2px_4px_rgba(255,255,255,0.8)] leading-snug shrink-0">
-        <span className="text-[10px] font-black uppercase tracking-wider text-[#e07383] block mb-0.5">🧑‍🍼 Parent & Child Co-Play Option</span>
-        {activeParentPrompt}
+        <span className="shrink-0 rounded-full bg-white px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-[#e07383] shadow-sm">
+          {activeTemplateIdx + 1}/{tracingTemplates.length}
+        </span>
       </div>
 
       {/* Success Modal */}

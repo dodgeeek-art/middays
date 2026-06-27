@@ -261,8 +261,13 @@ body::before {
   opacity: 0.9;
 }
 
+.midday-game-content button[aria-label*="back" i],
+.midday-game-content button[aria-label*="menu" i],
+.midday-game-content > div > button:first-child,
 .midday-game-content > div > div:first-child > button:first-child,
-.midday-game-content > div > div:first-child > .clay-btn:first-child {
+.midday-game-content > div > div:first-child > .clay-btn:first-child,
+.midday-game-content > div > div:first-child:has(> button:first-child),
+.midday-game-content > div > div:first-child:has(> .clay-btn:first-child) {
   display: none !important;
 }
 
