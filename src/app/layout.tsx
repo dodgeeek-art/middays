@@ -1,15 +1,21 @@
 import type { Metadata, Viewport } from "next";
-import { Quicksand } from "next/font/google";
+import { Baloo_2, Nunito } from "next/font/google";
 import "./globals.css";
 
-const quicksand = Quicksand({
-  variable: "--font-quicksand",
+const baloo = Baloo_2({
+  variable: "--font-brand-display",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["600", "700", "800"],
+});
+
+const nunito = Nunito({
+  variable: "--font-body",
+  subsets: ["latin"],
+  weight: ["500", "600", "700", "800", "900"],
 });
 
 export const viewport: Viewport = {
-  themeColor: "#FF6B6B",
+  themeColor: "#FFB51F",
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
@@ -17,13 +23,13 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "Midday's",
-  description: "Interactive early education app for preschoolers.",
+  title: "Midday",
+  description: "Sunshine-bright early-learning games for preschool phonics, logic, and creative play.",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "Midday's",
+    title: "Midday",
   },
 };
 
@@ -36,7 +42,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${quicksand.variable} h-full antialiased`}
+      className={`${baloo.variable} ${nunito.variable} h-full antialiased`}
     >
       <head>
         {isDev && (

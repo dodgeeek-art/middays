@@ -28,34 +28,34 @@ export default function ClayCard({
   ...props
 }: ClayCardProps) {
   const baseStyle =
-    "border-[3px] p-6 transition-all duration-200 shadow-clay-card select-none";
+    "border-2 p-6 transition-all duration-200 shadow-clay-card select-none";
 
   // Wavy organic radiuses
   const shapeStyles = {
-    none: "rounded-[2rem]",
-    "wavy-1": "rounded-[2.2rem_1.8rem_2.4rem_1.9rem_/_1.9rem_2.3rem_1.8rem_2.1rem]",
-    "wavy-2": "rounded-[1.8rem_2.4rem_1.9rem_2.3rem_/_2.1rem_1.9rem_2.2rem_1.8rem]",
+    none: "rounded-3xl",
+    "wavy-1": "rounded-[1.8rem_1.35rem_1.7rem_1.45rem_/_1.45rem_1.8rem_1.35rem_1.7rem]",
+    "wavy-2": "rounded-[1.35rem_1.8rem_1.45rem_1.7rem_/_1.7rem_1.4rem_1.8rem_1.45rem]",
   };
 
   const variantStyles = {
     default:
-      "bg-white border-white/50 text-[#4A5358] shadow-clay-card hover:shadow-clay-card-hover",
+      "bg-[#fffdf6] border-[#22313f]/10 text-[#22313f] shadow-clay-card hover:shadow-clay-card-hover",
     primary:
-      "bg-[#f2c1c6] border-white/40 text-[#5e1c22] shadow-clay-pink hover:shadow-clay-pink-hover",
+      "bg-[#fff1b8] border-[#ffb51f]/25 text-[#593900] shadow-clay-yellow hover:shadow-clay-yellow-hover",
     secondary:
-      "bg-[#c3e6dc] border-white/40 text-[#0d4036] shadow-clay-mint hover:shadow-clay-mint-hover",
+      "bg-[#d9fbf4] border-[#00a9a5]/20 text-[#063f3d] shadow-clay-mint hover:shadow-clay-mint-hover",
     tertiary:
-      "bg-[#f5e4a3] border-white/40 text-[#544001] shadow-clay-yellow hover:shadow-clay-yellow-hover",
+      "bg-[#ffe2d7] border-[#ff6f4f]/20 text-[#7a1d0f] shadow-clay-pink hover:shadow-clay-pink-hover",
     purple:
-      "bg-[#ddcbf5] border-white/40 text-[#42236b] shadow-clay-purple hover:shadow-clay-purple-hover",
+      "bg-[#eee7ff] border-[#8d6bff]/20 text-[#3c247a] shadow-clay-purple hover:shadow-clay-purple-hover",
     blue:
-      "bg-[#b5cce6] border-white/40 text-[#1f3d68] shadow-clay-blue hover:shadow-clay-blue-hover",
+      "bg-[#e2f2ff] border-[#2f80ed]/20 text-[#164a8c] shadow-clay-blue hover:shadow-clay-blue-hover",
     lime:
-      "bg-[#bee8d4] border-white/40 text-[#16533f] shadow-clay-mint hover:shadow-clay-mint-hover",
+      "bg-[#ebffd5] border-[#7fc72f]/20 text-[#2e5f12] shadow-clay-mint hover:shadow-clay-mint-hover",
     peach:
-      "bg-[#f7c2b3] border-white/40 text-[#732010] shadow-clay-pink hover:shadow-clay-pink-hover",
+      "bg-[#ffe2d3] border-[#ff8c5a]/20 text-[#733018] shadow-clay-pink hover:shadow-clay-pink-hover",
     glass:
-      "bg-white/45 backdrop-blur-md border-white/50 text-[#4A5358] shadow-[0_8px_32px_rgba(31,38,135,0.04),inset_-4px_-4px_8px_rgba(0,0,0,0.02),inset_4px_4px_8px_rgba(255,255,255,0.8)] hover:bg-white/55 transition-all duration-300",
+      "bg-white/88 backdrop-blur-sm border-[#22313f]/10 text-[#22313f] shadow-[0_16px_34px_rgba(34,49,63,0.1),0_3px_0_rgba(34,49,63,0.12)] hover:bg-white transition-all duration-300",
   };
 
   const cardStyle = `${baseStyle} ${shapeStyles[organicShape]} ${variantStyles[variant]} ${className}`;

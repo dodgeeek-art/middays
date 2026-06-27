@@ -1,0 +1,545 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Midday Brand Guidelines</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Nunito:wght@600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --ink: #22313f;
+        --muted: rgba(34, 49, 63, 0.66);
+        --cream: #fff8e7;
+        --paper: #fffdf7;
+        --line: rgba(34, 49, 63, 0.1);
+        --sun: #ffb51f;
+        --sun-deep: #f08a00;
+        --sky: #42c7ff;
+        --teal: #00a9a5;
+        --coral: #ff6f4f;
+        --violet: #8d6bff;
+        --display: "Baloo 2", "Nunito", system-ui, sans-serif;
+        --body: "Nunito", system-ui, sans-serif;
+        --shadow: 0 18px 46px rgba(34, 49, 63, 0.1);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        background: var(--cream);
+        color: var(--ink);
+        font-family: var(--body);
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        background:
+          radial-gradient(circle at 12% 4%, rgba(255, 181, 31, 0.22), transparent 22rem),
+          radial-gradient(circle at 92% 16%, rgba(66, 199, 255, 0.14), transparent 20rem),
+          linear-gradient(180deg, #fffdf7 0%, var(--cream) 72%);
+        -webkit-font-smoothing: antialiased;
+      }
+
+      body::before {
+        position: fixed;
+        inset: 0;
+        z-index: -1;
+        pointer-events: none;
+        background-image: radial-gradient(rgba(34, 49, 63, 0.045) 1px, transparent 1px);
+        background-size: 28px 28px;
+        content: "";
+      }
+
+      .shell {
+        width: min(1120px, calc(100% - 32px));
+        margin: 0 auto;
+      }
+
+      .hero {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(320px, 0.72fr);
+        gap: clamp(32px, 6vw, 72px);
+        align-items: center;
+        min-height: 88vh;
+        padding: clamp(40px, 8vw, 88px) 0 56px;
+      }
+
+      .lockup {
+        display: inline-flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 32px;
+      }
+
+      .mark {
+        width: 58px;
+        height: 58px;
+        overflow: hidden;
+        border-radius: 18px;
+        box-shadow: 0 12px 28px rgba(255, 181, 31, 0.18);
+      }
+
+      img {
+        display: block;
+        max-width: 100%;
+      }
+
+      .mark img,
+      .logo-card img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .wordmark {
+        font-family: var(--display);
+        font-size: 36px;
+        font-weight: 800;
+        line-height: 1;
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 18px;
+        color: var(--sun-deep);
+        font-size: 12px;
+        font-weight: 900;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .eyebrow::before {
+        width: 32px;
+        height: 4px;
+        border-radius: 999px;
+        background: var(--sun);
+        content: "";
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin-top: 0;
+      }
+
+      h1 {
+        max-width: 760px;
+        margin-bottom: 22px;
+        font-family: var(--display);
+        font-size: clamp(48px, 8vw, 92px);
+        font-weight: 800;
+        line-height: 0.92;
+      }
+
+      h2 {
+        margin-bottom: 0;
+        font-family: var(--display);
+        font-size: clamp(34px, 4.8vw, 56px);
+        line-height: 0.96;
+      }
+
+      h3 {
+        margin-bottom: 10px;
+        font-size: 18px;
+      }
+
+      p {
+        color: var(--muted);
+        font-weight: 800;
+        line-height: 1.5;
+      }
+
+      .hero-copy {
+        max-width: 650px;
+        margin-bottom: 28px;
+        font-size: clamp(18px, 2vw, 22px);
+      }
+
+      .pill-row,
+      .nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .pill,
+      .button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 44px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: var(--paper);
+        color: var(--ink);
+        font-size: 12px;
+        font-weight: 900;
+        letter-spacing: 0.04em;
+        text-decoration: none;
+        text-transform: uppercase;
+      }
+
+      .pill {
+        padding: 0 16px;
+      }
+
+      .button {
+        min-height: 52px;
+        padding: 0 22px;
+        box-shadow: var(--shadow);
+      }
+
+      .button.primary {
+        background: var(--sun);
+      }
+
+      .phone {
+        position: relative;
+        width: min(390px, 100%);
+        margin: 0 auto;
+        overflow: hidden;
+        border: 10px solid #22313f;
+        border-radius: 42px;
+        background: var(--cream);
+        box-shadow: 0 32px 80px rgba(34, 49, 63, 0.2);
+      }
+
+      .phone-screen {
+        min-height: 720px;
+        padding: 18px;
+        background:
+          radial-gradient(circle at 16% 0%, rgba(255, 181, 31, 0.18), transparent 15rem),
+          linear-gradient(180deg, #fffdf7, #fff8e7);
+      }
+
+      .appbar,
+      .panel,
+      .tile,
+      .section-card {
+        border: 1px solid var(--line);
+        background: rgba(255, 253, 247, 0.92);
+        box-shadow: var(--shadow);
+      }
+
+      .appbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 12px;
+        border-radius: 24px;
+      }
+
+      .appbar strong {
+        font-family: var(--display);
+        font-size: 24px;
+      }
+
+      .avatar {
+        width: 44px;
+        height: 44px;
+        overflow: hidden;
+        border-radius: 16px;
+      }
+
+      .panel {
+        margin-top: 18px;
+        padding: 18px;
+        border-radius: 28px;
+      }
+
+      .panel.featured {
+        background: linear-gradient(135deg, rgba(255, 181, 31, 0.26), rgba(255, 253, 247, 0.95) 55%);
+      }
+
+      .panel h3 {
+        font-family: var(--display);
+        font-size: 28px;
+        line-height: 1;
+      }
+
+      .section-title {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 16px;
+        margin: 20px 0 10px;
+      }
+
+      .section-title h4 {
+        margin: 0;
+        font-size: 14px;
+        font-weight: 900;
+      }
+
+      .mini-grid {
+        display: grid;
+        gap: 10px;
+      }
+
+      .tile {
+        display: grid;
+        grid-template-columns: 54px minmax(0, 1fr);
+        gap: 12px;
+        align-items: center;
+        padding: 12px;
+        border-radius: 24px;
+      }
+
+      .tile-icon {
+        display: grid;
+        width: 54px;
+        height: 54px;
+        place-items: center;
+        border-radius: 18px;
+        background: color-mix(in srgb, var(--tile-color) 18%, white);
+        color: var(--tile-color);
+        font-size: 24px;
+        font-weight: 900;
+      }
+
+      .tile strong {
+        display: block;
+        font-family: var(--display);
+        font-size: 18px;
+        line-height: 1;
+      }
+
+      .tile span,
+      .section-title span {
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 900;
+      }
+
+      section {
+        padding: 58px 0;
+      }
+
+      .section-head {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 24px;
+        margin-bottom: 24px;
+      }
+
+      .section-head p {
+        max-width: 440px;
+        margin-bottom: 0;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+      }
+
+      .section-card {
+        min-height: 220px;
+        padding: 24px;
+        border-radius: 28px;
+      }
+
+      .swatches {
+        display: grid;
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .swatch {
+        min-height: 118px;
+        padding: 14px;
+        border-radius: 24px;
+        color: #22313f;
+        font-size: 12px;
+        font-weight: 900;
+      }
+
+      .rules {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+      }
+
+      .do {
+        border-color: rgba(0, 169, 165, 0.28);
+      }
+
+      .dont {
+        border-color: rgba(255, 111, 79, 0.28);
+      }
+
+      ul {
+        margin: 0;
+        padding-left: 20px;
+        color: var(--muted);
+        font-weight: 800;
+        line-height: 1.55;
+      }
+
+      @media (max-width: 820px) {
+        .hero,
+        .grid,
+        .rules {
+          grid-template-columns: 1fr;
+        }
+
+        .hero {
+          min-height: auto;
+        }
+
+        .swatches {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section class="hero shell">
+        <div>
+          <div class="lockup">
+            <div class="mark"><img src="public/midday-sun-logo-flat.png" alt="Midday sun logo" /></div>
+            <div class="wordmark">Midday</div>
+          </div>
+          <div class="eyebrow">Bright learning library</div>
+          <h1>Calm games for sunny early learning.</h1>
+          <p class="hero-copy">
+            Midday is a modern phone and iPad learning app for preschool children: playful, clean, educational, and cute without overstimulating the screen.
+          </p>
+          <div class="pill-row">
+            <span class="pill">Education</span>
+            <span class="pill">Fun</span>
+            <span class="pill">Cute</span>
+            <span class="pill">Fluent-style icons</span>
+          </div>
+        </div>
+
+        <div class="phone" aria-label="Midday home screen style preview">
+          <div class="phone-screen">
+            <div class="appbar">
+              <div style="display:flex;align-items:center;gap:10px">
+                <div class="avatar"><img src="public/midday-sun-logo-flat.png" alt="" /></div>
+                <strong>Midday</strong>
+              </div>
+              <span class="pill">Parent</span>
+            </div>
+
+            <div class="panel featured">
+              <span class="pill">Continue</span>
+              <h3>Trace letters</h3>
+              <p>Start with one calm, obvious game before browsing the full library.</p>
+              <a class="button primary" href="#components">Play now</a>
+            </div>
+
+            <div class="section-title">
+              <h4>Letters & Sounds</h4>
+              <span>6 games</span>
+            </div>
+            <div class="mini-grid">
+              <div class="tile" style="--tile-color: var(--sun)">
+                <div class="tile-icon">A</div>
+                <div><strong>Trace</strong><span>Draw & write</span></div>
+              </div>
+              <div class="tile" style="--tile-color: var(--sky)">
+                <div class="tile-icon">♪</div>
+                <div><strong>Sound Hunt</strong><span>Listen and find</span></div>
+              </div>
+            </div>
+
+            <div class="section-title">
+              <h4>Logic & Patterns</h4>
+              <span>3 games</span>
+            </div>
+            <div class="mini-grid">
+              <div class="tile" style="--tile-color: var(--teal)">
+                <div class="tile-icon">▦</div>
+                <div><strong>Patterns</strong><span>Find what repeats</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="shell" id="system">
+        <div class="section-head">
+          <h2>Brand System</h2>
+          <p>Midday uses a mostly neutral interface with small, meaningful bursts of color. Sunshine is a brand signal, not a full-screen decoration.</p>
+        </div>
+        <div class="swatches">
+          <div class="swatch" style="background:#22313f;color:white">Ink<br />#22313F</div>
+          <div class="swatch" style="background:#fff8e7">Cream<br />#FFF8E7</div>
+          <div class="swatch" style="background:#fffdf7">Paper<br />#FFFDF7</div>
+          <div class="swatch" style="background:#ffb51f">Sun<br />#FFB51F</div>
+          <div class="swatch" style="background:#42c7ff">Sky<br />#42C7FF</div>
+          <div class="swatch" style="background:#00a9a5;color:white">Teal<br />#00A9A5</div>
+        </div>
+      </section>
+
+      <section class="shell" id="components">
+        <div class="section-head">
+          <h2>Components</h2>
+          <p>Components should feel like a real mobile app: compact, touchable, and sectioned. Fluent-style icons carry the playful personality.</p>
+        </div>
+        <div class="grid">
+          <article class="section-card">
+            <span class="pill">Header</span>
+            <h3>Small app bar</h3>
+            <p>Use the logo and app name without extra bevelled containers or decorative headers.</p>
+          </article>
+          <article class="section-card">
+            <span class="pill">Feature</span>
+            <h3>Continue game</h3>
+            <p>One game can be visually stronger so children know where to begin.</p>
+          </article>
+          <article class="section-card">
+            <span class="pill">Library</span>
+            <h3>Game sections</h3>
+            <p>Group games into calm shelves instead of one large, repetitive grid.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="shell">
+        <div class="section-head">
+          <h2>Do / Don't</h2>
+          <p>These rules keep Midday playful but production-ready.</p>
+        </div>
+        <div class="rules">
+          <article class="section-card do">
+            <h3>Do</h3>
+            <ul>
+              <li>Use sections and hierarchy.</li>
+              <li>Keep primary actions easy to reach.</li>
+              <li>Use Fluent SVG/emoji assets for animals.</li>
+              <li>Let category colors communicate meaning.</li>
+              <li>Make parent screens calmer and more adult.</li>
+            </ul>
+          </article>
+          <article class="section-card dont">
+            <h3>Don't</h3>
+            <ul>
+              <li>Fill the whole app with sunshine rays.</li>
+              <li>Use heavy bevels or clay-plastic shadows.</li>
+              <li>Show every game as an identical tile wall.</li>
+              <li>Create custom animal SVG drawings.</li>
+              <li>Overload children with competing animations.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

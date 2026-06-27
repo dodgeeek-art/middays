@@ -1,9 +1,14 @@
 import React, { useState } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import ClayCard from '@/components/ui/ClayCard';
-import ClayButton from '@/components/ui/ClayButton';
 import MascotSVG from '@/components/MascotSVG';
 import { CartoonSVG, vocabularyList } from '@/lib/svgDictionary';
+import {
+  CategoryBadge,
+  GAME_CATEGORY_STYLES,
+  GameCategory,
+  GameIconTile,
+} from '@/components/ui/GameShell';
 import { 
   PenTool, 
   Eraser, 
@@ -14,9 +19,9 @@ import {
   Layers, 
   Volume2, 
   Grid, 
-  HelpCircle, 
   BookOpen, 
-  Lightbulb 
+  Lightbulb,
+  Grid as GridIcon
 } from '@/components/Icons';
 
 interface ActivitiesMenuProps {
@@ -38,27 +43,27 @@ interface ActivityItem {
   gradient: string;
 }
 
-// Bespoke 3D Claymorphic Custom Icons for each game imported from Components/Icons
+type ActivityIconProps = React.SVGProps<SVGSVGElement> & { size?: number | string; animClass?: string };
 
-const PencilIcon = (props: any) => (
+const PencilIcon = (props: ActivityIconProps) => (
   <CartoonSVG animClass="anim-sway" {...props}>
     <PenTool size="100%" className="text-[#ff85a1]" />
   </CartoonSVG>
 );
 
-const EraserIcon = (props: any) => (
+const EraserIcon = (props: ActivityIconProps) => (
   <CartoonSVG animClass="anim-float" {...props}>
     <Eraser size="100%" className="text-[#4ecdc4]" />
   </CartoonSVG>
 );
 
-const BubbleIcon = (props: any) => (
+const BubbleIcon = (props: ActivityIconProps) => (
   <CartoonSVG animClass="anim-breathe" {...props}>
     <Sparkles size="100%" className="text-[#4ea0cd]" />
   </CartoonSVG>
 );
 
-const MagicSoundBubblesIcon = (props: React.SVGProps<SVGSVGElement> & { size?: number | string }) => (
+const MagicSoundBubblesIcon = (props: ActivityIconProps) => (
   <CartoonSVG animClass="anim-float" {...props}>
     <g fill="none">
       <circle cx="16" cy="16" r="12" fill="rgba(56, 189, 248, 0.15)" stroke="#38bdf8" strokeWidth="2.5" />
@@ -68,73 +73,76 @@ const MagicSoundBubblesIcon = (props: React.SVGProps<SVGSVGElement> & { size?: n
   </CartoonSVG>
 );
 
-const MonsterIcon = (props: any) => (
+const MonsterIcon = (props: ActivityIconProps) => (
   <CartoonSVG animClass="anim-breathe" {...props}>
     <Smile size="100%" className="text-[#9e7bf5]" />
   </CartoonSVG>
 );
 
-const SearchIcon = (props: any) => (
+const SearchIcon = (props: ActivityIconProps) => (
   <CartoonSVG animClass="anim-sway" {...props}>
     <Search size="100%" className="text-[#3fa394]" />
   </CartoonSVG>
 );
 
-const AdvancedSearchIcon = (props: any) => (
+const AdvancedSearchIcon = (props: ActivityIconProps) => (
   <CartoonSVG animClass="anim-float" {...props}>
     <Search size="100%" className="text-[#ff8552]" />
   </CartoonSVG>
 );
 
-const MusicIcon = (props: any) => (
+const MusicIcon = (props: ActivityIconProps) => (
   <CartoonSVG animClass="anim-sway" {...props}>
     <Music size="100%" className="text-[#f76ca0]" />
   </CartoonSVG>
 );
 
-const PuzzleIcon = (props: any) => (
+const PuzzleIcon = (props: ActivityIconProps) => (
   <CartoonSVG animClass="anim-breathe" {...props}>
     <Layers size="100%" className="text-[#5c72eb]" />
   </CartoonSVG>
 );
 
-const DrumIcon = (props: any) => (
+const DrumIcon = (props: ActivityIconProps) => (
   <CartoonSVG animClass="anim-float" {...props}>
     <Volume2 size="100%" className="text-[#e0a81b]" />
   </CartoonSVG>
 );
 
-const BasketIcon = (props: any) => (
+const BasketIcon = (props: ActivityIconProps) => (
   <CartoonSVG animClass="anim-float" {...props}>
     <Grid size="100%" className="text-[#f75468]" />
   </CartoonSVG>
 );
 
-const BunnyIcon = (props: any) => (
-  <CartoonSVG animClass="anim-breathe" {...props}>
-    <HelpCircle size="100%" className="text-[#1ca39c]" />
-  </CartoonSVG>
-);
+const BunnyIcon = (props: ActivityIconProps) => {
+  const RabbitIcon = vocabularyList.find(v => v.name === "Rabbit")?.icon || Smile;
+  return (
+    <CartoonSVG animClass="anim-breathe" {...props}>
+      <RabbitIcon size="100%" />
+    </CartoonSVG>
+  );
+};
 
-const BookIcon = (props: any) => (
+const BookIcon = (props: ActivityIconProps) => (
   <CartoonSVG animClass="anim-sway" {...props}>
     <BookOpen size="100%" className="text-[#925ceb]" />
   </CartoonSVG>
 );
 
-const PaletteIcon = (props: any) => (
+const PaletteIcon = (props: ActivityIconProps) => (
   <CartoonSVG animClass="anim-float" {...props}>
     <Lightbulb size="100%" className="text-[#e0c11b]" />
   </CartoonSVG>
 );
 
-const PatternIcon = (props: any) => (
+const PatternIcon = (props: ActivityIconProps) => (
   <CartoonSVG animClass="anim-sway" {...props}>
     <Grid size="100%" className="text-[#9e7bf5]" />
   </CartoonSVG>
 );
 
-const SymmetryIcon = (props: any) => {
+const SymmetryIcon = (props: ActivityIconProps) => {
   const ButterflyIcon = vocabularyList.find(v => v.name === "Butterfly")?.icon || Sparkles;
   return (
     <CartoonSVG animClass="anim-sway" {...props}>
@@ -143,7 +151,7 @@ const SymmetryIcon = (props: any) => {
   );
 };
 
-const AlchemyIcon = (props: any) => {
+const AlchemyIcon = (props: ActivityIconProps) => {
   const KoalaIcon = vocabularyList.find(v => v.name === "Koala")?.icon || Smile;
   return (
     <CartoonSVG animClass="anim-float" {...props}>
@@ -152,7 +160,7 @@ const AlchemyIcon = (props: any) => {
   );
 };
 
-const MazeIcon = (props: any) => {
+const MazeIcon = (props: ActivityIconProps) => {
   const AlligatorIcon = vocabularyList.find(v => v.name === "Alligator")?.icon || Grid;
   return (
     <CartoonSVG animClass="anim-breathe" {...props}>
@@ -161,7 +169,7 @@ const MazeIcon = (props: any) => {
   );
 };
 
-const GardenIcon = (props: React.SVGProps<SVGSVGElement> & { size?: string | number; animClass?: string }) => {
+const GardenIcon = (props: ActivityIconProps) => {
   const SunflowerIcon = vocabularyList.find(v => v.name === "Sunflower")?.icon || Sparkles;
   return (
     <CartoonSVG animClass="anim-sway" {...props}>
@@ -172,11 +180,13 @@ const GardenIcon = (props: React.SVGProps<SVGSVGElement> & { size?: string | num
 
 const BUILD_VERSION = "v2026.06.25.2";
 
+type ActivityFilter = "all" | "phonics" | "logic" | "creative";
+
 
 
 export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps) {
   const router = useRouter();
-  const [activeCategory, setActiveCategory] = useState<"all" | "phonics" | "logic" | "creative">("all");
+  const [activeCategory, setActiveCategory] = useState<ActivityFilter>("all");
 
   const activities: ActivityItem[] = [
     { 
@@ -409,19 +419,80 @@ export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps
     }
   ];
 
+  const getActivityCategory = (id: ActivityItem["id"]): GameCategory => {
+    if (["tracing", "rhyme", "match"].includes(id)) return "literacy";
+    if (["reveal", "bubbles", "monster", "scavenger", "scavenger-advanced", "garden", "magicsoundbubbles", "drummer"].includes(id)) return "sound";
+    if (["sorting", "pattern", "maze"].includes(id)) return "logic";
+    if (["story", "mark", "alchemy", "symmetry"].includes(id)) return "creative";
+    return "nature";
+  };
+
   const filteredActivities = activities.filter(act => {
     if (activeCategory === "all") return true;
     if (activeCategory === "phonics") {
-      return ["tracing", "reveal", "bubbles", "monster", "scavenger", "scavenger-advanced", "garden", "magicsoundbubbles"].includes(act.id);
+      return ["literacy", "sound"].includes(getActivityCategory(act.id));
     }
     if (activeCategory === "logic") {
-      return ["match", "drummer", "sorting", "bunny", "pattern", "maze"].includes(act.id);
+      return ["logic", "nature"].includes(getActivityCategory(act.id));
     }
     if (activeCategory === "creative") {
-      return ["story", "mark", "alchemy", "symmetry"].includes(act.id);
+      return getActivityCategory(act.id) === "creative";
     }
     return true;
   });
+
+  const categoryOptions = [
+    { id: "all" as const, label: "All", Icon: Sparkles },
+    { id: "phonics" as const, label: "Phonics", Icon: BookOpen },
+    { id: "logic" as const, label: "Logic", Icon: GridIcon },
+    { id: "creative" as const, label: "Creative", Icon: Lightbulb },
+  ];
+
+  const gameSections: {
+    id: ActivityFilter | "nature";
+    title: string;
+    subtitle: string;
+    categories: GameCategory[];
+  }[] = [
+    {
+      id: "phonics",
+      title: "Letters & Sounds",
+      subtitle: "Tracing, listening, rhyming, and phonics games.",
+      categories: ["literacy", "sound"],
+    },
+    {
+      id: "logic",
+      title: "Logic & Patterns",
+      subtitle: "Sorting, mazes, patterns, and discovery play.",
+      categories: ["logic", "nature"],
+    },
+    {
+      id: "creative",
+      title: "Create & Draw",
+      subtitle: "Drawing, color logic, stories, and symmetry.",
+      categories: ["creative"],
+    },
+  ];
+
+  const visibleSections = gameSections
+    .map((section) => ({
+      ...section,
+      activities: filteredActivities.filter((activity) =>
+        section.categories.includes(getActivityCategory(activity.id))
+      ),
+    }))
+    .filter((section) => section.activities.length > 0);
+
+  const recommendedActivity = activities.find((activity) => activity.id === "tracing") ?? activities[0];
+
+  const handleActivitySelect = (activity: ActivityItem) => {
+    if (activity.disabled) return;
+    if (activity.id === "scavenger-advanced") {
+      router.push("/advanced-search");
+      return;
+    }
+    onSelectActivity(activity.id as "tracing" | "reveal" | "bubbles" | "monster" | "scavenger" | "rhyme" | "match" | "drummer" | "sorting" | "bunny" | "story" | "mark" | "pattern" | "alchemy" | "maze" | "symmetry" | "garden" | "magicsoundbubbles");
+  };
 
   const getGameIcon = (id: string, floatDuration: number) => {
     const props = {
@@ -454,125 +525,157 @@ export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps
   };
 
   return (
-    <div
-      className="grid grid-cols-3 gap-2.5 sm:gap-6 w-full max-w-4xl mx-auto p-2 sm:p-4 z-10 relative overflow-visible"
-    >
-      {/* Playful compact header bar */}
-      <div
-        className="col-span-3 mb-1 flex items-center justify-between w-full bg-white/95 backdrop-blur-md px-4 py-2.5 rounded-[1.8rem] border-white/60 border-[3px] shadow-[0_8px_20px_rgba(0,0,0,0.02)] overflow-visible"
-      >
-        <div className="flex items-center gap-2.5">
-          {/* Small Mascot avatar */}
-          <div className="relative shrink-0 select-none w-9 h-9">
-            <MascotSVG className="w-full h-full filter drop-shadow-[1px_2px_4px_rgba(0,0,0,0.05)] animate-float" />
-          </div>
-          {/* Logo Branding */}
-          <div className="flex items-center gap-2">
-            <img
+    <section className="relative z-10 mx-auto flex w-full max-w-5xl flex-col gap-4 px-1 pb-4 sm:gap-5 sm:px-4">
+      <header className="flex items-center justify-between gap-4 px-1 py-2 sm:px-2 sm:py-3">
+        <div className="flex min-w-0 items-center gap-3.5">
+          <div className="relative shrink-0">
+            <span className="absolute inset-[-0.45rem] -z-10 rounded-full bg-[#ffb51f]/12 blur-xl" />
+            <Image
               alt="Midday Logo"
-              className="w-6 h-6 object-contain shrink-0"
-              src="/logo.png"
+              className="h-14 w-14 rounded-[1.35rem] object-cover shadow-[0_8px_22px_rgba(255,181,31,0.16)] sm:h-16 sm:w-16"
+              height={64}
+              src="/midday-sun-logo-flat.png"
+              unoptimized
+              width={64}
             />
-            <div className="flex flex-col text-left leading-none">
-              <h1 className="font-sans text-sm sm:text-base text-primary tracking-tight font-black uppercase">
+          </div>
+          <div className="min-w-0">
+            <div className="flex items-baseline gap-2">
+              <h1 className="truncate font-display text-[2.6rem] font-extrabold leading-[0.85] tracking-normal text-[var(--brand-ink)] sm:text-[3.5rem]">
                 Midday
               </h1>
-              <div className="flex flex-wrap items-center gap-1">
-                <span className="text-[7px] sm:text-[8px] font-black uppercase tracking-widest text-[#0d4036]/50">
-                  Playbook
-                </span>
+              <MascotSVG className="hidden h-8 w-8 shrink-0 sm:block" />
+            </div>
+            <p className="mt-2 text-[11px] font-black uppercase tracking-[0.18em] text-[var(--brand-sun-deep)]">
+              Game Library
+            </p>
+          </div>
+        </div>
+
+        <span className="shrink-0 rounded-full border border-[#22313f]/10 bg-[#22313f] px-3 py-1.5 text-[9px] font-black uppercase tracking-wider text-white shadow-[0_10px_24px_rgba(34,49,63,0.12)] sm:px-4 sm:py-2 sm:text-[10px]">
+          {BUILD_VERSION}
+        </span>
+      </header>
+
+      <div className="grid gap-3 lg:grid-cols-[minmax(0,0.88fr)_minmax(300px,0.46fr)]">
+        <button
+          type="button"
+          aria-label={`${recommendedActivity.name}: ${recommendedActivity.subtitle}. ${recommendedActivity.benefit}.`}
+          onClick={() => handleActivitySelect(recommendedActivity)}
+          className="group relative overflow-hidden rounded-[1.5rem] border border-[rgba(255,181,31,0.32)] bg-[linear-gradient(135deg,rgba(255,181,31,0.18),rgba(255,253,247,0.96)_56%)] p-3 text-left shadow-[0_14px_34px_rgba(255,181,31,0.12)] transition-transform duration-150 active:scale-[0.985] sm:p-4 sm:hover:-translate-y-0.5"
+        >
+          <div className="flex items-center justify-between gap-3">
+            <div className="min-w-0">
+              <span className="inline-flex items-center rounded-full bg-[#ffb51f] px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.12em] text-[#593900]">
+                Today&apos;s Pick
+              </span>
+              <h2 className="mt-3 font-display text-2xl font-extrabold leading-none tracking-normal text-[var(--brand-ink)] sm:text-4xl">
+                Trace
+              </h2>
+              <p className="mt-1 max-w-md text-xs font-extrabold leading-snug text-[var(--brand-muted)] sm:text-sm">
+                Warm up with letters and drawing.
+              </p>
+            </div>
+            <GameIconTile category="literacy" className="h-14 w-14 rounded-[1.25rem] p-2 shadow-[0_5px_0_rgba(34,49,63,0.12),0_10px_18px_rgba(34,49,63,0.08)] sm:h-20 sm:w-20">
+              {getGameIcon(recommendedActivity.id, recommendedActivity.floatDuration)}
+            </GameIconTile>
+          </div>
+          <div className="mt-3 flex flex-wrap items-center gap-2">
+            <span className="inline-flex min-h-9 items-center justify-center rounded-full bg-[#22313f] px-4 text-xs font-black text-white">
+              Play now
+            </span>
+            <CategoryBadge category="literacy" className="min-h-9 px-3 text-[8px]">
+              Fine motor
+            </CategoryBadge>
+          </div>
+        </button>
+
+        <aside className="rounded-[1.5rem] border border-[var(--brand-line)] bg-[var(--brand-paper)]/88 p-3 shadow-[0_12px_28px_rgba(34,49,63,0.06)]">
+          <p className="text-[9px] font-black uppercase tracking-[0.16em] text-[var(--brand-muted)]">
+            Focus
+          </p>
+          <div className="mt-2 grid grid-cols-4 gap-1.5 lg:grid-cols-2">
+            {categoryOptions.map(({ id, label, Icon }) => {
+              const isActive = activeCategory === id;
+              return (
+                <button
+                  key={id}
+                  type="button"
+                  onClick={() => setActiveCategory(id)}
+                  className={`flex min-h-10 items-center justify-center gap-1 rounded-[1rem] border px-1.5 text-[8px] font-black uppercase tracking-[0.03em] transition sm:text-[10px] lg:min-h-11 lg:gap-1.5 lg:px-2 ${
+                    isActive
+                      ? "border-[#ffb51f]/50 bg-[#ffb51f] text-[#593900] shadow-[0_10px_24px_rgba(255,181,31,0.22)]"
+                      : "border-[var(--brand-line)] bg-white/66 text-[var(--brand-ink)]"
+                  }`}
+                >
+                  <Icon className="h-3.5 w-3.5 shrink-0" />
+                  {label}
+                </button>
+              );
+            })}
+          </div>
+        </aside>
+      </div>
+
+      {visibleSections.map((section) => {
+        const sectionColor = GAME_CATEGORY_STYLES[section.categories[0]].color;
+        return (
+          <section key={section.id} className="rounded-[1.75rem] border border-[var(--brand-line)] bg-[var(--brand-paper)]/72 p-3 shadow-[0_14px_34px_rgba(34,49,63,0.07)] sm:p-4">
+            <div className="mb-3 flex items-end justify-between gap-3 px-1">
+              <div className="min-w-0">
+                <div className="mb-2 flex items-center gap-2">
+                  <span className="h-3 w-3 shrink-0 rounded-full" style={{ background: sectionColor }} />
+                  <span className="text-[10px] font-black uppercase tracking-[0.14em] text-[var(--brand-muted)]">
+                    {section.activities.length} games
+                  </span>
+                </div>
+                <h2 className="font-display text-xl font-extrabold leading-none tracking-normal text-[var(--brand-ink)] sm:text-3xl">
+                  {section.title}
+                </h2>
+                <p className="mt-1 text-[11px] font-extrabold leading-snug text-[var(--brand-muted)] sm:text-sm">
+                  {section.subtitle}
+                </p>
               </div>
             </div>
-          </div>
-        </div>
 
-        {/* Small header text info */}
-        <div className="text-right flex flex-col items-end justify-center gap-1">
-          <span className="rounded-full bg-[#2f3e46] px-2.5 py-1 text-[8px] sm:text-[9px] font-black uppercase tracking-wider text-white shadow-[0_4px_10px_rgba(47,62,70,0.18)]">
-            {BUILD_VERSION}
-          </span>
-          <p className="text-[8px] font-black text-[#d4a919] uppercase tracking-wider leading-none mb-0.5">Buddy says:</p>
-          <p className="text-[10px] sm:text-xs font-bold text-[#4A5358]/85 leading-none">Pick a game to play together!</p>
-        </div>
-      </div>
+            <div className="grid grid-cols-3 gap-2 sm:gap-3">
+              {section.activities.map((act) => {
+                const category = getActivityCategory(act.id);
+                const palette = GAME_CATEGORY_STYLES[category];
+                return (
+                  <button
+                    key={act.id}
+                    type="button"
+                    disabled={act.disabled}
+                    aria-label={`${act.name}: ${act.subtitle}. ${act.benefit}.`}
+                    onClick={() => handleActivitySelect(act)}
+                    className={`group flex min-h-[154px] w-full flex-col items-center rounded-[1.25rem] border bg-white/78 p-2.5 text-center shadow-[0_8px_22px_rgba(34,49,63,0.06)] transition duration-150 active:scale-[0.985] sm:min-h-[172px] sm:rounded-[1.5rem] sm:p-3 sm:hover:-translate-y-0.5 ${
+                      act.disabled ? "cursor-not-allowed opacity-55" : "cursor-pointer"
+                    } ${palette.border}`}
+                  >
+                    <GameIconTile category={category} className="h-11 w-11 shrink-0 rounded-[0.95rem] p-2 shadow-[0_3px_0_rgba(34,49,63,0.1),0_6px_10px_rgba(34,49,63,0.06)] sm:h-14 sm:w-14 sm:rounded-[1.15rem]">
+                      {getGameIcon(act.id, act.floatDuration)}
+                    </GameIconTile>
 
-      {/* Playful Category Switcher */}
-      <div className="col-span-3 flex flex-row items-center justify-start sm:justify-center gap-2 overflow-x-auto whitespace-nowrap scrollbar-none py-1.5 my-1 z-10 w-full">
-        {(["all", "phonics", "logic", "creative"] as const).map((cat) => {
-          const isActive = activeCategory === cat;
-          const labels = {
-            all: "🌈 All",
-            phonics: "🔤 Phonics",
-            logic: "🧩 Logic",
-            creative: "🎨 Creative"
-          };
-          return (
-            <ClayButton
-              key={cat}
-              variant={isActive ? "primary" : "surface"}
-              onClick={() => setActiveCategory(cat)}
-              className="py-1.5 px-3.5 text-[10px] sm:text-xs font-black uppercase rounded-full toddler-target shadow-sm active:scale-95 transition-all shrink-0"
-            >
-              {labels[cat]}
-            </ClayButton>
-          );
-        })}
-      </div>
-
-      {filteredActivities.map((act) => {
-        return (
-          <div
-            key={act.id}
-            className="w-full transition-transform duration-150 active:scale-[0.98] sm:hover:-translate-y-1 sm:hover:scale-[1.02]"
-          >
-            <ClayCard
-              variant="glass"
-              hoverEffect={false}
-              onClick={() => {
-                if (act.disabled) return;
-                if (act.id === "scavenger-advanced") {
-                  router.push("/advanced-search");
-                } else {
-                  onSelectActivity(act.id as "tracing" | "reveal" | "bubbles" | "monster" | "scavenger" | "rhyme" | "match" | "drummer" | "sorting" | "bunny" | "story" | "mark" | "pattern" | "alchemy" | "maze" | "symmetry" | "garden" | "magicsoundbubbles");
-                }
-              }}
-              className={`relative overflow-visible p-2.5 sm:p-5 flex flex-col justify-between h-full w-full min-h-[150px] sm:min-h-[220px] select-none cursor-pointer border-white/50 border-[3px] bg-gradient-to-br ${act.gradient} ${act.glowColor} ${act.disabled ? "opacity-60 saturate-50 cursor-not-allowed" : ""}`}
-            >
-              {/* Gold highlight badge for new/featured "Trace" activity */}
-              {!act.disabled && act.id === "tracing" && (
-                <div className="absolute top-1.5 left-1.5 sm:top-3 sm:left-3 z-20 w-6 h-6 sm:w-8 h-8 rounded-full border-2 border-white/60 bg-[#f2c94c] text-[#544001] flex items-center justify-center text-[10px] sm:text-xs font-black shadow-[inset_1px_1px_2px_rgba(255,255,255,0.8),0px_2px_4px_rgba(212,169,25,0.3)] animate-pulse-bounce">
-                  ⭐
-                </div>
-              )}
-
-              {/* Standardized Grid Card Layout */}
-              <div className="flex flex-col items-center justify-between text-center h-full w-full gap-2.5 sm:gap-4 relative overflow-visible pt-1">
-                {/* Top-aligned animal/item illustration floating freely */}
-                <div className="w-14 h-14 sm:w-20 sm:h-20 overflow-visible relative flex items-center justify-center z-10">
-                  {getGameIcon(act.id, act.floatDuration)}
-                </div>
-
-                {/* Center text info */}
-                <div className="flex flex-col items-center w-full">
-                  <h2 className={`text-xs sm:text-base md:text-lg font-black tracking-wide uppercase ${act.textColor} leading-tight`}>
-                    {act.name}
-                  </h2>
-                  <span className={`text-[9px] sm:text-xs font-bold ${act.textColor}/60 mt-0.5`}>
-                    {act.subtitle}
-                  </span>
-                </div>
-
-                {/* Bottom developmental benefit pill */}
-                <div className="w-full flex justify-center mt-auto">
-                  <span className={`inline-flex px-2 py-0.5 sm:px-3 sm:py-1 bg-white/75 border border-white/40 rounded-full text-[8px] sm:text-[9.5px] font-black uppercase tracking-wider ${act.textColor}`}>
-                    💡 {act.benefit}
-                  </span>
-                </div>
-              </div>
-            </ClayCard>
-          </div>
+                    <div className="mt-4 flex min-w-0 flex-1 flex-col items-center">
+                      <h3 className={`max-w-full truncate font-display text-[14px] font-extrabold leading-none tracking-normal sm:text-lg ${palette.text}`}>
+                        {act.name}
+                      </h3>
+                      <p className="mt-2 max-w-full truncate text-[9px] font-extrabold leading-none text-[var(--brand-muted)] sm:text-xs">
+                        {act.subtitle}
+                      </p>
+                      <span className="mt-2 hidden max-w-full truncate rounded-full bg-[#fff8e7] px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.08em] text-[var(--brand-ink)] sm:inline-flex">
+                        {act.benefit}
+                      </span>
+                      <CategoryBadge category={category} className="mt-2 px-1.5 text-[6px] sm:hidden" />
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </section>
         );
       })}
-    </div>
+    </section>
   );
 }

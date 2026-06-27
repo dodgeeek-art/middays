@@ -33,16 +33,16 @@ const DEMO_CHILD_ID = "demo-child";
 
 const GameLoading = () => (
   <div className="flex h-full min-h-0 w-full items-center justify-center">
-    <div className="flex w-[min(88vw,22rem)] flex-col items-center gap-4 rounded-[2rem] border-[3px] border-white/70 bg-white/90 px-6 py-8 text-center shadow-clay-card">
+    <div className="flex w-[min(88vw,22rem)] flex-col items-center gap-4 rounded-3xl border-2 border-[#22313f]/10 bg-[#fffdf6]/95 px-6 py-8 text-center shadow-clay-card">
       <div className="relative h-16 w-16">
-        <span className="absolute inset-0 rounded-full bg-[#ffd166]/45 animate-ping" />
-        <span className="relative grid h-16 w-16 place-items-center rounded-full bg-[#ffd166] text-3xl shadow-clay-btn">
-          🎮
+        <span className="absolute inset-0 rounded-2xl bg-[#ffb51f]/35 animate-ping" />
+        <span className="relative grid h-16 w-16 place-items-center rounded-2xl bg-[#ffb51f] text-3xl shadow-clay-btn">
+          ☀️
         </span>
       </div>
       <div>
-        <p className="text-[10px] font-black uppercase tracking-[0.22em] text-[#5c6b73]/70">Loading Game</p>
-        <p className="mt-1 text-lg font-black uppercase tracking-wide text-[#2f3e46]">Setting up play</p>
+        <p className="text-[10px] font-black uppercase tracking-[0.18em] text-[#00a9a5]">Loading Game</p>
+        <p className="mt-1 font-display text-xl font-extrabold text-[#22313f]">Setting up play</p>
       </div>
     </div>
   </div>
@@ -159,20 +159,6 @@ export default function Home() {
     <div className={`flex flex-col font-sans relative overflow-hidden bg-transparent text-foreground ${
       isGameActive ? "h-[100svh] max-h-[100svh] sm:h-[100dvh] sm:max-h-[100dvh]" : "min-h-[100dvh]"
     }`}>
-      {/* Animated Ambient Background Blobs */}
-      <div 
-        className="fixed -z-10 bg-[#bde8ca] w-96 h-96 rounded-full blur-[100px] opacity-35 -top-20 -left-20"
-        style={{ animation: "float 20s infinite alternate ease-in-out" }}
-      ></div>
-      <div 
-        className="fixed -z-10 bg-[#fef3c7] w-[500px] h-[500px] rounded-full blur-[120px] opacity-30 -bottom-32 -right-32"
-        style={{ animation: "float 20s infinite alternate ease-in-out", animationDelay: "-5s" }}
-      ></div>
-      <div 
-        className="fixed -z-10 bg-[#fed7aa] w-80 h-80 rounded-full blur-[95px] opacity-25 top-1/2 left-1/4"
-        style={{ animation: "float 20s infinite alternate ease-in-out", animationDelay: "-10s" }}
-      ></div>
-
       {/* Dynamic TopAppBar Shell matching Stitch designs */}
       {view !== "lesson" && (
         <FloatingHeader 
@@ -185,16 +171,16 @@ export default function Home() {
 
 
       {/* Main View Shell */}
-      <main className={`flex-grow max-w-6xl mx-auto w-full flex flex-col justify-center relative z-0 ${
+      <main className={`flex-grow max-w-6xl mx-auto w-full flex flex-col relative z-0 ${
         isGameActive 
-          ? "h-[100svh] max-h-[100svh] overflow-hidden p-1.5 pb-[calc(0.5rem+env(safe-area-inset-bottom))] sm:h-[calc(100dvh-2rem)] sm:max-h-[calc(100dvh-2rem)] sm:p-4 sm:pb-4 sm:mt-2" 
-          : `p-4 pb-28 sm:pb-32 md:pb-8 ${view === "lesson" ? "pt-6 sm:pt-8" : "pt-24 sm:pt-28"}`
+          ? "h-[100svh] max-h-[100svh] justify-center overflow-hidden p-1.5 pb-[calc(0.5rem+env(safe-area-inset-bottom))] sm:h-[calc(100dvh-2rem)] sm:max-h-[calc(100dvh-2rem)] sm:p-4 sm:pb-4 sm:mt-2" 
+          : `justify-start p-4 pb-32 sm:pb-36 md:pb-28 ${view === "lesson" ? "pt-6 sm:pt-8" : "pt-24 sm:pt-28"}`
       }`}>
         <AnimatePresence mode="wait">
             {view === "lesson" && (
               <motion.div 
                 key="lesson" 
-                initial={{ x: -20, opacity: 0 }} 
+                initial={false} 
                 animate={{ x: 0, opacity: 1 }} 
                 exit={{ x: 20, opacity: 0 }} 
                 transition={{ type: "spring", stiffness: 250, damping: 25 }}
@@ -202,7 +188,7 @@ export default function Home() {
               >
                 <AnimatePresence mode="wait">
                   {activeGame === "menu" && (
-                    <motion.div key="menu" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} transition={{ duration: 0.2 }} className="flex flex-col gap-6 w-full max-w-4xl mx-auto">
+                    <motion.div key="menu" initial={false} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.98 }} transition={{ duration: 0.16 }} className="flex flex-col gap-6 w-full max-w-4xl mx-auto">
                       <ActivitiesMenu onSelectActivity={setActiveGame} />
                     </motion.div>
                   )}
@@ -320,43 +306,51 @@ export default function Home() {
           </AnimatePresence>
       </main>
 
-      {/* BottomNavBar Shell matching Stitch layout */}
+      {/* Floating app navigation dock */}
       {activeGame === "menu" && (
-        <nav className="fixed bottom-5 left-1/2 -translate-x-1/2 w-[90%] max-w-md pt-3.5 pb-3.5 z-50 rounded-full bg-white/90 backdrop-blur-md border-[3px] border-white/50 shadow-[8px_8px_24px_rgba(0,0,0,0.06),_inset_-4px_-4px_8px_rgba(0,0,0,0.04),_inset_4px_4px_8px_rgba(255,255,255,0.95)]">
-          <div className="flex justify-around items-center px-4">
+        <nav
+          className="z-[80] w-[min(92vw,25rem)] rounded-[1.5rem] border border-[#22313f]/10 bg-[#fffdf7]/92 px-3 py-2.5 shadow-[0_18px_52px_rgba(34,49,63,0.18)] backdrop-blur-xl sm:rounded-[1.75rem]"
+          style={{
+            position: "fixed",
+            left: "50%",
+            bottom: "max(1rem, env(safe-area-inset-bottom))",
+            transform: "translateX(-50%)",
+          }}
+        >
+          <div className="grid grid-cols-3 gap-2">
             {(["lesson", "trophies", "dashboard"] as const).map((tab) => {
               const isActive = view === tab;
               let Icon = Play;
               let label = "Play";
-              let activeBg = "bg-primary-container";
-              let activeShadow = "shadow-[inset_-2px_-2px_4px_rgba(255,255,255,0.85),_inset_4px_4px_8px_rgba(0,0,0,0.18)]";
-              let activeText = "text-primary";
-              let activeIcon = "text-[#590d22]";
+              let activeBg = "bg-primary";
+              let activeShadow = "shadow-[0_6px_0_#d28700,0_14px_22px_rgba(255,181,31,0.24)]";
+              let activeText = "text-[#22313f]";
+              let activeIcon = "text-[#593900]";
               
               if (tab === "trophies") {
                 Icon = Trophy;
                 label = "Trophies";
-                activeBg = "bg-[#fef5d1]"; // tertiary-container
-                activeShadow = "shadow-[inset_-2px_-2px_4px_rgba(255,255,255,0.85),_inset_4px_4px_8px_rgba(0,0,0,0.18)]";
-                activeText = "text-tertiary";
-                activeIcon = "text-[#5c4d00]";
+                activeBg = "bg-primary";
+                activeShadow = "shadow-[0_6px_0_#d28700,0_14px_22px_rgba(255,181,31,0.24)]";
+                activeText = "text-[#22313f]";
+                activeIcon = "text-[#593900]";
               }
               if (tab === "dashboard") {
                 Icon = Settings;
                 label = "Parents";
-                activeBg = "bg-[#d2f4e6]"; // secondary-container
-                activeShadow = "shadow-[inset_-2px_-2px_4px_rgba(255,255,255,0.85),_inset_4px_4px_8px_rgba(0,0,0,0.18)]";
-                activeText = "text-secondary";
-                activeIcon = "text-[#0b4a45]";
+                activeBg = "bg-secondary";
+                activeShadow = "shadow-[0_6px_0_#00817e,0_14px_22px_rgba(0,169,165,0.2)]";
+                activeText = "text-[#22313f]";
+                activeIcon = "text-white";
               }
 
-              const buttonClass = isActive 
-                ? `${activeBg} ${activeShadow} border-black/5` 
-                : "bg-white/95 border-white/40 shadow-[4px_4px_8px_rgba(0,0,0,0.04),_inset_-2px_-2px_4px_rgba(0,0,0,0.03),_inset_2px_2px_4px_rgba(255,255,255,0.95)] hover:border-white/50";
+              const buttonClass = isActive
+                ? `${activeBg} ${activeShadow} border-[#22313f]/10`
+                : "bg-white/88 border-[#22313f]/10 shadow-[0_8px_20px_rgba(34,49,63,0.08)] hover:border-[#22313f]/20 hover:bg-white";
 
               const motionProps = isActive 
                 ? {
-                    animate: { y: 2, scaleX: 1.05, scaleY: 0.88 },
+                    animate: { y: -2, scale: 1.03 },
                     transition: { type: "spring" as const, stiffness: 450, damping: 20 },
                   }
                 : {
@@ -366,59 +360,67 @@ export default function Home() {
                   };
               
               return (
-                <div 
-                  key={tab} 
+                <button
+                  key={tab}
+                  type="button"
                   onClick={() => handleTabClick(tab)}
-                  className="flex flex-col items-center gap-1.5 flex-1 cursor-pointer py-0.5 group"
+                  className="group flex min-h-[4.35rem] flex-col items-center justify-center gap-1 rounded-[1.25rem] px-1 py-1 transition hover:bg-[#fff8e7]/80"
+                  aria-current={isActive ? "page" : undefined}
                 >
-                  <motion.button 
+                  <motion.span
                     {...motionProps}
-                    className={`w-12 h-12 rounded-full border-2 flex items-center justify-center pointer-events-none transition-all duration-200 ${buttonClass}`}
+                    className={`flex h-10 w-10 items-center justify-center rounded-2xl border transition-all duration-200 sm:h-11 sm:w-11 ${buttonClass}`}
                   >
-                    <Icon className={`w-5 h-5 transition-colors duration-150 ${isActive ? activeIcon : "text-slate-dark/60"}`} strokeWidth={3.5} />
-                  </motion.button>
-                  <span className={`text-[9px] font-black uppercase tracking-wider transition-colors duration-150 ${
-                    isActive ? activeText : "text-slate-dark/40 group-hover:text-slate-dark/65"
+                    <Icon className={`h-4.5 w-4.5 transition-colors duration-150 sm:h-5 sm:w-5 ${isActive ? activeIcon : "text-slate-dark/60"}`} strokeWidth={3.5} />
+                  </motion.span>
+                  <span className={`text-[8px] font-black uppercase tracking-wider transition-colors duration-150 sm:text-[9px] ${
+                    isActive ? activeText : "text-slate-dark/55 group-hover:text-slate-dark/75"
                   }`}>
                     {label}
                   </span>
-                </div>
+                </button>
               );
             })}
           </div>
         </nav>
       )}
 
-      {/* Parent Gate Modal with Lavender Theme & Swipe Lock */}
+      {/* Parent Gate Modal */}
       <AnimatePresence>
         {showGate && (
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-md p-6"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--brand-ink)]/55 p-6 backdrop-blur-md"
           >
             <ClayCard
-              variant="purple"
+              variant="default"
               hoverEffect={false}
               initial={{ scale: 0.9, y: 20 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.9, y: 20 }}
-              className="p-8 max-w-sm w-full flex flex-col items-center gap-6 rounded-[2.5rem] border-white/30"
+              className="brand-panel max-w-sm w-full flex flex-col items-center gap-6 p-7"
             >
-              <h2 className="text-3xl font-black text-center text-[#4A5358] uppercase tracking-wide">Adults Only!</h2>
-              <p className="text-sm text-center font-black text-on-secondary-container">Swipe the Star ⭐ to the Circle ⭕ to unlock!</p>
+              <div className="brand-icon-tile h-16 w-16 bg-[var(--primary-container)] text-[var(--brand-sun-deep)]">
+                <Settings size={34} />
+              </div>
+              <div className="text-center">
+                <span className="brand-chip mx-auto mb-3">Parent Gate</span>
+                <h2 className="brand-title text-3xl">Grown-up check</h2>
+                <p className="brand-copy mt-2 text-sm">Swipe the star to the circle to open parent tools.</p>
+              </div>
               
-              <div className="w-full bg-slate-100/80 border-[3px] border-slate-200/50 rounded-full h-20 relative shadow-[inset_3px_3px_6px_rgba(0,0,0,0.05),_inset_-3px_-3px_6px_rgba(255,255,255,0.9)] flex items-center px-2 select-none overflow-hidden">
+              <div className="relative flex h-20 w-full select-none items-center overflow-hidden rounded-full border-2 border-[var(--brand-line)] bg-[var(--surface-container-low)] px-2 shadow-[inset_0_2px_6px_rgba(34,49,63,0.08)]">
                 {/* Track guides */}
-                <div className="absolute inset-0 flex items-center justify-between px-6 pointer-events-none opacity-20">
+                <div className="pointer-events-none absolute inset-0 flex items-center justify-between px-6 opacity-30">
                   <span className="text-xl">⭐</span>
-                  <div className="flex-1 border-t-4 border-dashed border-slate-400 mx-4" />
+                  <div className="mx-4 flex-1 border-t-4 border-dashed border-[var(--brand-ink)]/35" />
                   <span className="text-xl">⭕</span>
                 </div>
                 
                 {/* Target Circle */}
-                <div className="absolute right-3 w-14 h-14 rounded-full border-4 border-dashed border-[#e07383] bg-white flex items-center justify-center text-2xl shadow-inner select-none pointer-events-none">
+                <div className="pointer-events-none absolute right-3 flex h-14 w-14 select-none items-center justify-center rounded-full border-4 border-dashed border-[var(--brand-sun)] bg-[var(--brand-paper)] text-2xl shadow-inner">
                   ⭕
                 </div>
 
@@ -433,7 +435,7 @@ export default function Home() {
                       handleGateUnlock();
                     }
                   }}
-                  className="w-14 h-14 rounded-full bg-white border-2 border-white/50 shadow-clay-btn hover:shadow-clay-btn-hover active:shadow-clay-btn-pressed flex items-center justify-center text-3xl cursor-grab active:cursor-grabbing z-10"
+                  className="z-10 flex h-14 w-14 cursor-grab items-center justify-center rounded-full border-2 border-[var(--brand-line)] bg-[var(--brand-paper)] text-3xl shadow-clay-btn hover:shadow-clay-btn-hover active:cursor-grabbing active:shadow-clay-btn-pressed"
                 >
                   ⭐
                 </motion.div>

@@ -17,43 +17,55 @@ body.game-active {
 }
 
 :root {
-  /* Candy pastel kid-friendly theme */
-  --background: #e2efe9; /* Calm pastel celadon-green canvas */
-  --foreground: #4a5358; /* Soft readable dark charcoal (not harsh black) */
+  /* Midday brand: bright learning library */
+  --background: #fff8e7;
+  --foreground: #22313f;
   
-  /* Primary: Dusty Rose Clay */
-  --primary: #e07383;
-  --primary-container: #f2c1c6;
-  --on-primary-container: #5e1c22;
+  --primary: #ffb51f;
+  --primary-container: #fff1b8;
+  --on-primary-container: #593900;
   
-  /* Secondary: Celadon Green Clay */
-  --secondary: #3fa394;
-  --secondary-container: #c3e6dc;
-  --on-secondary-container: #0d4036;
+  --secondary: #00a9a5;
+  --secondary-container: #d9fbf4;
+  --on-secondary-container: #063f3d;
   
-  /* Tertiary: Honey Gold Clay */
-  --tertiary: #d4a919;
-  --tertiary-container: #f5e4a3;
-  --on-tertiary-container: #544001;
+  --tertiary: #ff6f4f;
+  --tertiary-container: #ffe2d7;
+  --on-tertiary-container: #7a1d0f;
   
-  /* Containers & Surfaces */
-  --surface-container-lowest: #edf3f0; /* Soft warm pastel sage-cream background (replaces blinding white) */
-  --surface-container-low: #f9fbfd;
-  --surface-container: #f1f6fa;
-  --surface-container-high: #e7eff5;
-  --surface-container-highest: #dbe8f2;
+  --surface-container-lowest: #fffdf5;
+  --surface-container-low: #fff8e4;
+  --surface-container: #fff0c8;
+  --surface-container-high: #ffe4a3;
+  --surface-container-highest: #ffd06f;
   
-  /* Outline / Border Tints */
-  --outline: #9eb1bd;
-  --outline-variant: rgba(0, 0, 0, 0.04);
-  --slate-dark: #4a5358; /* Retained as soft charcoal for compatibility */
+  --outline: #263544;
+  --outline-variant: rgba(34, 49, 63, 0.1);
+  --slate-dark: #22313f;
   
-  /* Activity card pastel colors - vibrant candy pastels */
-  --lime-green: #bee8d4; /* Soft celadon lime */
-  --light-purple: #ddcbf5; /* Iris lavender */
-  --light-mint: #c3f2ec; /* Soft pastel teal */
-  --light-peach: #f7c2b3; /* Rich apricot peach */
-  --light-blue: #b5cce6; /* Denim blue */
+  --lime-green: #b8f36b;
+  --light-purple: #d7c2ff;
+  --light-mint: #9df4df;
+  --light-peach: #ffb895;
+  --light-blue: #9fd7ff;
+  --brand-ink: #22313f;
+  --brand-coral: #ff6f4f;
+  --brand-teal: #00a9a5;
+  --brand-sun: #ffb51f;
+  --brand-sun-deep: #f08a00;
+  --brand-sky: #42c7ff;
+  --brand-blue: #2f80ed;
+  --brand-violet: #8d6bff;
+  --brand-cream: #fff8e7;
+  --brand-paper: #fffdf7;
+  --brand-line: rgba(34, 49, 63, 0.1);
+  --brand-muted: rgba(34, 49, 63, 0.66);
+  --brand-shadow: 0 18px 46px rgba(34, 49, 63, 0.1);
+  --category-literacy: #ffb51f;
+  --category-sound: #42c7ff;
+  --category-logic: #00a9a5;
+  --category-creative: #ff6f4f;
+  --category-nature: #8d6bff;
 }
 
 @theme inline {
@@ -81,14 +93,14 @@ body.game-active {
   --color-light-mint: var(--light-mint);
   --color-light-peach: var(--light-peach);
   --color-light-blue: var(--light-blue);
-  --font-sans: var(--font-quicksand), sans-serif;
+  --font-sans: var(--font-body), sans-serif;
+  --font-display: var(--font-brand-display), var(--font-body), sans-serif;
 
-  /* Claymorphic Layered Shadows */
-  --shadow-clay-card: 4px 6px 12px rgba(40, 50, 60, 0.04), 12px 16px 32px rgba(40, 50, 60, 0.08), inset -6px -6px 12px rgba(40, 50, 60, 0.05), inset 6px 6px 12px rgba(255, 255, 255, 0.95);
-  --shadow-clay-card-hover: 6px 8px 16px rgba(40, 50, 60, 0.05), 16px 24px 44px rgba(40, 50, 60, 0.12), inset -6px -6px 12px rgba(40, 50, 60, 0.03), inset 6px 6px 12px rgba(255, 255, 255, 0.95);
-  --shadow-clay-btn: 3px 4px 8px rgba(40, 50, 60, 0.04), 6px 8px 16px rgba(40, 50, 60, 0.06), inset -4px -4px 8px rgba(40, 50, 60, 0.05), inset 4px 4px 8px rgba(255, 255, 255, 0.95);
-  --shadow-clay-btn-hover: 4px 6px 10px rgba(40, 50, 60, 0.06), 8px 14px 22px rgba(40, 50, 60, 0.09), inset -4px -4px 8px rgba(40, 50, 60, 0.04), inset 4px 4px 8px rgba(255, 255, 255, 0.95);
-  --shadow-clay-btn-pressed: inset -1px -1px 2px rgba(255, 255, 255, 0.75), inset 5px 6px 10px rgba(0, 0, 0, 0.22);
+  --shadow-clay-card: 0 16px 36px rgba(34, 49, 63, 0.1), 0 3px 0 rgba(34, 49, 63, 0.14);
+  --shadow-clay-card-hover: 0 22px 46px rgba(34, 49, 63, 0.14), 0 4px 0 rgba(34, 49, 63, 0.16);
+  --shadow-clay-btn: 0 7px 0 rgba(34, 49, 63, 0.14), 0 14px 24px rgba(34, 49, 63, 0.12);
+  --shadow-clay-btn-hover: 0 9px 0 rgba(34, 49, 63, 0.14), 0 18px 30px rgba(34, 49, 63, 0.16);
+  --shadow-clay-btn-pressed: 0 2px 0 rgba(34, 49, 63, 0.18), 0 6px 12px rgba(34, 49, 63, 0.1);
   
   /* Color-matched Layered Shadows */
   --shadow-clay-pink: 3px 4px 8px rgba(224, 115, 131, 0.12), 10px 12px 24px rgba(224, 115, 131, 0.22), inset -6px -6px 12px rgba(0, 0, 0, 0.06), inset 6px 6px 12px rgba(255, 255, 255, 0.5);
@@ -104,57 +116,159 @@ body.game-active {
 }
 
 body {
-  background: 
-    radial-gradient(at 10% 20%, #d8ebd2 0px, transparent 45%),
-    radial-gradient(at 90% 10%, #fef5d1 0px, transparent 40%),
-    radial-gradient(at 50% 80%, #d1f0ea 0px, transparent 50%),
-    radial-gradient(at 80% 90%, #fce1d4 0px, transparent 45%),
-    #e5efe8; /* Soft pastel celadon base */
+  background: linear-gradient(180deg, #fffdf7 0%, #fff8e7 72%, #fff4d6 100%);
   color: var(--foreground);
   overflow-x: hidden;
-  font-weight: 800; /* Friendly chunky text */
+  font-weight: 800;
   position: relative;
-  box-shadow: inset 0 0 120px rgba(0, 0, 0, 0.02);
+  box-shadow: none;
 }
 
-/* Playful background texture: Extremely soft playmat grid + subtle minty polka dots */
+/* Calm app-paper texture */
 body::before {
   content: "";
   position: fixed;
   inset: 0;
   z-index: -5;
-  background-image: 
-    radial-gradient(rgba(63, 163, 148, 0.035) 2px, transparent 2px),
-    linear-gradient(rgba(255, 255, 255, 0.35) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.35) 1px, transparent 1px);
-  background-size: 56px 56px, 56px 56px, 56px 56px;
-  background-position: 28px 28px, 0 0, 0 0;
+  background-image: none;
   pointer-events: none;
 }
 
 /* Claymorphic Card Utilities */
 .clay-card {
-  background: var(--surface-container-lowest, #ffffff);
-  border: 3px solid rgba(255, 255, 255, 0.5); /* Top-left highlight border */
-  border-radius: 2rem; /* rounded-[2rem] */
-  box-shadow: 
-    12px 12px 24px rgba(0, 0, 0, 0.04), /* Soft large outer shadow */
-    inset -6px -6px 12px rgba(0, 0, 0, 0.04), /* Bottom-right inner shadow */
-    inset 6px 6px 12px rgba(255, 255, 255, 0.95); /* Top-left inner highlight */
-  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s ease;
+  background: var(--surface-container-lowest, #fffdf6);
+  border: 2px solid rgba(34, 49, 63, 0.12);
+  border-radius: 1.25rem;
+  box-shadow: var(--shadow-clay-card);
+  transition: transform 0.18s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.18s ease;
+}
+
+.brand-panel {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.78), rgba(255, 253, 246, 0.94)),
+    var(--brand-paper);
+  border: 2px solid var(--brand-line);
+  border-radius: 1.5rem;
+  box-shadow: var(--brand-shadow);
+}
+
+.brand-panel-quiet {
+  background: rgba(255, 253, 246, 0.76);
+  border: 1px solid rgba(34, 49, 63, 0.1);
+  border-radius: 1.25rem;
+  box-shadow: 0 12px 28px rgba(34, 49, 63, 0.08);
+}
+
+.brand-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  width: fit-content;
+  min-height: 2rem;
+  padding: 0.35rem 0.75rem;
+  border: 1px solid rgba(34, 49, 63, 0.12);
+  border-radius: 999px;
+  background: rgba(255, 253, 246, 0.78);
+  color: var(--brand-muted);
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.brand-title {
+  color: var(--brand-ink);
+  font-family: var(--font-brand-display), var(--font-body), sans-serif;
+  font-weight: 800;
+  letter-spacing: 0;
+  line-height: 0.95;
+}
+
+.brand-copy {
+  color: var(--brand-muted);
+  font-weight: 800;
+  line-height: 1.45;
+}
+
+.brand-icon-tile {
+  display: grid;
+  place-items: center;
+  border: 2px solid rgba(34, 49, 63, 0.1);
+  border-radius: 1.1rem;
+  background: var(--brand-paper);
+  box-shadow: inset 0 -3px 0 rgba(34, 49, 63, 0.08);
+}
+
+.brand-progress-track {
+  overflow: hidden;
+  border: 1px solid rgba(34, 49, 63, 0.12);
+  border-radius: 999px;
+  background: rgba(34, 49, 63, 0.08);
+  box-shadow: inset 0 1px 2px rgba(34, 49, 63, 0.08);
+}
+
+.brand-progress-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--brand-sun), var(--brand-sun-deep), var(--brand-coral));
+}
+
+.brand-sunburst {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.brand-sunburst::before {
+  content: "";
+  position: absolute;
+  inset: -35%;
+  z-index: -1;
+  background:
+    conic-gradient(
+      from -18deg,
+      rgba(255, 181, 31, 0.22) 0 8deg,
+      transparent 8deg 20deg,
+      rgba(255, 181, 31, 0.16) 20deg 30deg,
+      transparent 30deg 48deg
+    );
+  opacity: 0.75;
+  transform: rotate(8deg);
+}
+
+.brand-ray-field {
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255, 181, 31, 0.34), transparent 16rem),
+    linear-gradient(112deg, rgba(255, 181, 31, 0.2) 0 18%, transparent 18.2% 50%, rgba(66, 199, 255, 0.12) 50.2% 62%, transparent 62.2%),
+    linear-gradient(28deg, transparent 0 60%, rgba(255, 111, 79, 0.12) 60.2% 72%, transparent 72.2%);
+}
+
+.brand-sticker {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid rgba(34, 49, 63, 0.12);
+  border-radius: 1rem;
+  background: var(--brand-paper);
+  box-shadow: 0 5px 0 rgba(34, 49, 63, 0.12), 0 12px 20px rgba(34, 49, 63, 0.08);
+}
+
+.brand-category-strip {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 0.45rem;
+  border-radius: inherit;
+  opacity: 0.9;
 }
 
 /* Claymorphic Button Utilities */
 .clay-btn {
-  background: var(--surface-container-lowest, #ffffff);
-  border: 3px solid rgba(255, 255, 255, 0.45); /* Highlight border */
-  border-radius: 9999px; /* rounded-full */
-  box-shadow: 
-    6px 6px 12px rgba(0, 0, 0, 0.05), /* Outer shadow */
-    inset -4px -4px 8px rgba(0, 0, 0, 0.05), /* Bottom-right inner shadow */
-    inset 4px 4px 8px rgba(255, 255, 255, 0.95); /* Top-left inner highlight */
-  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  font-weight: 950; /* Extra bold */
+  background: var(--surface-container-lowest, #fffdf6);
+  border: 2px solid rgba(34, 49, 63, 0.12);
+  border-radius: 9999px;
+  box-shadow: var(--shadow-clay-btn);
+  transition: transform 0.18s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.18s cubic-bezier(0.22, 1, 0.36, 1);
+  font-weight: 900;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
@@ -163,19 +277,14 @@ body::before {
 }
 
 .clay-btn:hover {
-  transform: translateY(-4px); /* Hover float */
-  box-shadow: 
-    8px 14px 20px rgba(0, 0, 0, 0.08), /* Deepened outer shadow */
-    inset -4px -4px 8px rgba(0, 0, 0, 0.04), 
-    inset 4px 4px 8px rgba(255, 255, 255, 0.95);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-clay-btn-hover);
 }
 
 /* Active clay states (pressed/squished) */
 .clay-btn:active, .clay-btn-active {
-  transform: translateY(4px) scale(0.97); /* Depress down */
-  box-shadow: 
-    inset -2px -2px 4px rgba(255, 255, 255, 0.8), /* Light bottom-right inner */
-    inset 4px 4px 8px rgba(0, 0, 0, 0.16) !important; /* Deep dark top-left inner */
+  transform: translateY(4px) scale(0.98);
+  box-shadow: var(--shadow-clay-btn-pressed) !important;
 }
 
 /* Carved Groove Input Utility */
@@ -505,11 +614,11 @@ body::before {
   line-height: 18px;
 }
 
-/* Brushed clay noise texture overlay applied globally for rich realism */
-.clay-card, .clay-btn, .glass-card, .glass-panel, .clay-bubble, nav {
+/* Brushed clay noise texture overlay for legacy clay surfaces */
+.clay-card, .clay-btn, .glass-card, .glass-panel, .clay-bubble {
   position: relative;
 }
-.clay-card::after, .clay-btn::after, .glass-card::after, .glass-panel::after, .clay-bubble::after, nav::after {
+.clay-card::after, .clay-btn::after, .glass-card::after, .glass-panel::after, .clay-bubble::after {
   content: "";
   position: absolute;
   inset: 0;

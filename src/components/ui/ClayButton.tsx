@@ -20,28 +20,28 @@ export default function ClayButton({
 }: ClayButtonProps) {
   // Styles mapping
   const baseStyle =
-    "inline-flex items-center justify-center font-black uppercase tracking-wide border transition-all duration-150 cursor-pointer select-none outline-none focus-visible:ring-4 focus-visible:ring-primary/45";
+    "inline-flex items-center justify-center font-extrabold uppercase tracking-wide border transition-all duration-150 cursor-pointer select-none outline-none focus-visible:ring-4 focus-visible:ring-primary/35";
 
   // Size mapping
   const sizeStyles = {
-    sm: "px-4 py-2 text-xs rounded-2xl border-[2px]",
-    md: "px-6 py-3.5 text-sm rounded-3xl border-[3px]",
-    lg: "px-8 py-5 text-lg rounded-[2rem] border-[4px]",
-    icon: "p-3.5 rounded-full border-[3px] aspect-square",
+    sm: "px-4 py-2 text-xs rounded-xl border-2",
+    md: "px-6 py-3.5 text-sm rounded-2xl border-2",
+    lg: "px-8 py-5 text-lg rounded-2xl border-2",
+    icon: "p-3.5 rounded-2xl border-2 aspect-square",
   };
 
   // Color variants mapping (background, text, border, shadows)
   const variantStyles = {
     primary:
-      "bg-primary text-white border-white/30 shadow-[4px_6px_12px_rgba(255,133,161,0.35),_inset_-4px_-4px_8px_rgba(0,0,0,0.08),_inset_4px_4px_8px_rgba(255,255,255,0.4)] hover:bg-primary/95 active:shadow-[inset_-2px_-2px_4px_rgba(255,255,255,0.4),_inset_4px_4px_8px_rgba(0,0,0,0.2)]",
+      "bg-primary text-[#593900] border-[#c47a00]/20 shadow-[0_7px_0_#d28700,0_16px_28px_rgba(255,181,31,0.28)] hover:bg-[#ffc247] active:shadow-[0_2px_0_#d28700,0_8px_14px_rgba(255,181,31,0.18)]",
     secondary:
-      "bg-secondary text-[#0b4a45] border-white/30 shadow-[4px_6px_12px_rgba(78,205,196,0.3),_inset_-4px_-4px_8px_rgba(0,0,0,0.08),_inset_4px_4px_8px_rgba(255,255,255,0.4)] hover:bg-secondary/95 active:shadow-[inset_-2px_-2px_4px_rgba(255,255,255,0.4),_inset_4px_4px_8px_rgba(0,0,0,0.2)]",
+      "bg-secondary text-white border-[#007d79]/20 shadow-[0_7px_0_#00817e,0_16px_28px_rgba(0,169,165,0.22)] hover:bg-[#009d99] active:shadow-[0_2px_0_#00817e,0_8px_14px_rgba(0,169,165,0.16)]",
     tertiary:
-      "bg-tertiary text-[#5c4d00] border-white/30 shadow-[4px_6px_12px_rgba(255,209,102,0.3),_inset_-4px_-4px_8px_rgba(0,0,0,0.1),_inset_4px_4px_8px_rgba(255,255,255,0.4)] hover:bg-tertiary/95 active:shadow-[inset_-2px_-2px_4px_rgba(255,255,255,0.4),_inset_4px_4px_8px_rgba(0,0,0,0.2)]",
+      "bg-tertiary text-white border-[#bd3d22]/20 shadow-[0_7px_0_#c44a2f,0_16px_28px_rgba(255,111,79,0.22)] hover:bg-[#ff603d] active:shadow-[0_2px_0_#c44a2f,0_8px_14px_rgba(255,111,79,0.16)]",
     surface:
-      "bg-white text-[#4A5358] border-white/50 shadow-[4px_6px_12px_rgba(0,0,0,0.04),_inset_-4px_-4px_8px_rgba(0,0,0,0.04),_inset_4px_4px_8px_rgba(255,255,255,0.95)] hover:bg-white/98 active:shadow-[inset_-2px_-2px_4px_rgba(255,255,255,0.8),_inset_4px_4px_8px_rgba(0,0,0,0.12)]",
+      "bg-[#fffdf6] text-[#22313f] border-[#22313f]/10 shadow-[0_6px_0_rgba(34,49,63,0.12),0_12px_22px_rgba(34,49,63,0.08)] hover:bg-white active:shadow-[0_2px_0_rgba(34,49,63,0.15),0_6px_10px_rgba(34,49,63,0.06)]",
     danger:
-      "bg-red-500 text-white border-white/30 shadow-[4px_6px_12px_rgba(239,68,68,0.3),_inset_-4px_-4px_8px_rgba(0,0,0,0.1),_inset_4px_4px_8px_rgba(255,255,255,0.4)] hover:bg-red-500/95 active:shadow-[inset_-2px_-2px_4px_rgba(255,255,255,0.4),_inset_4px_4px_8px_rgba(0,0,0,0.2)]",
+      "bg-red-500 text-white border-red-700/20 shadow-[0_7px_0_#b91c1c,0_16px_28px_rgba(239,68,68,0.24)] hover:bg-red-600 active:shadow-[0_2px_0_#b91c1c,0_8px_14px_rgba(239,68,68,0.16)]",
   };
 
   // Disabled style overrides

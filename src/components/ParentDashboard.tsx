@@ -1,9 +1,8 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Clock, BookOpen, Lightbulb, CheckCircle2, BarChart2 } from "@/components/Icons";
+import { BarChart2, BookOpen, CheckCircle2, Clock, Lightbulb, Star } from "@/components/Icons";
 import { motion } from "framer-motion";
-import ClayCard from "@/components/ui/ClayCard";
 import ClayButton from "@/components/ui/ClayButton";
 
 interface ProgressRecord {
@@ -20,20 +19,29 @@ interface Child {
   progressRecord: ProgressRecord[];
 }
 
-const getCategory = (target: string): "Literacy" | "Logic" | "Fine Motor" => {
+const BRAND_COLORS = {
+  literacy: "#ffb51f",
+  logic: "#00a9a5",
+  motor: "#8d6bff",
+  sun: "#ffb51f",
+  coral: "#ff6f4f",
+  blue: "#2f80ed",
+};
+
+const getCategory = (target: string): "Literacy" | "Logic" | "Creative Motor" => {
   const t = target.toUpperCase();
   if (["SORTING", "PATTERN", "STORY", "DRUMMER", "BUNNY", "LOGIC", "ALCH", "MAZE"].includes(t)) {
     return "Logic";
   }
   if (["MARK", "MARKMAKER", "FINE_MOTOR", "SYMM"].includes(t)) {
-    return "Fine Motor";
+    return "Creative Motor";
   }
   return "Literacy";
 };
 
 const getActivityName = (target: string): string => {
   const t = target.toUpperCase();
-  if (t === "STORY") return "3-Piece Sequence";
+  if (t === "STORY") return "Story Sequence";
   if (t === "PATTERN") return "Pattern Explorer";
   if (t === "SORTING") return "Sorting Basket";
   if (t === "MARK") return "Trace & Color";
@@ -46,6 +54,9 @@ const getActivityName = (target: string): string => {
   return t;
 };
 
+const average = (scores: number[], fallback: number) =>
+  scores.length > 0 ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : fallback;
+
 export default function ParentDashboard({ childId }: { childId?: string }) {
   const [data, setData] = useState<Child | null>(null);
 
@@ -55,9 +66,7 @@ export default function ParentDashboard({ childId }: { childId?: string }) {
       fetch(`/api/progress/${childId}`)
         .then((res) => res.json())
         .then((json) => {
-          if (json.child) {
-            setData(json.child);
-          }
+          if (json.child) setData(json.child);
         });
     };
     fetchProgress();
@@ -65,325 +74,325 @@ export default function ParentDashboard({ childId }: { childId?: string }) {
 
   if (!data) {
     return (
-      <div className="p-8 text-center text-[var(--foreground)] font-bold animate-pulse">
-        Loading Dashboard...
+      <div className="mx-auto mt-12 w-fit rounded-full border border-[var(--brand-line)] bg-[var(--brand-paper)] px-6 py-4 text-center text-sm font-black text-[var(--brand-muted)] shadow-clay-card">
+        Loading dashboard
       </div>
     );
   }
 
-  // Calculate dynamic statistics
-  const totalSessions = data.progressRecord.length;
-  
-  const averageScore = totalSessions > 0 
-    ? Math.round(data.progressRecord.reduce((acc, curr) => acc + curr.tracingScore, 0) / totalSessions)
+  const records = data.progressRecord;
+  const childName = data.name || "Demo Student";
+  const totalSessions = records.length;
+  const averageScore = totalSessions > 0
+    ? Math.round(records.reduce((acc, curr) => acc + curr.tracingScore, 0) / totalSessions)
     : 100;
 
-  const totalTimeMs = data.progressRecord.reduce((acc, curr) => acc + curr.timeSpentMs, 0);
+  const totalTimeMs = records.reduce((acc, curr) => acc + curr.timeSpentMs, 0);
   const totalTimeMins = Math.round(totalTimeMs / 60000);
   const totalTimeStr = totalTimeMins > 0 ? `${totalTimeMins}m` : `${Math.round(totalTimeMs / 1000)}s`;
 
-  // Radar Chart Constants & Helpers
+  const literacyScores = records.filter((r) => getCategory(r.targetLetter) === "Literacy").map((r) => r.tracingScore);
+  const logicScores = records.filter((r) => getCategory(r.targetLetter) === "Logic").map((r) => r.tracingScore);
+  const motorScores = records.filter((r) => getCategory(r.targetLetter) === "Creative Motor").map((r) => r.tracingScore);
+
+  const avgLiteracy = average(literacyScores, 85);
+  const avgLogic = average(logicScores, 80);
+  const avgMotor = average(motorScores, 90);
+
+  const strongestArea = [
+    { label: "Literacy", value: avgLiteracy, color: BRAND_COLORS.literacy },
+    { label: "Logic", value: avgLogic, color: BRAND_COLORS.logic },
+    { label: "Creative Motor", value: avgMotor, color: BRAND_COLORS.motor },
+  ].sort((a, b) => b.value - a.value)[0];
+
+  const nextFocus = [
+    { label: "letter sounds", value: avgLiteracy },
+    { label: "patterns and sequencing", value: avgLogic },
+    { label: "drawing control", value: avgMotor },
+  ].sort((a, b) => a.value - b.value)[0];
+
   const cx = 150;
   const cy = 135;
   const maxR = 90;
-
-  const records = data.progressRecord;
-  const literacyScores = records.filter(r => getCategory(r.targetLetter) === "Literacy").map(r => r.tracingScore);
-  const logicScores = records.filter(r => getCategory(r.targetLetter) === "Logic").map(r => r.tracingScore);
-  const motorScores = records.filter(r => getCategory(r.targetLetter) === "Fine Motor").map(r => r.tracingScore);
-
-  const avgLiteracy = literacyScores.length > 0 ? Math.round(literacyScores.reduce((a, b) => a + b, 0) / literacyScores.length) : 85;
-  const avgLogic = logicScores.length > 0 ? Math.round(logicScores.reduce((a, b) => a + b, 0) / logicScores.length) : 80;
-  const avgMotor = motorScores.length > 0 ? Math.round(motorScores.reduce((a, b) => a + b, 0) / motorScores.length) : 90;
 
   const getCoordinates = (literacy: number, logic: number, motor: number) => {
     const rLit = (literacy / 100) * maxR;
     const rLog = (logic / 100) * maxR;
     const rMot = (motor / 100) * maxR;
-    
     const pLit = { x: cx, y: cy - rLit };
     const pLog = { x: cx + rLog * Math.cos(Math.PI / 6), y: cy + rLog * Math.sin(Math.PI / 6) };
     const pMot = { x: cx - rMot * Math.cos(Math.PI / 6), y: cy + rMot * Math.sin(5 * Math.PI / 6) };
-    
     return `${pLit.x},${pLit.y} ${pLog.x},${pLog.y} ${pMot.x},${pMot.y}`;
   };
 
-  // Animation variants
   const containerVariants = {
     hidden: { opacity: 0 },
-    show: { opacity: 1, transition: { staggerChildren: 0.08 } }
+    show: { opacity: 1, transition: { staggerChildren: 0.06 } },
   };
-  
+
   const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0, transition: { type: "spring" as const, stiffness: 250, damping: 25 } }
+    hidden: { opacity: 0, y: 16 },
+    show: { opacity: 1, y: 0, transition: { type: "spring" as const, stiffness: 260, damping: 26 } },
   };
+
+  const statCards = [
+    {
+      label: "Accuracy",
+      value: `${averageScore}%`,
+      detail: "Average scored sessions",
+      color: BRAND_COLORS.literacy,
+      icon: CheckCircle2,
+    },
+    {
+      label: "Practice Time",
+      value: totalTimeStr,
+      detail: "Total recorded play",
+      color: BRAND_COLORS.sun,
+      icon: Clock,
+    },
+    {
+      label: "Sessions",
+      value: `${totalSessions}`,
+      detail: "Completed activities",
+      color: BRAND_COLORS.logic,
+      icon: BarChart2,
+    },
+  ];
 
   return (
-    <motion.div 
-      variants={containerVariants} 
-      initial="hidden" 
-      animate="show" 
-      className="max-w-5xl mx-auto px-4 pb-20 pt-6"
+    <motion.div
+      variants={containerVariants}
+      initial="hidden"
+      animate="show"
+      className="mx-auto max-w-6xl px-4 pb-24 pt-5"
     >
-      {/* Header Section */}
-      <motion.div variants={itemVariants} className="mb-8">
-        <h2 className="text-4xl font-black text-[#4A5358] uppercase mb-1 tracking-tight">Parent Dashboard</h2>
-        <p className="text-sm font-bold text-[#4A5358]/70">Here is how {data.name || "Demo Student"} is doing today.</p>
-      </motion.div>
-
-      {/* Telemetry Stat Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        {/* Accuracy */}
-        <ClayCard 
-          variants={itemVariants} 
-          variant="primary"
-          className="flex flex-col items-center justify-center text-center"
-        >
-          <div className="bg-white/80 border border-white/40 p-3 rounded-2xl mb-4 shadow-[inset_1px_1px_3px_rgba(255,255,255,0.9),_inset_-1px_-1px_3px_rgba(0,0,0,0.03)]">
-            <CheckCircle2 className="text-[#ff85a1]" size={36} strokeWidth={2.5} />
+      <motion.header variants={itemVariants} className="mb-7 brand-panel p-5 sm:p-7">
+        <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+          <div>
+            <span className="brand-chip mb-4">Parent Dashboard</span>
+            <h2 className="brand-title text-4xl sm:text-5xl">Learning snapshot</h2>
+            <p className="brand-copy mt-3 max-w-2xl">
+              A clear view of {childName}&apos;s practice across letters, logic, and creative motor skills.
+            </p>
           </div>
-          <span className="text-xs font-black uppercase tracking-wider text-[#590d22]/70 mb-1">Accuracy</span>
-          <div className="text-4xl font-black text-[#ff85a1]">{averageScore}%</div>
-        </ClayCard>
-
-        {/* Total Time */}
-        <ClayCard 
-          variants={itemVariants} 
-          variant="tertiary"
-          className="flex flex-col items-center justify-center text-center"
-        >
-          <div className="bg-white/80 border border-white/40 p-3 rounded-2xl mb-4 shadow-[inset_1px_1px_3px_rgba(255,255,255,0.9),_inset_-1px_-1px_3px_rgba(0,0,0,0.03)]">
-            <Clock className="text-[#ffd166]" size={36} strokeWidth={2.5} />
+          <div className="brand-panel-quiet flex items-center gap-3 px-4 py-3">
+            <div className="brand-icon-tile h-12 w-12 text-[var(--brand-sun)]">
+              <Star size={26} className="fill-current" />
+            </div>
+            <div>
+              <p className="mb-0 text-xs font-black uppercase tracking-[0.08em] text-[var(--brand-muted)]">Strongest area</p>
+              <p className="mb-0 text-lg font-black" style={{ color: strongestArea.color }}>{strongestArea.label}</p>
+            </div>
           </div>
-          <span className="text-xs font-black uppercase tracking-wider text-[#5c4d00]/70 mb-1">Total Time</span>
-          <div className="text-4xl font-black text-[#ffd166]">{totalTimeStr}</div>
-        </ClayCard>
+        </div>
+      </motion.header>
 
-        {/* Sessions */}
-        <ClayCard 
-          variants={itemVariants} 
-          variant="secondary"
-          className="flex flex-col items-center justify-center text-center"
-        >
-          <div className="bg-white/80 border border-white/40 p-3 rounded-2xl mb-4 shadow-[inset_1px_1px_3px_rgba(255,255,255,0.9),_inset_-1px_-1px_3px_rgba(0,0,0,0.03)]">
-            <BarChart2 className="text-[#4ecdc4]" size={36} strokeWidth={2.5} />
-          </div>
-          <span className="text-xs font-black uppercase tracking-wider text-[#0b4a45]/70 mb-1">Sessions</span>
-          <div className="text-4xl font-black text-[#4ecdc4]">{totalSessions}</div>
-        </ClayCard>
+      <div className="mb-7 grid grid-cols-1 gap-4 md:grid-cols-3">
+        {statCards.map((card) => {
+          const Icon = card.icon;
+          return (
+            <motion.div key={card.label} variants={itemVariants} className="brand-panel p-5">
+              <div className="mb-5 flex items-center justify-between">
+                <div className="brand-icon-tile h-12 w-12" style={{ color: card.color, background: `${card.color}18` }}>
+                  <Icon size={28} />
+                </div>
+                <span className="h-3 w-3 rounded-full" style={{ background: card.color }} />
+              </div>
+              <p className="mb-1 text-xs font-black uppercase tracking-[0.08em] text-[var(--brand-muted)]">{card.label}</p>
+              <p className="mb-1 font-display text-5xl font-black leading-none" style={{ color: card.color }}>{card.value}</p>
+              <p className="mb-0 text-sm font-extrabold text-[var(--brand-muted)]">{card.detail}</p>
+            </motion.div>
+          );
+        })}
       </div>
 
-      {/* Developmental Progress & Weekly Analytics */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-12">
-        {/* Left: Radar Chart */}
-        <ClayCard className="p-6 bg-white border border-white/20 rounded-[2.5rem] shadow-clay-card flex flex-col items-center justify-center">
-          <h3 className="text-xl font-black text-[#4A5358] uppercase mb-4 tracking-wide self-start pl-2">Developmental Radar</h3>
-          <div className="relative w-full max-w-[320px] aspect-square flex items-center justify-center">
-            <svg viewBox="0 0 300 270" className="w-full h-full overflow-visible">
-              {/* Concentric grid lines */}
-              {[0.2, 0.4, 0.6, 0.8, 1].map((scale) => {
-                const r = maxR * scale;
-                const p1 = { x: cx, y: cy - r };
-                const p2 = { x: cx + r * Math.cos(Math.PI / 6), y: cy + r * Math.sin(Math.PI / 6) };
-                const p3 = { x: cx - r * Math.cos(Math.PI / 6), y: cy + r * Math.sin(5 * Math.PI / 6) };
-                return (
-                  <polygon
-                    key={scale}
-                    points={`${p1.x},${p1.y} ${p2.x},${p2.y} ${p3.x},${p3.y}`}
-                    fill="none"
-                    stroke="rgba(74,83,88,0.08)"
-                    strokeWidth="1.5"
-                    strokeDasharray={scale === 1 ? undefined : "3 3"}
-                  />
-                );
-              })}
-              
-              {/* Axis lines */}
-              {[Math.PI / 6, 5 * Math.PI / 6, -Math.PI / 2].map((angle, i) => {
-                const x2 = cx + maxR * Math.cos(angle);
-                const y2 = cy + maxR * Math.sin(angle);
-                return (
+      <div className="mb-8 grid grid-cols-1 gap-5 lg:grid-cols-[1.08fr_0.92fr]">
+        <motion.section variants={itemVariants} className="brand-panel p-5 sm:p-6">
+          <div className="mb-3 flex items-center justify-between gap-4">
+            <div>
+              <h3 className="brand-title text-3xl">Skill balance</h3>
+              <p className="brand-copy mt-1 text-sm">Three core learning categories, scored from recent sessions.</p>
+            </div>
+          </div>
+          <div className="flex flex-col items-center gap-5 md:flex-row">
+            <div className="relative flex aspect-square w-full max-w-[330px] items-center justify-center">
+              <svg viewBox="0 0 300 270" className="h-full w-full overflow-visible">
+                {[0.2, 0.4, 0.6, 0.8, 1].map((scale) => {
+                  const r = maxR * scale;
+                  const p1 = { x: cx, y: cy - r };
+                  const p2 = { x: cx + r * Math.cos(Math.PI / 6), y: cy + r * Math.sin(Math.PI / 6) };
+                  const p3 = { x: cx - r * Math.cos(Math.PI / 6), y: cy + r * Math.sin(5 * Math.PI / 6) };
+                  return (
+                    <polygon
+                      key={scale}
+                      points={`${p1.x},${p1.y} ${p2.x},${p2.y} ${p3.x},${p3.y}`}
+                      fill={scale === 1 ? "rgba(255,253,246,0.5)" : "none"}
+                      stroke="rgba(34,49,63,0.12)"
+                      strokeWidth="1.5"
+                      strokeDasharray={scale === 1 ? undefined : "3 3"}
+                    />
+                  );
+                })}
+                {[Math.PI / 6, 5 * Math.PI / 6, -Math.PI / 2].map((angle, i) => (
                   <line
                     key={i}
                     x1={cx}
                     y1={cy}
-                    x2={x2}
-                    y2={y2}
-                    stroke="rgba(74,83,88,0.12)"
+                    x2={cx + maxR * Math.cos(angle)}
+                    y2={cy + maxR * Math.sin(angle)}
+                    stroke="rgba(34,49,63,0.14)"
                     strokeWidth="1.5"
                   />
-                );
-              })}
-
-              {/* Labels */}
-              <text x={cx} y={cy - maxR - 10} textAnchor="middle" className="text-[11px] font-black fill-[#ff85a1] uppercase">Literacy ({avgLiteracy}%)</text>
-              <text x={cx + maxR * Math.cos(Math.PI / 6) + 5} y={cy + maxR * Math.sin(Math.PI / 6) + 12} textAnchor="start" className="text-[11px] font-black fill-[#4ecdc4] uppercase">Logic ({avgLogic}%)</text>
-              <text x={cx - maxR * Math.cos(Math.PI / 6) - 5} y={cy + maxR * Math.sin(5 * Math.PI / 6) + 12} textAnchor="end" className="text-[11px] font-black fill-[#ffd166] uppercase">Fine Motor ({avgMotor}%)</text>
-
-              {/* Data area */}
-              <polygon
-                points={getCoordinates(avgLiteracy, avgLogic, avgMotor)}
-                fill="rgba(224, 115, 131, 0.25)"
-                stroke="#e07383"
-                strokeWidth="3.5"
-                strokeLinejoin="round"
-                className="drop-shadow-md"
-              />
-              
-              {/* Data points */}
-              {(() => {
-                const rLit = (avgLiteracy / 100) * maxR;
-                const rLog = (avgLogic / 100) * maxR;
-                const rMot = (avgMotor / 100) * maxR;
-                const pts = [
-                  { x: cx, y: cy - rLit, color: "#ff85a1" },
-                  { x: cx + rLog * Math.cos(Math.PI / 6), y: cy + rLog * Math.sin(Math.PI / 6), color: "#4ecdc4" },
-                  { x: cx - rMot * Math.cos(Math.PI / 6), y: cy + rMot * Math.sin(5 * Math.PI / 6), color: "#ffd166" }
-                ];
-                return pts.map((pt, i) => (
-                  <circle
-                    key={i}
-                    cx={pt.x}
-                    cy={pt.y}
-                    r="5"
-                    fill="white"
-                    stroke={pt.color}
-                    strokeWidth="3.5"
-                    className="shadow-sm"
-                  />
-                ));
-              })()}
-            </svg>
-          </div>
-        </ClayCard>
-
-        {/* Right: Weekly Analytics Summary */}
-        <div className="flex flex-col gap-6">
-          <div className="grid grid-cols-2 gap-4">
-            {/* Play Streak Card */}
-            <ClayCard variant="primary" hoverEffect className="p-5 flex flex-col justify-between h-36">
-              <span className="text-2xl">🔥</span>
-              <div>
-                <h4 className="text-xs font-black uppercase text-[#590d22]/60 tracking-wider">Play Streak</h4>
-                <p className="text-2xl font-black text-[#e07383]">5 Days</p>
-              </div>
-            </ClayCard>
-
-            {/* Badges Card */}
-            <ClayCard variant="secondary" hoverEffect className="p-5 flex flex-col justify-between h-36">
-              <span className="text-2xl">🏅</span>
-              <div>
-                <h4 className="text-xs font-black uppercase text-[#0b4a45]/60 tracking-wider">Badges Earned</h4>
-                <p className="text-2xl font-black text-[#3fa394]">{Math.max(1, totalSessions)} Badges</p>
-              </div>
-            </ClayCard>
-          </div>
-
-          {/* Activity Focus Card */}
-          <ClayCard variant="tertiary" className="p-6 flex-grow flex flex-col justify-center">
-            <h4 className="text-sm font-black uppercase text-[#5c4d00]/70 tracking-wider mb-2">Development Focus</h4>
-            <p className="text-sm font-bold text-[#4A5358]/85 leading-relaxed">
-              {data.name || "Your child"} has made massive strides in <span className="font-extrabold text-[#e07383]">Fine Motor</span> drawing accuracy this week! Focus next on <span className="font-extrabold text-[#3fa394]">Logic & Sequencing</span> (like Pattern Explorer) to balance their milestone chart.
-            </p>
-          </ClayCard>
-        </div>
-      </div>
-
-      {/* Session History Section */}
-      <motion.div variants={itemVariants} className="mb-12">
-        <div className="flex justify-between items-center mb-6 px-2">
-          <h3 className="text-2xl font-black text-[#4A5358] uppercase">Session History</h3>
-          <ClayButton variant="surface" size="sm" className="text-xs">Download Report</ClayButton>
-        </div>
-
-        <div className="flex flex-col gap-4">
-          {data.progressRecord.map((record) => {
-            let progressColor = "bg-primary";
-            let textColor = "text-primary";
-            let bgBadge = "bg-primary-container/60";
-            
-            if (record.tracingScore < 90) {
-              progressColor = "bg-secondary";
-              textColor = "text-secondary";
-              bgBadge = "bg-secondary-container/60";
-            }
-            if (record.tracingScore < 80) {
-              progressColor = "bg-tertiary";
-              textColor = "text-tertiary";
-              bgBadge = "bg-tertiary-container/60";
-            }
-
-            return (
-              <ClayCard
-                key={record.id}
-                className="flex flex-col sm:flex-row items-center justify-between p-5 bg-white border border-white/20 rounded-[2rem] shadow-clay-card gap-4 hover:scale-[1.01] transition-transform duration-200"
-              >
-                {/* Left side: Icon, Name & Date */}
-                <div className="flex items-center gap-4 w-full sm:w-auto text-left">
-                  <div className={`w-12 h-12 rounded-2xl ${bgBadge} flex items-center justify-center border border-white/20 shadow-[inset_1px_1px_3px_rgba(255,255,255,0.9),_inset_-1px_-1px_3px_rgba(0,0,0,0.03)] shrink-0`}>
-                    <BookOpen size={24} className="text-[#4a5358]" strokeWidth={2.5} />
+                ))}
+                <text x={cx} y={cy - maxR - 10} textAnchor="middle" className="fill-[var(--brand-sun-deep)] text-[11px] font-black uppercase">Literacy {avgLiteracy}%</text>
+                <text x={cx + maxR * Math.cos(Math.PI / 6) + 8} y={cy + maxR * Math.sin(Math.PI / 6) + 12} textAnchor="start" className="fill-[var(--brand-teal)] text-[11px] font-black uppercase">Logic {avgLogic}%</text>
+                <text x={cx - maxR * Math.cos(Math.PI / 6) - 8} y={cy + maxR * Math.sin(5 * Math.PI / 6) + 12} textAnchor="end" className="fill-[var(--brand-violet)] text-[11px] font-black uppercase">Motor {avgMotor}%</text>
+                <polygon
+                  points={getCoordinates(avgLiteracy, avgLogic, avgMotor)}
+                  fill="rgba(255, 92, 122, 0.18)"
+                  stroke="var(--brand-sun-deep)"
+                  strokeWidth="3.5"
+                  strokeLinejoin="round"
+                />
+                {[
+                  { x: cx, y: cy - (avgLiteracy / 100) * maxR, color: BRAND_COLORS.literacy },
+                  {
+                    x: cx + (avgLogic / 100) * maxR * Math.cos(Math.PI / 6),
+                    y: cy + (avgLogic / 100) * maxR * Math.sin(Math.PI / 6),
+                    color: BRAND_COLORS.logic,
+                  },
+                  {
+                    x: cx - (avgMotor / 100) * maxR * Math.cos(Math.PI / 6),
+                    y: cy + (avgMotor / 100) * maxR * Math.sin(5 * Math.PI / 6),
+                    color: BRAND_COLORS.motor,
+                  },
+                ].map((pt, i) => (
+                  <circle key={i} cx={pt.x} cy={pt.y} r="5" fill="white" stroke={pt.color} strokeWidth="3.5" />
+                ))}
+              </svg>
+            </div>
+            <div className="grid w-full gap-3">
+              {[
+                { label: "Literacy", value: avgLiteracy, color: BRAND_COLORS.literacy },
+                { label: "Logic", value: avgLogic, color: BRAND_COLORS.logic },
+                { label: "Creative Motor", value: avgMotor, color: BRAND_COLORS.motor },
+              ].map((item) => (
+                <div key={item.label} className="brand-panel-quiet p-4">
+                  <div className="mb-2 flex items-center justify-between">
+                    <span className="text-sm font-black text-[var(--brand-ink)]">{item.label}</span>
+                    <span className="text-sm font-black" style={{ color: item.color }}>{item.value}%</span>
                   </div>
-                  <div className="flex flex-col gap-0.5">
-                    <span className="text-sm font-black text-[#4A5358]">{getActivityName(record.targetLetter)}</span>
-                    <span className="text-xs font-bold text-[#4A5358]/55">
-                      {new Date(record.createdAt).toLocaleDateString(undefined, { 
-                        month: 'short', 
-                        day: 'numeric', 
-                        year: 'numeric' 
-                      })}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Right side: Accuracy & Progress Bar */}
-                <div className="flex items-center gap-6 w-full sm:w-auto justify-between sm:justify-end flex-grow">
-                  {/* Accuracy Stat */}
-                  <div className="flex flex-col items-start sm:items-end shrink-0">
-                    <span className="text-[9px] font-black uppercase tracking-wider text-[#4A5358]/40 leading-none mb-0.5">Accuracy</span>
-                    <span className={`text-base font-black ${textColor}`}>{record.tracingScore}%</span>
-                  </div>
-                  {/* Progress Pill Bar */}
-                  <div className="w-full sm:w-44 bg-[#dbe8f2] rounded-full h-4 p-0.5 overflow-hidden border border-white/20 shadow-inner shrink-0">
-                    <motion.div 
+                  <div className="brand-progress-track h-3">
+                    <motion.div
                       initial={{ width: 0 }}
-                      animate={{ width: `${record.tracingScore}%` }}
-                      transition={{ duration: 1, ease: "easeOut" }}
-                      className={`h-full rounded-full ${progressColor}`}
+                      animate={{ width: `${item.value}%` }}
+                      transition={{ duration: 0.8, ease: "easeOut" }}
+                      className="h-full rounded-full"
+                      style={{ background: item.color }}
                     />
                   </div>
                 </div>
-              </ClayCard>
+              ))}
+            </div>
+          </div>
+        </motion.section>
+
+        <motion.aside variants={itemVariants} className="grid gap-4">
+          <div className="brand-panel p-5">
+            <span className="brand-chip mb-4">Next Focus</span>
+            <h3 className="brand-title text-3xl">Build on {nextFocus.label}</h3>
+            <p className="brand-copy mt-3 text-sm">
+              Balance the week with short games that reinforce {nextFocus.label}. Keep sessions brief and repeat the same concept across two or three activities.
+            </p>
+          </div>
+          <div className="brand-panel p-5">
+            <span className="brand-chip mb-4">Weekly Rhythm</span>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="brand-panel-quiet p-4">
+                <span className="text-2xl">5</span>
+                <p className="mb-0 text-xs font-black uppercase tracking-[0.08em] text-[var(--brand-muted)]">Day streak</p>
+              </div>
+              <div className="brand-panel-quiet p-4">
+                <span className="text-2xl">{Math.max(1, totalSessions)}</span>
+                <p className="mb-0 text-xs font-black uppercase tracking-[0.08em] text-[var(--brand-muted)]">Badges</p>
+              </div>
+            </div>
+          </div>
+        </motion.aside>
+      </div>
+
+      <motion.section variants={itemVariants} className="mb-8">
+        <div className="mb-4 flex flex-col gap-3 px-1 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h3 className="brand-title text-3xl">Session history</h3>
+            <p className="brand-copy mt-1 text-sm">Recent practice entries and scoring.</p>
+          </div>
+          <ClayButton variant="surface" size="sm" className="w-fit text-xs">
+            Download Report
+          </ClayButton>
+        </div>
+
+        <div className="grid gap-3">
+          {records.map((record) => {
+            const category = getCategory(record.targetLetter);
+            const color = category === "Literacy" ? BRAND_COLORS.literacy : category === "Logic" ? BRAND_COLORS.logic : BRAND_COLORS.motor;
+            return (
+              <div key={record.id} className="brand-panel flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex min-w-0 items-center gap-4">
+                  <div className="brand-icon-tile h-12 w-12 shrink-0" style={{ color, background: `${color}16` }}>
+                    <BookOpen size={23} />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="mb-0 truncate text-sm font-black text-[var(--brand-ink)]">{getActivityName(record.targetLetter)}</p>
+                    <p className="mb-0 text-xs font-extrabold text-[var(--brand-muted)]">
+                      {category} · {new Date(record.createdAt).toLocaleDateString(undefined, {
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric",
+                      })}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4 sm:min-w-[250px]">
+                  <div className="shrink-0 text-right">
+                    <p className="mb-0 text-[10px] font-black uppercase tracking-[0.08em] text-[var(--brand-muted)]">Accuracy</p>
+                    <p className="mb-0 text-lg font-black" style={{ color }}>{record.tracingScore}%</p>
+                  </div>
+                  <div className="brand-progress-track h-3 flex-1">
+                    <motion.div
+                      initial={{ width: 0 }}
+                      animate={{ width: `${record.tracingScore}%` }}
+                      transition={{ duration: 0.8, ease: "easeOut" }}
+                      className="h-full rounded-full"
+                      style={{ background: color }}
+                    />
+                  </div>
+                </div>
+              </div>
             );
           })}
           {totalSessions === 0 && (
-            <div className="p-8 text-center text-gray-500 font-bold bg-white/40 border border-dashed border-[#9eb1bd]/40 rounded-[2rem]">
-              No sessions recorded yet. Time to play!
+            <div className="rounded-[1.5rem] border-2 border-dashed border-[var(--brand-line)] bg-[var(--brand-paper)] p-8 text-center text-sm font-black text-[var(--brand-muted)]">
+              No sessions recorded yet. Start with one short game.
             </div>
           )}
         </div>
-      </motion.div>
+      </motion.section>
 
-      {/* Weekly Focus Suggestion */}
-      <ClayCard 
-        variants={itemVariants}
-        className="flex flex-col md:flex-row items-center gap-6 bg-white/70"
-      >
-        <div className="w-24 h-24 bg-white border border-white/20 rounded-full flex items-center justify-center shadow-[6px_6px_12px_rgba(0,0,0,0.04),_inset_-4px_-4px_8px_rgba(0,0,0,0.04),_inset_4px_4px_8px_rgba(255,255,255,0.95)] flex-shrink-0 animate-float">
-          <Lightbulb className="text-[#ff85a1] text-5xl" size={48} style={{ fill: "var(--primary-container)" }} />
+      <motion.section variants={itemVariants} className="brand-panel flex flex-col gap-5 p-5 sm:p-6 md:flex-row md:items-center">
+        <div className="brand-icon-tile h-20 w-20 shrink-0 text-[var(--brand-sun)]">
+          <Lightbulb size={42} />
         </div>
-        <div>
-          <h4 className="text-xl font-black text-[#4A5358] uppercase mb-2">Weekly Focus: &quot;Phonetic P&quot;</h4>
-          <p className="text-sm font-bold text-[#4A5358]/70">
-            {data.name || "Demo Student"} is doing great with visuals! This week, try spending more time on activities starting with the letter &apos;P&apos; to help reinforce phonetic recognition.
+        <div className="flex-1">
+          <h4 className="brand-title text-2xl">Recommended focus: phonetic P</h4>
+          <p className="brand-copy mb-0 mt-2 text-sm">
+            {childName} is building visual confidence. This week, add a few short games around the letter P to connect tracing, sound recognition, and vocabulary.
           </p>
-          <div className="mt-4 flex gap-3">
-            <ClayButton variant="primary" className="text-xs py-3 px-5">
-              View Suggested Activities
-            </ClayButton>
-          </div>
         </div>
-      </ClayCard>
+        <ClayButton variant="primary" className="w-full shrink-0 text-sm md:w-auto">
+          View Activities
+        </ClayButton>
+      </motion.section>
     </motion.div>
   );
 }
