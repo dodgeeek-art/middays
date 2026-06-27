@@ -261,6 +261,11 @@ body::before {
   opacity: 0.9;
 }
 
+.midday-game-content > div > div:first-child > button:first-child,
+.midday-game-content > div > div:first-child > .clay-btn:first-child {
+  display: none !important;
+}
+
 /* Claymorphic Button Utilities */
 .clay-btn {
   background: var(--surface-container-lowest, #fffdf6);

@@ -14,6 +14,7 @@ import { Play, Trophy, Settings } from "@/components/Icons";
 import FloatingHeader from "@/components/ui/FloatingHeader";
 import ClayButton from "@/components/ui/ClayButton";
 import ClayCard from "@/components/ui/ClayCard";
+import InGameShell, { InGameShellMeta } from "@/components/ui/InGameShell";
 
 interface ProgressRecord {
   id: string;
@@ -28,6 +29,156 @@ interface Child {
   name: string;
   progressRecord: ProgressRecord[];
 }
+
+type ActiveGame =
+  | "menu"
+  | "tracing"
+  | "reveal"
+  | "bubbles"
+  | "monster"
+  | "scavenger"
+  | "rhyme"
+  | "match"
+  | "drummer"
+  | "sorting"
+  | "bunny"
+  | "story"
+  | "mark"
+  | "pattern"
+  | "alchemy"
+  | "maze"
+  | "symmetry"
+  | "garden"
+  | "magicsoundbubbles";
+
+const IN_GAME_META: Record<Exclude<ActiveGame, "menu">, InGameShellMeta> = {
+  tracing: {
+    title: "Trace",
+    eyebrow: "Letters & motor",
+    instruction: "Follow the path with your finger. Stay close to the guide line.",
+    category: "literacy",
+    status: "Letter practice",
+  },
+  reveal: {
+    title: "Reveal",
+    eyebrow: "Visual ID",
+    instruction: "Erase the frosty cover, then choose the matching letter object.",
+    category: "sound",
+    status: "Magic eraser",
+  },
+  bubbles: {
+    title: "Pop",
+    eyebrow: "Motor skills",
+    instruction: "Pop the bubbles with the target letter before they float away.",
+    category: "sound",
+    status: "Bubble round",
+  },
+  monster: {
+    title: "Feed",
+    eyebrow: "Phonics",
+    instruction: "Feed the monster the object that starts with the target sound.",
+    category: "sound",
+    status: "Sound match",
+  },
+  scavenger: {
+    title: "Search",
+    eyebrow: "Sound hunt",
+    instruction: "Listen for the sound, then find the matching object.",
+    category: "sound",
+    status: "Listening",
+  },
+  rhyme: {
+    title: "Rhyme",
+    eyebrow: "Language",
+    instruction: "Choose the word that rhymes with the prompt word.",
+    category: "literacy",
+    status: "Rhyme round",
+  },
+  match: {
+    title: "Match",
+    eyebrow: "Memory",
+    instruction: "Flip cards and find pairs that belong together.",
+    category: "literacy",
+    status: "Card match",
+  },
+  drummer: {
+    title: "Beats",
+    eyebrow: "Rhythm",
+    instruction: "Tap the drums to count the syllables in the word.",
+    category: "sound",
+    status: "Syllables",
+  },
+  sorting: {
+    title: "Sort",
+    eyebrow: "Logic",
+    instruction: "Move each item into the basket where it belongs.",
+    category: "logic",
+    status: "Sorting",
+  },
+  bunny: {
+    title: "Shelter",
+    eyebrow: "Nature logic",
+    instruction: "Help each animal find the right home.",
+    category: "nature",
+    status: "Habitats",
+  },
+  story: {
+    title: "Story",
+    eyebrow: "Sequence",
+    instruction: "Put the story pieces in an order that makes sense.",
+    category: "creative",
+    status: "Story order",
+  },
+  mark: {
+    title: "Draw",
+    eyebrow: "Creative motor",
+    instruction: "Trace, color, and practice steady hand control.",
+    category: "creative",
+    status: "Drawing",
+  },
+  pattern: {
+    title: "Patterns",
+    eyebrow: "Logic",
+    instruction: "Look at what repeats, then pick the missing piece.",
+    category: "logic",
+    status: "Pattern",
+  },
+  alchemy: {
+    title: "Alchemy",
+    eyebrow: "Color logic",
+    instruction: "Mix the right colors to make the target clay color.",
+    category: "creative",
+    status: "Color mix",
+  },
+  maze: {
+    title: "Maze",
+    eyebrow: "Spatial logic",
+    instruction: "Build a path from the start to the target.",
+    category: "logic",
+    status: "Path",
+  },
+  symmetry: {
+    title: "Symmetry",
+    eyebrow: "Creative motor",
+    instruction: "Paint one side and watch the other side mirror it.",
+    category: "creative",
+    status: "Mirror",
+  },
+  garden: {
+    title: "Garden",
+    eyebrow: "Beginning sounds",
+    instruction: "Grow the garden by choosing the object with the right sound.",
+    category: "sound",
+    status: "Sound garden",
+  },
+  magicsoundbubbles: {
+    title: "Bubbles",
+    eyebrow: "Magic sounds",
+    instruction: "Listen to the sound, then pop the matching bubbles.",
+    category: "sound",
+    status: "Listening",
+  },
+};
 
 const DEMO_CHILD_ID = "demo-child";
 
@@ -69,7 +220,7 @@ const MagicSoundBubblesEngine = dynamic(() => import("@/components/MagicSoundBub
 
 export default function Home() {
   const [view, setView] = useState<"lesson" | "dashboard" | "trophies">("lesson");
-  const [activeGame, setActiveGame] = useState<"menu" | "tracing" | "reveal" | "bubbles" | "monster" | "scavenger" | "rhyme" | "match" | "drummer" | "sorting" | "bunny" | "story" | "mark" | "pattern" | "alchemy" | "maze" | "symmetry" | "garden" | "magicsoundbubbles">("menu");
+  const [activeGame, setActiveGame] = useState<ActiveGame>("menu");
   const [childId, setChildId] = useState<string>(DEMO_CHILD_ID);
   const [childProgress, setChildProgress] = useState<Child | null>(null);
 
@@ -155,6 +306,61 @@ export default function Home() {
     };
   }, [isGameActive]);
 
+  const backToMenu = () => setActiveGame("menu");
+
+  const renderActiveGame = () => {
+    switch (activeGame) {
+      case "tracing":
+        return (
+          <ActiveLessonEngine
+            childId={childId}
+            letter={currentLetter}
+            pathString={currentPath}
+            currentLetterIndex={currentLetterIndex}
+            onSelectLetterIndex={setCurrentLetterIndex}
+            onBack={backToMenu}
+            onNext={handleNextLetter}
+          />
+        );
+      case "reveal":
+        return <MagicRevealEngine childId={childId} onBack={backToMenu} />;
+      case "bubbles":
+        return <BubblePopEngine childId={childId} onBack={backToMenu} />;
+      case "monster":
+        return <FeedMonsterEngine childId={childId} onBack={backToMenu} />;
+      case "scavenger":
+        return <SoundScavengerEngine childId={childId} onBack={backToMenu} />;
+      case "rhyme":
+        return <RhymeRiverEngine childId={childId} onBack={backToMenu} />;
+      case "match":
+        return <PhonicsMatchEngine childId={childId} onBack={backToMenu} />;
+      case "drummer":
+        return <SyllableDrummerEngine childId={childId} onBack={backToMenu} />;
+      case "sorting":
+        return <SortingBasketEngine childId={childId} onBack={backToMenu} />;
+      case "bunny":
+        return <WhereIsBunnyEngine childId={childId} onBack={backToMenu} />;
+      case "story":
+        return <StorySequenceEngine childId={childId} onBack={backToMenu} />;
+      case "mark":
+        return <MarkMakerEngine childId={childId} onBack={backToMenu} />;
+      case "pattern":
+        return <PatternExplorerEngine childId={childId} onBack={backToMenu} />;
+      case "alchemy":
+        return <ClayAlchemyEngine childId={childId} onBack={backToMenu} />;
+      case "maze":
+        return <MazeRouterEngine childId={childId} onBack={backToMenu} />;
+      case "symmetry":
+        return <SymmetryPainterEngine childId={childId} onBack={backToMenu} />;
+      case "garden":
+        return <SoundGardenEngine childId={childId} onBack={backToMenu} />;
+      case "magicsoundbubbles":
+        return <MagicSoundBubblesEngine childId={childId} onBack={backToMenu} />;
+      default:
+        return null;
+    }
+  };
+
   return (
     <div className={`flex flex-col font-sans relative overflow-hidden bg-transparent text-foreground ${
       isGameActive ? "h-[100svh] max-h-[100svh] sm:h-[100dvh] sm:max-h-[100dvh]" : "min-h-[100dvh]"
@@ -192,102 +398,21 @@ export default function Home() {
                       <ActivitiesMenu onSelectActivity={setActiveGame} />
                     </motion.div>
                   )}
-                  {activeGame === "tracing" && (
-                    <motion.div key="tracing" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="flex flex-col gap-6 w-full max-w-4xl mx-auto h-full min-h-0">
-                      <ActiveLessonEngine 
-                        childId={childId} 
-                        letter={currentLetter} 
-                        pathString={currentPath} 
-                        currentLetterIndex={currentLetterIndex}
-                        onSelectLetterIndex={setCurrentLetterIndex}
-                        onBack={() => setActiveGame("menu")} 
-                        onNext={handleNextLetter} 
-                      />
-                    </motion.div>
-                  )}
-                  {activeGame === "reveal" && (
-                    <motion.div key="reveal" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="h-full min-h-0 flex flex-col justify-center">
-                      <MagicRevealEngine childId={childId} onBack={() => setActiveGame("menu")} />
-                    </motion.div>
-                  )}
-                  {activeGame === "bubbles" && (
-                    <motion.div key="bubbles" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="h-full min-h-0 flex flex-col justify-center">
-                      <BubblePopEngine childId={childId} onBack={() => setActiveGame("menu")} />
-                    </motion.div>
-                  )}
-                  {activeGame === "monster" && (
-                    <motion.div key="monster" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="h-full min-h-0 flex flex-col justify-center">
-                      <FeedMonsterEngine childId={childId} onBack={() => setActiveGame("menu")} />
-                    </motion.div>
-                  )}
-                  {activeGame === "scavenger" && (
-                    <motion.div key="scavenger" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="h-full min-h-0 flex flex-col justify-center">
-                      <SoundScavengerEngine childId={childId} onBack={() => setActiveGame("menu")} />
-                    </motion.div>
-                  )}
-                  {activeGame === "rhyme" && (
-                    <motion.div key="rhyme" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="h-full min-h-0 flex flex-col justify-center">
-                      <RhymeRiverEngine childId={childId} onBack={() => setActiveGame("menu")} />
-                    </motion.div>
-                  )}
-                  {activeGame === "match" && (
-                    <motion.div key="match" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="h-full min-h-0 flex flex-col justify-center">
-                      <PhonicsMatchEngine childId={childId} onBack={() => setActiveGame("menu")} />
-                    </motion.div>
-                  )}
-                  {activeGame === "drummer" && (
-                    <motion.div key="drummer" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="h-full min-h-0 flex flex-col justify-center">
-                      <SyllableDrummerEngine childId={childId} onBack={() => setActiveGame("menu")} />
-                    </motion.div>
-                  )}
-                  {activeGame === "sorting" && (
-                    <motion.div key="sorting" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="h-full min-h-0 flex flex-col justify-center">
-                      <SortingBasketEngine childId={childId} onBack={() => setActiveGame("menu")} />
-                    </motion.div>
-                  )}
-                  {activeGame === "bunny" && (
-                    <motion.div key="bunny" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="h-full min-h-0 flex flex-col justify-center">
-                      <WhereIsBunnyEngine childId={childId} onBack={() => setActiveGame("menu")} />
-                    </motion.div>
-                  )}
-                  {activeGame === "story" && (
-                    <motion.div key="story" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="h-full min-h-0 flex flex-col justify-center">
-                      <StorySequenceEngine childId={childId} onBack={() => setActiveGame("menu")} />
-                    </motion.div>
-                  )}
-                  {activeGame === "mark" && (
-                    <motion.div key="mark" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="h-full min-h-0 flex flex-col justify-center">
-                      <MarkMakerEngine childId={childId} onBack={() => setActiveGame("menu")} />
-                    </motion.div>
-                  )}
-                  {activeGame === "pattern" && (
-                    <motion.div key="pattern" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="h-full min-h-0 flex flex-col justify-center">
-                      <PatternExplorerEngine childId={childId} onBack={() => setActiveGame("menu")} />
-                    </motion.div>
-                  )}
-                  {activeGame === "alchemy" && (
-                    <motion.div key="alchemy" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="h-full min-h-0 flex flex-col justify-center">
-                      <ClayAlchemyEngine childId={childId} onBack={() => setActiveGame("menu")} />
-                    </motion.div>
-                  )}
-                  {activeGame === "maze" && (
-                    <motion.div key="maze" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="h-full min-h-0 flex flex-col justify-center">
-                      <MazeRouterEngine childId={childId} onBack={() => setActiveGame("menu")} />
-                    </motion.div>
-                  )}
-                  {activeGame === "symmetry" && (
-                    <motion.div key="symmetry" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="h-full min-h-0 flex flex-col justify-center">
-                      <SymmetryPainterEngine childId={childId} onBack={() => setActiveGame("menu")} />
-                    </motion.div>
-                  )}
-                  {activeGame === "garden" && (
-                    <motion.div key="garden" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="h-full min-h-0 flex flex-col justify-center">
-                      <SoundGardenEngine childId={childId} onBack={() => setActiveGame("menu")} />
-                    </motion.div>
-                  )}
-                  {activeGame === "magicsoundbubbles" && (
-                    <motion.div key="magicsoundbubbles" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="h-full min-h-0 flex flex-col justify-center">
-                      <MagicSoundBubblesEngine childId={childId} onBack={() => setActiveGame("menu")} />
+                  {activeGame !== "menu" && (
+                    <motion.div
+                      key={activeGame}
+                      initial={{ opacity: 0, y: 16 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -16 }}
+                      transition={{ duration: 0.18 }}
+                      className="h-full min-h-0 w-full"
+                    >
+                      <InGameShell
+                        meta={IN_GAME_META[activeGame]}
+                        onBack={backToMenu}
+                      >
+                        {renderActiveGame()}
+                      </InGameShell>
                     </motion.div>
                   )}
                 </AnimatePresence>
