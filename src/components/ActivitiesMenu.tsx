@@ -3,6 +3,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import MascotSVG from '@/components/MascotSVG';
 import { CartoonSVG, vocabularyList } from '@/lib/svgDictionary';
+import { Shapes24Regular } from '@fluentui/react-icons';
 import {
   CategoryBadge,
   GAME_CATEGORY_STYLES,
@@ -26,12 +27,12 @@ import {
 
 interface ActivitiesMenuProps {
   onSelectActivity: (
-    activity: "tracing" | "reveal" | "bubbles" | "monster" | "scavenger" | "rhyme" | "match" | "drummer" | "sorting" | "bunny" | "story" | "mark" | "pattern" | "alchemy" | "maze" | "symmetry" | "garden" | "magicsoundbubbles"
+    activity: "tracing" | "reveal" | "bubbles" | "monster" | "scavenger" | "rhyme" | "match" | "drummer" | "sorting" | "bunny" | "story" | "mark" | "pattern" | "alchemy" | "maze" | "symmetry" | "garden" | "magicsoundbubbles" | "shapefinder" | "soundmail" | "patternpicnic" | "builder" | "creaturecare"
   ) => void;
 }
 
 interface ActivityItem {
-  id: "tracing" | "reveal" | "bubbles" | "monster" | "scavenger" | "scavenger-advanced" | "rhyme" | "match" | "drummer" | "sorting" | "bunny" | "story" | "mark" | "pattern" | "alchemy" | "maze" | "symmetry" | "garden" | "magicsoundbubbles";
+  id: "tracing" | "reveal" | "bubbles" | "monster" | "scavenger" | "scavenger-advanced" | "rhyme" | "match" | "drummer" | "sorting" | "bunny" | "story" | "mark" | "pattern" | "alchemy" | "maze" | "symmetry" | "garden" | "magicsoundbubbles" | "shapefinder" | "soundmail" | "patternpicnic" | "builder" | "creaturecare";
   name: string;
   subtitle: string;
   clayVariant: "primary" | "secondary" | "tertiary" | "purple" | "blue" | "lime" | "peach" | "glass";
@@ -174,6 +175,48 @@ const GardenIcon = (props: ActivityIconProps) => {
   return (
     <CartoonSVG animClass="anim-sway" {...props}>
       <SunflowerIcon size="100%" />
+    </CartoonSVG>
+  );
+};
+
+const ShapeFinderIcon = (props: ActivityIconProps) => (
+  <CartoonSVG animClass="anim-breathe" {...props}>
+    <Shapes24Regular className="w-full h-full text-[#e0a81b]" />
+  </CartoonSVG>
+);
+
+const SoundMailIcon = (props: ActivityIconProps) => {
+  const SunIcon = vocabularyList.find(v => v.name === "Sun")?.icon || Smile;
+  return (
+    <CartoonSVG animClass="anim-sway" {...props}>
+      <SunIcon size="100%" />
+    </CartoonSVG>
+  );
+};
+
+const PatternPicnicIcon = (props: ActivityIconProps) => {
+  const WatermelonIcon = vocabularyList.find(v => v.name === "Watermelon")?.icon || Smile;
+  return (
+    <CartoonSVG animClass="anim-float" {...props}>
+      <WatermelonIcon size="100%" />
+    </CartoonSVG>
+  );
+};
+
+const BuilderIcon = (props: ActivityIconProps) => {
+  const HouseIcon = vocabularyList.find(v => v.name === "House")?.icon || Smile;
+  return (
+    <CartoonSVG animClass="anim-breathe" {...props}>
+      <HouseIcon size="100%" />
+    </CartoonSVG>
+  );
+};
+
+const CreatureCareIcon = (props: ActivityIconProps) => {
+  const PandaIcon = vocabularyList.find(v => v.name === "Panda")?.icon || Smile;
+  return (
+    <CartoonSVG animClass="anim-breathe" {...props}>
+      <PandaIcon size="100%" />
     </CartoonSVG>
   );
 };
@@ -416,13 +459,73 @@ export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps
       benefit: "Symmetry",
       glowColor: "shadow-[0_20px_50px_rgba(247,194,179,0.18)] hover:shadow-[0_25px_60px_rgba(247,194,179,0.3)]",
       gradient: "from-[#f7c2b3]/40 to-[#f9b5a2]/30"
+    },
+    { 
+      id: "shapefinder", 
+      name: "Shapes", 
+      subtitle: "Shape Finder",
+      clayVariant: "glass",
+      textColor: "text-[#544001]",
+      disabled: false,
+      floatDuration: 4.4,
+      benefit: "Geometry",
+      glowColor: "shadow-[0_20px_50px_rgba(245,228,163,0.14)] hover:shadow-[0_25px_60px_rgba(245,228,163,0.25)]",
+      gradient: "from-[#f5e4a3]/40 to-[#ebd787]/30"
+    },
+    {
+      id: "soundmail",
+      name: "Sunny Mail",
+      subtitle: "Sunny Sound Mail",
+      clayVariant: "glass",
+      textColor: "text-[#16533f]",
+      disabled: false,
+      floatDuration: 4.8,
+      benefit: "Sounds",
+      glowColor: "shadow-[0_20px_50px_rgba(190,232,212,0.14)] hover:shadow-[0_25px_60px_rgba(190,232,212,0.25)]",
+      gradient: "from-[#bee8d4]/40 to-[#a3d8c1]/30"
+    },
+    {
+      id: "patternpicnic",
+      name: "Picnic",
+      subtitle: "Pattern Picnic",
+      clayVariant: "glass",
+      textColor: "text-[#42236b]",
+      disabled: false,
+      floatDuration: 5.1,
+      benefit: "Logic",
+      glowColor: "shadow-[0_20px_50px_rgba(221,203,245,0.14)] hover:shadow-[0_25px_60px_rgba(221,203,245,0.25)]",
+      gradient: "from-[#ddcbf5]/40 to-[#ceb5f2]/30"
+    },
+    {
+      id: "builder",
+      name: "Builder",
+      subtitle: "Little Builder",
+      clayVariant: "glass",
+      textColor: "text-[#544001]",
+      disabled: false,
+      floatDuration: 4.5,
+      benefit: "Shapes",
+      glowColor: "shadow-[0_20px_50px_rgba(245,228,163,0.14)] hover:shadow-[0_25px_60px_rgba(245,228,163,0.25)]",
+      gradient: "from-[#f5e4a3]/40 to-[#ebd787]/30"
+    },
+    {
+      id: "creaturecare",
+      name: "Care",
+      subtitle: "Creature Care",
+      clayVariant: "glass",
+      textColor: "text-[#0d4036]",
+      disabled: false,
+      floatDuration: 4.9,
+      benefit: "Biology",
+      glowColor: "shadow-[0_20px_50px_rgba(196,240,225,0.18)] hover:shadow-[0_25px_60px_rgba(196,240,225,0.3)]",
+      gradient: "from-[#c3e6dc]/40 to-[#a3d9cf]/30"
     }
   ];
 
   const getActivityCategory = (id: ActivityItem["id"]): GameCategory => {
     if (["tracing", "rhyme", "match"].includes(id)) return "literacy";
-    if (["reveal", "bubbles", "monster", "scavenger", "scavenger-advanced", "garden", "magicsoundbubbles", "drummer"].includes(id)) return "sound";
-    if (["sorting", "pattern", "maze"].includes(id)) return "logic";
+    if (["reveal", "bubbles", "monster", "scavenger", "scavenger-advanced", "garden", "magicsoundbubbles", "drummer", "soundmail"].includes(id)) return "sound";
+    if (["sorting", "pattern", "maze", "shapefinder", "patternpicnic", "builder"].includes(id)) return "logic";
     if (["story", "mark", "alchemy", "symmetry"].includes(id)) return "creative";
     return "nature";
   };
@@ -491,7 +594,7 @@ export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps
       router.push("/advanced-search");
       return;
     }
-    onSelectActivity(activity.id as "tracing" | "reveal" | "bubbles" | "monster" | "scavenger" | "rhyme" | "match" | "drummer" | "sorting" | "bunny" | "story" | "mark" | "pattern" | "alchemy" | "maze" | "symmetry" | "garden" | "magicsoundbubbles");
+    onSelectActivity(activity.id as "tracing" | "reveal" | "bubbles" | "monster" | "scavenger" | "rhyme" | "match" | "drummer" | "sorting" | "bunny" | "story" | "mark" | "pattern" | "alchemy" | "maze" | "symmetry" | "garden" | "magicsoundbubbles" | "shapefinder" | "soundmail" | "patternpicnic" | "builder" | "creaturecare");
   };
 
   const getGameIcon = (id: string, floatDuration: number) => {
@@ -520,6 +623,11 @@ export default function ActivitiesMenu({ onSelectActivity }: ActivitiesMenuProps
       case "symmetry": return <SymmetryIcon {...props} style={{ animationDuration: `${floatDuration}s` }} />;
       case "garden": return <GardenIcon {...props} style={{ animationDuration: `${floatDuration}s` }} />;
       case "magicsoundbubbles": return <MagicSoundBubblesIcon {...props} style={{ animationDuration: `${floatDuration}s` }} />;
+      case "shapefinder": return <ShapeFinderIcon {...props} style={{ animationDuration: `${floatDuration}s` }} />;
+      case "soundmail": return <SoundMailIcon {...props} style={{ animationDuration: `${floatDuration}s` }} />;
+      case "patternpicnic": return <PatternPicnicIcon {...props} style={{ animationDuration: `${floatDuration}s` }} />;
+      case "builder": return <BuilderIcon {...props} style={{ animationDuration: `${floatDuration}s` }} />;
+      case "creaturecare": return <CreatureCareIcon {...props} style={{ animationDuration: `${floatDuration}s` }} />;
       default: return null;
     }
   };

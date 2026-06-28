@@ -49,7 +49,12 @@ type ActiveGame =
   | "maze"
   | "symmetry"
   | "garden"
-  | "magicsoundbubbles";
+  | "magicsoundbubbles"
+  | "shapefinder"
+  | "soundmail"
+  | "patternpicnic"
+  | "builder"
+  | "creaturecare";
 
 const IN_GAME_META: Record<Exclude<ActiveGame, "menu">, InGameShellMeta> = {
   tracing: {
@@ -178,6 +183,41 @@ const IN_GAME_META: Record<Exclude<ActiveGame, "menu">, InGameShellMeta> = {
     category: "sound",
     status: "Listening",
   },
+  shapefinder: {
+    title: "Shape Finder",
+    eyebrow: "Logic & geometry",
+    instruction: "Find the shape inside the real-world object.",
+    category: "logic",
+    status: "Shapes",
+  },
+  soundmail: {
+    title: "Sunny Mail",
+    eyebrow: "Letters & sounds",
+    instruction: "Help the sun deliver postcards to the correct mailbox.",
+    category: "sound",
+    status: "Beginning sounds",
+  },
+  patternpicnic: {
+    title: "Picnic Patterns",
+    eyebrow: "Logic & sequencing",
+    instruction: "Look at the repeating pattern, then drag or tap the missing item.",
+    category: "logic",
+    status: "Patterns",
+  },
+  builder: {
+    title: "Little Builder",
+    eyebrow: "Shapes & matching",
+    instruction: "Drag the shapes to build the picture.",
+    category: "logic",
+    status: "Shapes",
+  },
+  creaturecare: {
+    title: "Creature Care",
+    eyebrow: "Nature discovery",
+    instruction: "Help the animals by choosing what they need.",
+    category: "nature",
+    status: "Animal care",
+  },
 };
 
 const DEMO_CHILD_ID = "demo-child";
@@ -217,6 +257,11 @@ const MazeRouterEngine = dynamic(() => import("@/components/MazeRouterEngine"), 
 const SymmetryPainterEngine = dynamic(() => import("@/components/SymmetryPainterEngine"), { loading: GameLoading });
 const SoundGardenEngine = dynamic(() => import("@/components/SoundGardenEngine"), { loading: GameLoading });
 const MagicSoundBubblesEngine = dynamic(() => import("@/components/MagicSoundBubblesEngine"), { loading: GameLoading });
+const ShapeFinderEngine = dynamic(() => import("@/components/ShapeFinderEngine"), { loading: GameLoading });
+const SunnySoundMailEngine = dynamic(() => import("@/components/SunnySoundMailEngine"), { loading: GameLoading });
+const PatternPicnicEngine = dynamic(() => import("@/components/PatternPicnicEngine"), { loading: GameLoading });
+const LittleBuilderShapesEngine = dynamic(() => import("@/components/LittleBuilderShapesEngine"), { loading: GameLoading });
+const CalmCreatureCareEngine = dynamic(() => import("@/components/CalmCreatureCareEngine"), { loading: GameLoading });
 
 export default function Home() {
   const [view, setView] = useState<"lesson" | "dashboard" | "trophies">("lesson");
@@ -356,6 +401,16 @@ export default function Home() {
         return <SoundGardenEngine childId={childId} onBack={backToMenu} />;
       case "magicsoundbubbles":
         return <MagicSoundBubblesEngine childId={childId} onBack={backToMenu} />;
+      case "shapefinder":
+        return <ShapeFinderEngine childId={childId} onBack={backToMenu} />;
+      case "soundmail":
+        return <SunnySoundMailEngine childId={childId} onBack={backToMenu} />;
+      case "patternpicnic":
+        return <PatternPicnicEngine childId={childId} onBack={backToMenu} />;
+      case "builder":
+        return <LittleBuilderShapesEngine childId={childId} onBack={backToMenu} />;
+      case "creaturecare":
+        return <CalmCreatureCareEngine childId={childId} onBack={backToMenu} />;
       default:
         return null;
     }

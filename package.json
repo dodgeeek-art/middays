@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@ducanh2912/next-pwa": "^10.2.9",
+    "@fluentui/react-icons": "^2.0.331",
     "@prisma/client": "5.22.0",
     "canvas-confetti": "^1.9.4",
     "framer-motion": "^12.40.0",

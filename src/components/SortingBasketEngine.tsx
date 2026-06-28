@@ -82,6 +82,7 @@ const colorMap: Record<string, "red" | "blue" | "green" | "yellow" | "orange" | 
   Balloon: "red",
   Drum: "red",
   Octopus: "red", // Mapped to Red (SVG is coral/red)
+  Leaf: "red", // Mapped to Red (SVG is red maple leaf)
 
   // Blue
   Whale: "blue",
@@ -98,7 +99,6 @@ const colorMap: Record<string, "red" | "blue" | "green" | "yellow" | "orange" | 
 
   // Green
   Frog: "green",
-  Leaf: "green",
   Tree: "green",
   Pear: "green",
   Alligator: "green",
